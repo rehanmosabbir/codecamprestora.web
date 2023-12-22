@@ -1,4 +1,4 @@
-import { RestaurantSVG } from "../Icons/RestaurantSVG";
+import { RestaurantSVG } from "../HeaderIcons/RestaurantSVG";
 import Link from "next/link";
 
 export const Restaurant = () => {
@@ -7,7 +7,7 @@ export const Restaurant = () => {
       <Link
         href={"/"}
         type="text"
-        className="flex items-center w-48 py-3 mt-2 text-gray-600 fill-gray-600 hover:text-black hover:fill-blue-700 hover:bg-gray-100 active:bg-gray-200 transition rounded-lg"
+        className="flex items-center w-56 py-3 mt-2 text-gray-600 fill-gray-600 hover:text-black hover:fill-blue-700 hover:bg-gray-100 active:bg-gray-200 transition rounded-lg"
       >
         <RestaurantSVG />
         Restaurant Settings

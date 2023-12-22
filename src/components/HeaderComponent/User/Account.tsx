@@ -1,4 +1,4 @@
-import { AccountSVG } from "../Icons/AccountSVG";
+import { AccountSVG } from "../HeaderIcons/AccountSVG";
 import Link from "next/link";
 
 export const Account = () => {
@@ -7,7 +7,7 @@ export const Account = () => {
       <Link
         href={"/"}
         type="text"
-        className="flex items-center w-48 py-3 mt-2 text-gray-600 fill-gray-600 hover:text-black hover:fill-blue-700 hover:bg-gray-100 active:bg-gray-200 transition rounded-lg"
+        className="flex items-center w-56 py-3 mt-2 text-gray-600 fill-gray-600 hover:text-black hover:fill-blue-700 hover:bg-gray-100 active:bg-gray-200 transition rounded-lg"
       >
         <AccountSVG />
         Account Settings

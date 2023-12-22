@@ -3,6 +3,10 @@ import { Layout } from "@/components/LayoutComponent/Layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
-  return <main></main>;
+export default function Default() {
+  return (
+    <main>
+      <Layout />
+    </main>
+  );
 }

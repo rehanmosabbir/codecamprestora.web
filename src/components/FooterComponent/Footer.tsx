@@ -1,5 +1,7 @@
 export const Footer = () => {
   return (
-    <div className="h-20 flex items-center bg-white">Dashboard Footer</div>
+    <div className="h-10 flex items-center justify-center bg-white">
+      <p>Dashboard Footer</p>
+    </div>
   );
 };
