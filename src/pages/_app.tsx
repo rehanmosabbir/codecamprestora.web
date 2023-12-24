@@ -11,18 +11,28 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps, router }: AppProps) {
+  const shouldShowHeader = (): boolean => {
+    const pathsWithoutHeader = ["/registration", "/login"];
+
+    return !pathsWithoutHeader.includes(router.pathname);
+  };
+  const shouldShowFooter = (): boolean => {
+    const pathsWithoutFooter = ["/registration", "/login"];
+
+    return !pathsWithoutFooter.includes(router.pathname);
+  };
   return (
     <>
       <ConfigProvider theme={theme}>
         <header className={roboto.className}>
-          <Header />
+          {shouldShowHeader() && <Header />}
         </header>
         <main className={roboto.className}>
           <Component {...pageProps} />
         </main>
         <footer className={roboto.className}>
-          <Footer />
+          {shouldShowFooter() && <Footer />}
         </footer>
       </ConfigProvider>
     </>
