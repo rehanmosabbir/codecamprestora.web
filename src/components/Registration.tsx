@@ -22,16 +22,16 @@ interface FieldType {
   address?: string;
 }
 
-const App: React.FC = () => (
+const Registration = () => (
   <div className="full-h-screen bg-gray-100 font-sans">
-    <div className="w-full py-20 px-20  flex justify-center">
+    <div className="w-full !py-20 !px-20  flex justify-center">
       <Form
         name="basic"
         style={{ maxWidth: 600 }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        className="bg-white rounded-lg shadow-lg p-10 w-[28rem]"
+        className="bg-white rounded-lg shadow-lg !p-10 w-[28rem]"
       >
         <div className="flex justify-center mb-8">
           <Image src={logo} width={100} height={100} alt="logo" priority />
@@ -55,7 +55,7 @@ const App: React.FC = () => (
         >
           <label> Restaurant Name:</label>
           <Input
-            className="py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Restaurent Name"
             size="large"
           />
@@ -66,7 +66,7 @@ const App: React.FC = () => (
         >
           <label> Owner Name:</label>
           <Input
-            className="py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Owner Name"
             size="large"
           />
@@ -79,7 +79,7 @@ const App: React.FC = () => (
         >
           <label> Restaurant Address:</label>
           <Input
-            className="py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1 "
             placeholder="Enter Restaurant Address"
             size="large"
           />
@@ -91,7 +91,7 @@ const App: React.FC = () => (
         >
           <label> Email:</label>
           <Input
-            className="py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Email"
             type="email"
             size="large"
@@ -104,7 +104,7 @@ const App: React.FC = () => (
         >
           <label> Password:</label>
           <Input.Password
-            className="py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Password"
             type="password"
             size="large"
@@ -119,7 +119,7 @@ const App: React.FC = () => (
 
         <Form.Item>
           <Button
-            className="bg-purple-700 text-white text-lg h-12 font-semibold hover:text-white"
+            className="!bg-purple-700 !text-white text-lg !h-12 font-semibold !hover:text-white"
             htmlType="submit"
             block
           >
@@ -136,4 +136,4 @@ const App: React.FC = () => (
   </div>
 );
 
-export default App;
+export default Registration;
