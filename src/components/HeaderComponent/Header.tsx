@@ -1,5 +1,5 @@
-import React from "react";
 import Link from "next/link";
+import React, { useState } from "react";
 import { AppLogo } from "./HeaderIcons/Logo";
 import { Popover } from "antd";
 import { User } from "./User/User";
@@ -25,7 +25,7 @@ export const Header = () => {
       </div>
       <div className="flex justify-end items-center ">
         <Popover content={content} title="CodeCamp Dev" trigger="click">
-          <button className="py-[6px] px-4 flex justify-center items-center rounded-3xl bg-gray-200 fill-blue-700 hover:bg-blue-700 active:bg-blue-500 hover:fill-gray-200 duration-300">
+          <button className="py-[6px] px-4 flex justify-center custom-hover items-center rounded-3xl bg-gray-200 fill-blue-700 hover:bg-blue-700 active:bg-blue-500 hover:fill-gray-200 duration-300">
             <User />
           </button>
         </Popover>
