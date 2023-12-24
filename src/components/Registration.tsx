@@ -129,7 +129,7 @@ const App: React.FC = () => (
         <hr className="mb-3" />
 
         <div className="font-medium text-[16px] text-center">
-          <Link href=""> Already have an account?</Link>
+          <Link href="#"> Already have an account?</Link>
         </div>
       </Form>
     </div>
