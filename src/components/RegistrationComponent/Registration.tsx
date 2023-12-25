@@ -16,8 +16,8 @@ interface FieldType {
   username?: string;
   password?: string;
   agreement?: string;
-  restarurantname?: string;
-  ownername?: string;
+  restaurantName?: string;
+  ownerName?: string;
   email?: string;
   address?: string;
 }
@@ -48,7 +48,7 @@ const Registration = () => (
         </h3>
 
         <Form.Item<FieldType>
-          name="restarurantname"
+          name="restaurantName"
           rules={[
             { required: true, message: "Please input your Restaurant Name!" },
           ]}
@@ -56,12 +56,12 @@ const Registration = () => (
           <label> Restaurant Name:</label>
           <Input
             className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-            placeholder="Enter Restaurent Name"
+            placeholder="Enter Restaurant Name"
             size="large"
           />
         </Form.Item>
         <Form.Item<FieldType>
-          name="ownername"
+          name="ownerName"
           rules={[{ required: true, message: "Please input Owner's Name!" }]}
         >
           <label> Owner Name:</label>
@@ -129,7 +129,7 @@ const Registration = () => (
         <hr className="mb-3" />
 
         <div className="font-medium text-[16px] text-center">
-          <Link href="#"> Already have an account?</Link>
+          <Link href="/login">Already have an account?</Link>
         </div>
       </Form>
     </div>
