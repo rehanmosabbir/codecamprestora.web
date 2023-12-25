@@ -3,15 +3,20 @@ import { Header } from "@/components/HeaderComponent/Header";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Roboto } from "next/font/google";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Flex } from "antd";
 import theme from "../../theme/themeConfig";
+import { SessionProvider } from "next-auth/react";
 
 const roboto = Roboto({
   weight: "400",
   subsets: ["latin"],
 });
 
-export default function App({ Component, pageProps, router }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+  router,
+}: AppProps) {
   const shouldShowHeader = (): boolean => {
     const pathsWithoutHeader = ["/registration", "/login"];
 
@@ -25,15 +30,19 @@ export default function App({ Component, pageProps, router }: AppProps) {
   return (
     <>
       <ConfigProvider theme={theme}>
-        <header className={roboto.className}>
-          {shouldShowHeader() && <Header />}
-        </header>
-        <main className={roboto.className}>
-          <Component {...pageProps} />
-        </main>
-        <footer className={roboto.className}>
-          {shouldShowFooter() && <Footer />}
-        </footer>
+        <SessionProvider session={session}>
+          <Flex className="flex-col min-h-screen">
+            <header className={roboto.className}>
+              {shouldShowHeader() && <Header />}
+            </header>
+            <main className={`${roboto.className} flex-grow sm:px-5 px-3`}>
+              <Component {...pageProps} />
+            </main>
+            <footer className={roboto.className}>
+              {shouldShowFooter() && <Footer />}
+            </footer>
+          </Flex>
+        </SessionProvider>
       </ConfigProvider>
     </>
   );
