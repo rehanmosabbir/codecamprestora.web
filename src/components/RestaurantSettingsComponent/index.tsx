@@ -60,7 +60,7 @@ export function RestaurantSettingsComponent() {
     };
 
     return (
-        <div className="flex flex-col gap-2 mx-16">
+        <div className="flex flex-col gap-2 mx-12">
             {contextHolder}
             <h3 className="font-bold py-2 text-[23px] text-purple-700">Restaurant Settings</h3>
             <Form
@@ -70,30 +70,19 @@ export function RestaurantSettingsComponent() {
                 style={{ maxWidth: 600 }}
                 onFinish={handleOnFinish}
             >
-                <Form.Item
-                    label={"Name"}
-                    name={"name"}
-                >
-                    <Input
-                        className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                        placeholder="Update Name"
+                <Form.Item label={"Restaurant Name"} name={"name"}>
+                    <Input size={"large"} placeholder="Update Restaurant Name" />
+                </Form.Item>
+
+                <Form.Item label={"Restaurant Location"} name={"location"}>
+                    {/* <Input size={"large"} placeholder="Update Restaurant Location" /> */}
+                    <Input.TextArea
+                        autoSize={{ minRows: 3, maxRows: 5 }}
+                        placeholder="Update Restaurant Location"
                     />
                 </Form.Item>
 
-                <Form.Item
-                    label={"Location"}
-                    name={"location"}
-                >
-                    <Input
-                        className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                        placeholder="Update Location"
-                    />
-                </Form.Item>
-
-                <Form.Item
-                    label={"Image"}
-                    name={"image"}
-                >
+                <Form.Item label={"Restaurant Image"} name={"image"}>
                     <Upload
                         name="restaurant-image"
                         listType={"picture-card"}
@@ -103,7 +92,6 @@ export function RestaurantSettingsComponent() {
                     >
                         {fileList.length >= 1 ? null : uploadButton}
                     </Upload>
-
                 </Form.Item>
 
                 <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
@@ -114,10 +102,11 @@ export function RestaurantSettingsComponent() {
                     <Button
                         type={"default"}
                         htmlType={"submit"}
-                        className="!bg-purple-700 !text-white text-lg !h-12 font-semibold !hover:text-white"
+                        // className="!bg-purple-700 !text-white text-lg !h-12 font-semibold !hover:text-white"
+                        style={{ backgroundColor: "#7e22ce", color: "#fff", fontSize: "large", height: "3rem" }}
                         onClick={success}
                     >
-                        Update Settings
+                        Update Restaurant
                     </Button>
                 </Form.Item>
             </Form>
