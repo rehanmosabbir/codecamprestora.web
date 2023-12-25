@@ -19,7 +19,7 @@ export const Header = () => {
   return (
     <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 sticky top-0 bg-white">
       <div className="flex justify-start items-center ">
-        <Link href={"/dashboard/default/"}>
+        <Link href={"/dashboard/"}>
           <AppLogo />
         </Link>
       </div>
