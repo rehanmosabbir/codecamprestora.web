@@ -8,12 +8,7 @@ export const BranchCreation = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
   const handleCancel = () => {
-    
     setIsModalOpen(false);
   };
 
@@ -22,13 +17,7 @@ export const BranchCreation = () => {
       <Button type="primary" onClick={showModal}>
         Create New Branch
       </Button>
-      <Modal
-        // title="Basic Modal"
-        open={isModalOpen}
-        // onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-      >
+      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
         <BranchCreateModal></BranchCreateModal>
       </Modal>
     </>

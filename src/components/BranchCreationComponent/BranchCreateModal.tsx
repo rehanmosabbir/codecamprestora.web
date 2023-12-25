@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 
@@ -22,6 +22,7 @@ interface FieldType {
 const BranchCreateModal = () => (
   <div>
     <Form
+      requiredMark={true}
       name="basic"
       style={{ maxWidth: 600 }}
       onFinish={onFinish}
@@ -38,21 +39,24 @@ const BranchCreateModal = () => (
       </h1>
 
       <Form.Item<FieldType>
+        label="Branch Name:"
         name="branchName"
+        labelCol={{ span: 24 }}
         rules={[{ required: true, message: "Please input your Branch Name!" }]}
       >
-        <label>Branch Name:</label>
         <Input
           className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
           placeholder="Enter Branch Name"
           size="large"
         />
       </Form.Item>
+
       <Form.Item<FieldType>
+        label="Contact Number:"
+        labelCol={{ span: 24 }}
         name="contactNumber"
         rules={[{ required: true, message: "Please input Contact Number!" }]}
       >
-        <label> Contact Number:</label>
         <Input
           className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
           placeholder="Enter Contact Number"
@@ -60,13 +64,15 @@ const BranchCreateModal = () => (
           type="tel"
         />
       </Form.Item>
+
       <Form.Item<FieldType>
+        label="Restaurant Address:"
+        labelCol={{ span: 24 }}
         name="location"
         rules={[
           { required: true, message: "Please input Restaurant's address!" },
         ]}
       >
-        <label> Restaurant Address:</label>
         <Input
           className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1 "
           placeholder="Enter Restaurant Address"
@@ -74,11 +80,13 @@ const BranchCreateModal = () => (
           type="text"
         />
       </Form.Item>
+
       <Form.Item<FieldType>
+        label="Opening Hours:"
+        labelCol={{ span: 24 }}
         name="openingHours"
         rules={[{ required: true, message: "Please input Opening Hours!" }]}
       >
-        <label> Opening Hours:</label>
         <Input
           className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
           placeholder="Enter Opening Hours"
