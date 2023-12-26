@@ -1,5 +1,5 @@
 import React from "react";
-import { Space, Table, Popover, Button } from "antd";
+import { Space, Table, Popover, Button,Badge } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 interface DataType {
@@ -86,14 +86,18 @@ const data: DataType[] = [
 
 const BranchList = () => {
   return (
-    <div className="bg-slate-100">
+    <div className="bg-slate-100 rounded-lg">
       <div className="m-[80px] mt-1">
-        <h2 className="ml-[150px] font-semibold text-[20px] text-gray-700">
-          Restaurant Branch List
-        </h2>
         <div className="flex justify-center items-center">
-          <div className="w-[900px] m-10">
-            <Table columns={columns} dataSource={data} />
+          <div className="w-full m-10 ">
+            <h2 className=" text-[20px] text-black p-5 bg-white rounded-t-lg">
+              Restaurant Branch List
+            </h2>
+            <Table
+              columns={columns}
+              dataSource={data}
+              style={{borderRadius: 0}}
+            />
           </div>
         </div>
       </div>
