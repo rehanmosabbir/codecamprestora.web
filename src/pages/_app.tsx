@@ -35,7 +35,7 @@ export default function App({
             <header className={roboto.className}>
               {shouldShowHeader() && <Header />}
             </header>
-            <main className={`${roboto.className} flex-grow sm:px-5 px-3`}>
+            <main className={`${roboto.className} flex-grow`}>
               <Component {...pageProps} />
             </main>
             <footer className={roboto.className}>

@@ -1,16 +1,10 @@
-import { Button, Checkbox, ConfigProvider, Divider, Form, Input } from "antd";
+import { Button, Checkbox, Divider, Form, Input } from "antd";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-
 import logo from "../assets/logo.png";
-
-const onFinish = (values: any) => {
-  console.log("Success:", values);
-};
-
-const onFinishFailed = (errorInfo: any) => {
-  console.log("Failed:", errorInfo);
-};
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface FieldType {
   username?: string;
@@ -18,9 +12,33 @@ interface FieldType {
   remember?: string;
 }
 
-const LoginPage: React.FC = () => (
-  <div className="h-screen bg-gray-100">
-    <div className="w-full pt-20 px-5 sm:p-20 flex justify-center">
+const LoginPage = () => {
+  const router = useRouter();
+  const [logError, setError] = useState<boolean>(false);
+  const onFinish = async (values: any) => {
+    const { username, password } = values;
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        username,
+        password,
+      });
+
+      if (result?.error) {
+        setError(true);
+      } else {
+        await router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error occurred during authentication:", error);
+    }
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
+  return (
+    <div className="h-screen w-full flex justify-center items-center bg-gray-100">
       <Form
         layout="vertical"
         name="basic"
@@ -61,6 +79,9 @@ const LoginPage: React.FC = () => (
         <Form.Item<FieldType> name="remember" valuePropName="checked">
           <Checkbox className="text-gray-500">Keep me logged in</Checkbox>
         </Form.Item>
+        <span className="text-[14px] text-red-500">
+          {logError ? <span>Invalid Username or Password</span> : <span></span>}
+        </span>
         <Form.Item>
           <Button
             type="primary"
@@ -78,7 +99,7 @@ const LoginPage: React.FC = () => (
         </div>
       </Form>
     </div>
-  </div>
-);
+  );
+};
 
 export default LoginPage;

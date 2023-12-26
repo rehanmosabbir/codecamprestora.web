@@ -22,7 +22,7 @@ interface FieldType {
 }
 
 const RegistrationPage: React.FC = () => (
-  <div className="min-h-screen bg-gray-100">
+  <div className="min-h-screen flex items-center bg-gray-100">
     <div className="w-full pt-20 px-5 sm:p-20 flex justify-center">
       <Form
         layout="vertical"

@@ -1,16 +1,13 @@
-import { Inter } from "next/font/google";
-import { Layout } from "@/components/LayoutComponent/Layout";
-import { Roboto } from "next/font/google";
-import { getServerSession } from "next-auth";
-import { authOption } from "./api/auth/[...nextauth]";
 import { useSession } from "next-auth/react";
-
-const roboto = Roboto({
-  weight: "400",
-  subsets: ["latin"],
-});
 
 export default function Home() {
   const { data } = useSession();
-  return <main className={roboto.className}>{JSON.stringify(data)}</main>;
+  return (
+    <main className="bg-gray-100">
+      User Logged in : {JSON.stringify(data)}
+      <h2 className="text-3xl font-bold text-center pt-[40vh] pb-[40vh]">
+        Welcome to Restora.App
+      </h2>
+    </main>
+  );
 }
