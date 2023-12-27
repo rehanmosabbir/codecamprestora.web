@@ -31,8 +31,8 @@ export default function App({
     <>
       <ConfigProvider theme={theme}>
         <SessionProvider session={session}>
-          <Flex className="flex-col min-h-screen">
-            <header className={roboto.className}>
+          <div className="flex flex-col min-h-screen">
+            <header className={`${roboto.className} sticky top-0`}>
               {shouldShowHeader() && <Header />}
             </header>
             <main className={`${roboto.className} flex-grow`}>
@@ -41,7 +41,7 @@ export default function App({
             <footer className={roboto.className}>
               {shouldShowFooter() && <Footer />}
             </footer>
-          </Flex>
+          </div>
         </SessionProvider>
       </ConfigProvider>
     </>
