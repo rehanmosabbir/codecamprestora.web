@@ -53,7 +53,7 @@ const Registration = () => (
             { required: true, message: "Please input your Restaurant Name!" },
           ]}
         >
-          <label> Restaurant Name:</label>
+          <label className="mb-1 text-[5px]"> Restaurant Name:</label>
           <Input
             className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Restaurant Name"
@@ -66,7 +66,7 @@ const Registration = () => (
         >
           <label> Owner Name:</label>
           <Input
-            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-3 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Owner Name"
             size="large"
           />
@@ -79,7 +79,7 @@ const Registration = () => (
         >
           <label> Restaurant Address:</label>
           <Input
-            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1 "
+            className="!py-3 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1 "
             placeholder="Enter Restaurant Address"
             size="large"
           />
@@ -91,7 +91,7 @@ const Registration = () => (
         >
           <label> Email:</label>
           <Input
-            className="!py-4 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+            className="!py-3 text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
             placeholder="Enter Email"
             type="email"
             size="large"

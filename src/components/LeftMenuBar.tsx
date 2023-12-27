@@ -29,7 +29,7 @@ const items: MenuItem[] = [
   getItem("Branch Details", "sub1", <TbListDetails size="1.1rem" />),
   getItem("Branch Users", "sub2", <FaUsers size="1.1rem" />),
   getItem("Menu", "sub4", <MdOutlineRestaurantMenu size="1.1rem" />, [
-    getItem("Catagory", "9"),
+    getItem("Category", "9"),
     getItem("List of food items", "10"),
   ]),
   getItem("Orders List", "11", <LuClipboardList size="1.1rem" />),

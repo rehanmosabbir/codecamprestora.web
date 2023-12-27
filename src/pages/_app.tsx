@@ -31,17 +31,17 @@ export default function App({
     <>
       <ConfigProvider theme={theme}>
         <SessionProvider session={session}>
-          <Flex className="flex-col min-h-screen">
-            <header className={roboto.className}>
+          <div className="flex flex-col min-h-screen">
+            <header className={`${roboto.className} sticky top-0`}>
               {shouldShowHeader() && <Header />}
             </header>
-            <main className={`${roboto.className} flex-grow sm:px-5 px-3`}>
+            <main className={`${roboto.className} flex-grow`}>
               <Component {...pageProps} />
             </main>
             <footer className={roboto.className}>
               {shouldShowFooter() && <Footer />}
             </footer>
-          </Flex>
+          </div>
         </SessionProvider>
       </ConfigProvider>
     </>

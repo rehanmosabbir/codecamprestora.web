@@ -22,8 +22,8 @@ interface FieldType {
 }
 
 const RegistrationPage: React.FC = () => (
-  <div className="min-h-screen bg-gray-100">
-    <div className="w-full pt-20 px-5 sm:p-20 flex justify-center">
+  <div className="min-h-screen flex items-center bg-gray-100">
+    <div className="w-full py-20 px-3 flex justify-center">
       <Form
         layout="vertical"
         name="basic"
@@ -95,7 +95,7 @@ const RegistrationPage: React.FC = () => (
         <Form.Item>
           <Button
             type="primary"
-            className="font-medium text-white"
+            className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
             htmlType="submit"
             block
             size="large"
