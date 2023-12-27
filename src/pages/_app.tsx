@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Roboto } from "next/font/google";
 import { ConfigProvider } from "antd";
+import { ConfigProvider } from "antd";
 import theme from "../../theme/themeConfig";
 
 const roboto = Roboto({
