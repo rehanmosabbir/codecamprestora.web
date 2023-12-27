@@ -1,4 +1,5 @@
-import BranchList from "@/components/BranchListComponent/BranchList";
+import React from "react";
+import { BranchList } from "./../../components/BranchListComponent/BranchList";
 
 const index = () => {
   return (
