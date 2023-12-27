@@ -2,14 +2,17 @@ import React from "react";
 import { createCache, extractStyle, StyleProvider } from "@ant-design/cssinjs";
 import Document, { Head, Html, Main, NextScript } from "next/document";
 import type { DocumentContext } from "next/document";
+import AuthProvider from "@/components/AuthProvider";
 
 const MyDocument = () => (
   <Html lang="en">
     <Head />
-    <body>
-      <Main />
-      <NextScript />
-    </body>
+    <AuthProvider>
+      <body>
+        <Main />
+        <NextScript />
+      </body>
+    </AuthProvider>
   </Html>
 );
 
