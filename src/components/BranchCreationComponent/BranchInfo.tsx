@@ -4,10 +4,7 @@ import { Button, Card } from "antd";
 
 export const BranchInfo = () => {
   const [editInfo, setEditInfo] = useState(true);
-  const handeleditInfo = () => {
-    setEditInfo(false);
-  };
-
+  
   return editInfo ? (
     <div className=" bg-slate-100 rounded-lg flex justify-center min-h-[calc(100vh-130px)]">
       <div className="flex justify-center items-center">
@@ -38,9 +35,9 @@ export const BranchInfo = () => {
       </div>
     </div>
   ) : (
-    <div className="bg-slate-100 rounded-lg flex justify-center items-center)]">
+    <div className="bg-slate-100 rounded-lg flex justify-center items-center">
       <div>
-        <div className="w-full m-10">
+        <div className="w-full m-11">
           <BranchInfoEdit editInfoOff={setEditInfo} />
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { FieldType } from "@/types/BreanchCreationTypes";
 import { Button, Col, Form, Input, Row } from "antd";
-import React, { useState } from "react";
 
 export const BranchInfoEdit = ({
   editInfoOff,
@@ -21,7 +20,7 @@ export const BranchInfoEdit = ({
       <Form
         requiredMark={true}
         name="basic"
-        style={{ maxWidth: 600 }}
+        style={{ width: 600 }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
