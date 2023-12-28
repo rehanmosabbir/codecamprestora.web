@@ -28,26 +28,28 @@ function getItem(
 }
 
 const menuItems: MenuItem[] = [
-  getItem("Branch Details", "branch-details", <TbListDetails size="1.1rem" />),
-  getItem("Branch Users", "branch-users", <FaUsers size="1.1rem" />),
+  getItem("Branch Details", "info", <TbListDetails size="1.1rem" />),
+  getItem("Branch Users", "users", <FaUsers size="1.1rem" />),
   getItem("Menu", "menu", <MdOutlineRestaurantMenu size="1.1rem" />),
-  getItem("Orders List", "order-list", <LuClipboardList size="1.1rem" />),
-  getItem("Branch Pictures", "branch-pictures", <SlPicture size="1.1rem" />),
+  getItem("Orders List", "orders", <LuClipboardList size="1.1rem" />),
+  getItem("Branch Pictures", "pictures", <SlPicture size="1.1rem" />),
   getItem("Reviews", "reviews", <MdOutlineReviews size="1.1rem" />),
 ];
 
 const rootItems: MenuItem[] = [
-  getItem("Branch List", "branch-list", <TbListDetails size="1.1rem" />),
-  getItem("Catagories", "catagories", <BiCategory size="1.1rem" />),
+  getItem("Branch List", "branches", <TbListDetails size="1.1rem" />),
+  getItem("Categories", "categories", <BiCategory size="1.1rem" />),
 ];
 
-const rootSubmenuKeys = ["sub1", "sub2", "sub4"];
+const rootSubmenuKeys = ["branches", "categories"];
 
 const LeftMenuBar: React.FC = () => {
-  const [openKeys, setOpenKeys] = useState(["sub1"]);
+  const [openKeys, setOpenKeys] = useState(["branches"]);
+
   const router = useRouter();
-  // console.log(router);
-  const showMenu = router.pathname.includes("/branchlist/[branchid]");
+  const query = router.query.branchid;
+
+  const showMenu = router.pathname.includes("/branches/[branchid]");
 
   const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -58,12 +60,24 @@ const LeftMenuBar: React.FC = () => {
     }
   };
 
+  const handleSelect = ({ key }: { key: string }) => {
+    router.push(
+      showMenu
+        ? {
+            pathname: `/branches/[branchid]/${key}`,
+            query: { branchid: query },
+          }
+        : `${key}`
+    );
+  };
+
   return (
-    <div className="">
+    <div>
       <Menu
         mode="inline"
         openKeys={openKeys}
         onOpenChange={onOpenChange}
+        onSelect={handleSelect}
         style={{
           width: 250,
           flex: "auto",
