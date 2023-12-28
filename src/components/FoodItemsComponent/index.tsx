@@ -9,8 +9,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import React, { useId, useState } from 'react';
-import { Button, Checkbox, Form, Input, InputNumber, Popconfirm, Select, Table, Typography, Upload } from 'antd';
-import { DeleteTwoTone, EditTwoTone, FileAddTwoTone } from '@ant-design/icons';
+import { Button, Checkbox, Form, Input, InputNumber, Popconfirm, Select, Table, Typography, Upload, UploadProps } from 'antd';
+import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload';
 
 interface DataType {
     key: string;
@@ -93,11 +94,30 @@ const Row = (props: RowProps) => {
     return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
 };
 
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result as string));
+    reader.readAsDataURL(img);
+};
+
 export const FoodItemsComponent: React.FC = () => {
     const [count, setCount] = useState<number>(1);
     const [dataSource, setDataSource] = useState<any>([]);
     const [editingKey, setEditingKey] = useState<string>('0');
     const [form] = Form.useForm<any>();
+
+    const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>();
+
+    const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
+        if (info.file.status === 'done') {
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj as RcFile, (url) => {
+                setLoading(false);
+                setImageUrl(url);
+            });
+        }
+    };
 
     const isEditing = (record: DataType) => record.key === editingKey;
 
@@ -162,8 +182,8 @@ export const FoodItemsComponent: React.FC = () => {
 
     const uploadButton = (
         <span>
-            <FileAddTwoTone className="mr-2" />
-            Add Image
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            {/* Add Image */}
         </span>
     );
 
@@ -171,15 +191,16 @@ export const FoodItemsComponent: React.FC = () => {
         return (
             <Upload
                 fileList={undefined}
+                onChange={handleImageChange}
             >
-                {uploadButton}
+                {imageUrl ? <img className="rounded-full w-10 h-10" src={imageUrl} alt="avatar" style={{ width: "100%" }} /> : uploadButton}
             </Upload>
         );
     };
 
     const SelectInput = ({ value }: any) => {
         return (
-            <Select style={{ width: '100%' }} defaultValue={"Add Category"}>
+            <Select style={{ width: "fixed" }} defaultValue={"Add Category"}>
                 {
                     value.map((item: any) => <Select.Option key={item} value={item}>{item}</Select.Option>)
                 }
