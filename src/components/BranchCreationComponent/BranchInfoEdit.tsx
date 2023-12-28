@@ -1,103 +1,14 @@
 import { FieldType } from "@/types/BreanchCreationTypes";
 import { Button, Card, Col, Form, Input, Row } from "antd";
-import React, { useState } from "react";
-import { Divider, Radio, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import { Divider } from "antd";
 import Meta from "antd/es/card/Meta";
-
-interface DataType {
-  key: React.Key;
-  Days: string;
-  OpeningHours: string;
-  ClosingHours: string;
-}
-
-const columns: ColumnsType<DataType> = [
-  {
-    title: "Days",
-    dataIndex: "Days",
-    align: "center",
-    // render: (text: string) => <a>{text}</a>,
-  },
-  {
-    title: "Opening Hours",
-    dataIndex: "OpeningHours",
-    align: "center",
-  },
-  {
-    title: "Closing Hours",
-    dataIndex: "ClosingHours",
-    align: "center",
-  },
-];
-
-const data: DataType[] = [
-  {
-    key: "1",
-    Days: "Saturday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "2",
-    Days: "Sunday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "3",
-    Days: "Monday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "4",
-    Days: "Tuesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "5",
-    Days: "Wednesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "6",
-    Days: "Thursday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "7",
-    Days: "Friday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-];
-
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  // getCheckboxProps: (record: DataType) => ({
-  //   disabled: record.name === "Disabled User", // Column configuration not to be checked
-  //   name: record.name,
-  // }),
-};
+import BranchTimeEdit from "./BranchTimeEdit";
 
 export const BranchInfoEdit = ({
   editInfoOff,
 }: {
   editInfoOff: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [selectionType, setSelectionType] = useState<"checkbox">("checkbox");
-
   const onFinish = (values: any) => {
     console.log("Success:", values);
     editInfoOff(true);
@@ -112,11 +23,11 @@ export const BranchInfoEdit = ({
       <Card
         title="Branch Information"
         className="grid col-span-2 justify-center"
-        style={{ width: 700 }}
+        style={{ width: 900 }}
       >
         <Form
           name="basic"
-          style={{ width: 600 }}
+          style={{ width: 850 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -198,18 +109,11 @@ export const BranchInfoEdit = ({
           <div>
             <Meta title="Opening Hours" />
             <Divider />
-            <Table
-              rowSelection={{
-                type: selectionType,
-                ...rowSelection,
-              }}
-              columns={columns}
-              dataSource={data}
-              pagination={{ hideOnSinglePage: true }}
-            />
+            <BranchTimeEdit />
           </div>
+          
           <hr className="mb-3" />
-          <div className="flex justify-center">
+          <div className="flex ">
             <Form.Item>
               <Button
                 className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
