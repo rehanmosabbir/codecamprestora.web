@@ -8,7 +8,6 @@ export default function Default() {
   return (
     <main>
       <Layout />
-      <LeftMenuBar />
     </main>
   );
 }

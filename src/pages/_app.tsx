@@ -6,6 +6,7 @@ import { Roboto } from "next/font/google";
 import { ConfigProvider, Flex } from "antd";
 import theme from "../../theme/themeConfig";
 import { SessionProvider } from "next-auth/react";
+import LeftMenuBar from "@/components/LeftMenuBar";
 
 const roboto = Roboto({
   weight: "400",
@@ -17,29 +18,34 @@ export default function App({
   pageProps: { session, ...pageProps },
   router,
 }: AppProps) {
-  const shouldShowHeader = (): boolean => {
+  const isShow = (): boolean => {
     const pathsWithoutHeader = ["/registration", "/login"];
 
     return !pathsWithoutHeader.includes(router.pathname);
   };
-  const shouldShowFooter = (): boolean => {
-    const pathsWithoutFooter = ["/registration", "/login"];
 
-    return !pathsWithoutFooter.includes(router.pathname);
-  };
   return (
     <>
       <ConfigProvider theme={theme}>
         <SessionProvider session={session}>
           <div className="flex flex-col min-h-screen">
             <header className={`${roboto.className} sticky top-0`}>
-              {shouldShowHeader() && <Header />}
+              {isShow() && <Header />}
             </header>
-            <main className={`${roboto.className} flex-grow`}>
-              <Component {...pageProps} />
+            <main
+              className={`${roboto.className} flex-grow ${
+                isShow() ? "px-5" : ""
+              } overflow-hidden`}
+            >
+              <div className="grid grid-cols-6">
+                {isShow() && <LeftMenuBar />}
+                <div className={isShow() ? `col-span-5` : "col-span-6"}>
+                  <Component {...pageProps} />
+                </div>
+              </div>
             </main>
             <footer className={roboto.className}>
-              {shouldShowFooter() && <Footer />}
+              {isShow() && <Footer />}
             </footer>
           </div>
         </SessionProvider>
