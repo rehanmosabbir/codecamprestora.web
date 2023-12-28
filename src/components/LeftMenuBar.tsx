@@ -4,8 +4,10 @@ import { MdOutlineRestaurantMenu, MdOutlineReviews } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { SlPicture } from "react-icons/sl";
 import { LuClipboardList } from "react-icons/lu";
+import { BiCategory } from "react-icons/bi";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
+import { useRouter } from "next/router";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -25,23 +27,27 @@ function getItem(
   } as MenuItem;
 }
 
-const items: MenuItem[] = [
-  getItem("Branch Details", "sub1", <TbListDetails size="1.1rem" />),
-  getItem("Branch Users", "sub2", <FaUsers size="1.1rem" />),
-  getItem("Menu", "sub4", <MdOutlineRestaurantMenu size="1.1rem" />, [
-    getItem("Category", "9"),
-    getItem("List of food items", "10"),
-  ]),
-  getItem("Orders List", "11", <LuClipboardList size="1.1rem" />),
-  getItem("Branch Pictures", "12", <SlPicture size="1.1rem" />),
-  getItem("Reviews", "13", <MdOutlineReviews size="1.1rem" />),
+const menuItems: MenuItem[] = [
+  getItem("Branch Details", "branch-details", <TbListDetails size="1.1rem" />),
+  getItem("Branch Users", "branch-users", <FaUsers size="1.1rem" />),
+  getItem("Menu", "menu", <MdOutlineRestaurantMenu size="1.1rem" />),
+  getItem("Orders List", "order-list", <LuClipboardList size="1.1rem" />),
+  getItem("Branch Pictures", "branch-pictures", <SlPicture size="1.1rem" />),
+  getItem("Reviews", "reviews", <MdOutlineReviews size="1.1rem" />),
 ];
 
-// submenu keys of first level
+const rootItems: MenuItem[] = [
+  getItem("Branch List", "branch-list", <TbListDetails size="1.1rem" />),
+  getItem("Catagories", "catagories", <BiCategory size="1.1rem" />),
+];
+
 const rootSubmenuKeys = ["sub1", "sub2", "sub4"];
 
 const LeftMenuBar: React.FC = () => {
   const [openKeys, setOpenKeys] = useState(["sub1"]);
+  const router = useRouter();
+  // console.log(router);
+  const showMenu = router.pathname.includes("/branchlist/[branchid]");
 
   const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -53,14 +59,22 @@ const LeftMenuBar: React.FC = () => {
   };
 
   return (
-    <Menu
-      mode="inline"
-      openKeys={openKeys}
-      onOpenChange={onOpenChange}
-      style={{ width: 230, fontSize: 15 }}
-      items={items}
-      className="min-h-screen"
-    />
+    <div className="">
+      <Menu
+        mode="inline"
+        openKeys={openKeys}
+        onOpenChange={onOpenChange}
+        style={{
+          width: 250,
+          flex: "auto",
+          fontSize: 15,
+          paddingRight: 10,
+          border: 0,
+        }}
+        items={showMenu ? menuItems : rootItems}
+        className="min-h-screen fixed gap-5"
+      />
+    </div>
   );
 };
 
