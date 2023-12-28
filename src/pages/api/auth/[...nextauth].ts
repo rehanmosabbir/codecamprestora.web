@@ -8,14 +8,19 @@ const authOption: NextAuthOptions = {
         CredentialsProvider({
             name: "cred",
             credentials: {
-                username: { label: "Username", placeholder: "Enter Username" },
+                username: { label: "Username or Email", placeholder: "Enter Username or Email" },
                 password: { label: "Password", placeholder: "Enter Password" },
             },
             async authorize(credentials) {
                 if (!credentials || !credentials.username || !credentials.password)
                     return null;
-                const user = users.find((item) => item.username === credentials.username);
-                if (user?.password === credentials.password) {
+                const user = users.find((item) => {
+                    return (
+                        (item.username === credentials.username || item.email === credentials.username) &&
+                        item.password === credentials.password
+                    );
+                });
+                if (user) {
                     return user;
                 }
                 return null;
@@ -28,4 +33,3 @@ const authOption: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
 }
 export default NextAuth(authOption);
-

@@ -17,15 +17,15 @@ const content = (
 
 export const Header = () => {
   return (
-    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 sticky top-0 bg-white">
-      <div className="flex justify-start items-center ">
+    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white">
+      <div className="flex justify-start items-center invisible md:visible">
         <Link href={"/dashboard/"}>
           <AppLogo />
         </Link>
       </div>
       <div className="flex justify-end items-center ">
         <Popover content={content} title="CodeCamp Dev" trigger="click">
-          <button className="py-[6px] px-4 flex justify-center custom-hover items-center rounded-3xl bg-gray-200 fill-blue-700 hover:bg-blue-700 active:bg-blue-500 hover:fill-gray-200 duration-300">
+          <button className="py-[6px] px-4 flex justify-center items-center rounded-3xl bg-sky-100 text-sky-600 hover:bg-sky-500 active:bg-sky-400 hover:text-gray-100 text-xl duration-300">
             <User />
           </button>
         </Popover>
