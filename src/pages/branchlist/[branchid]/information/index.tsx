@@ -1,4 +1,4 @@
-import { BranchInfo } from "@/components/BranchCreationComponent/BranchInfo";
+import { BranchInfo } from "@/components/BranchCreationComponent/BranchInformation";
 import React from "react";
 
 export const BranchInformation = () => {
