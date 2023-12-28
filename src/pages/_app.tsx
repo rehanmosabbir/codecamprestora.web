@@ -33,11 +33,13 @@ export default function App({
               {isShow() && <Header />}
             </header>
             <main
-              className={`${roboto.className} flex-grow px-5 overflow-hidden`}
+              className={`${roboto.className} flex-grow ${
+                isShow() ? "px-5" : ""
+              } overflow-hidden`}
             >
               <div className="grid grid-cols-6">
                 {isShow() && <LeftMenuBar />}
-                <div className="col-span-5">
+                <div className={isShow() ? `col-span-5` : "col-span-6"}>
                   <Component {...pageProps} />
                 </div>
               </div>
