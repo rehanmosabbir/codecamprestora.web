@@ -1,4 +1,3 @@
-import type { DragEndEvent } from "@dnd-kit/core";
 import {
   DndContext,
   PointerSensor,
@@ -7,130 +6,34 @@ import {
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-  arrayMove,
   SortableContext,
-  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import React, { useState } from "react";
 import {
   Button,
   Form,
-  Input,
-  InputNumber,
   Modal,
   Popconfirm,
   Table,
   Typography,
-  Upload,
+  message,
 } from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
 import { TbPencilCancel } from "react-icons/tb";
-import type { ColumnsType } from "antd/es/table";
-import {
-  LoadingOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import {
-  RcFile,
-  UploadChangeParam,
-  UploadFile,
-  UploadProps,
-} from "antd/es/upload";
+import EditableCell from "./CategoriesEditable";
+import Row from "./CategoriesAddRow";
+import Picture from "./CategoriesPicture";
+import { DragEndEvent } from "@dnd-kit/core";
+import { RcFile } from "antd/es/upload";
 
 interface DataType {
   key: string;
   name: string;
-  picture: any;
+  image: string;
 }
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  inputType: "number" | "text";
-  record: DataType;
-  index: number;
-  children: React.ReactNode;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
-
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
-  reader.readAsDataURL(img);
-};
-
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  "data-row-key": string;
-}
-
-const Row = (props: RowProps) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props["data-row-key"],
-  });
-
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-    transition,
-    ...(isDragging ? { position: "relative" } : {}),
-  };
-
-  return (
-    <tr
-      {...props}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    />
-  );
-};
 
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<any>([]);
@@ -140,7 +43,7 @@ export const RestaurantCategories: React.FC = () => {
   const isEditing = (record: DataType) => record.key === editingKey;
 
   const edit = (record: Partial<DataType> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", picture: "", ...record });
+    form.setFieldsValue({ name: "", image: "", ...record });
     setEditingKey(record.key);
   };
 
@@ -150,22 +53,22 @@ export const RestaurantCategories: React.FC = () => {
 
   const save = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as DataType;
+      const formData = await form.validateFields();
+      const { name, image } = formData;
 
       const newData = [...dataSource];
       const index = newData.findIndex((item) => key === item.key);
+
       if (index > -1) {
-        const item = newData[index];
         newData.splice(index, 1, {
-          ...item,
-          ...row,
+          ...newData[index],
+          name,
+          image,
         });
         setDataSource(newData);
         setEditingKey("");
-      } else {
-        newData.push(row);
-        setDataSource(newData);
-        setEditingKey("");
+        console.log("Updated Data:", newData);
+        form.submit();
       }
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
@@ -177,22 +80,12 @@ export const RestaurantCategories: React.FC = () => {
   const handleAdd = () => {
     const newData: DataType = {
       key: count.toString(),
-      name: "Add Restaurant Name",
-      picture: "",
+      name: "",
+      image: "",
     };
+    edit(newData);
     setDataSource([...dataSource, newData]);
     setCount(count + 1);
-  };
-
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
   };
 
   const handleDelete = (key: React.Key) => {
@@ -200,55 +93,9 @@ export const RestaurantCategories: React.FC = () => {
     setDataSource(newData);
   };
 
-  const App: React.FC = () => {
-    const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
-
-    const handleChange: UploadProps["onChange"] = (
-      info: UploadChangeParam<UploadFile>
-    ) => {
-      if (info.file.status === "done") {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj as RcFile, (url) => {
-          setLoading(false);
-          setImageUrl(url);
-        });
-      }
-    };
-
-    const uploadButton = (
-      <div>
-        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>Upload</div>
-      </div>
-    );
-    return (
-      <>
-        <Upload
-          name="avatar"
-          listType="picture-card"
-          className="avatar-uploader"
-          showUploadList={false}
-          onChange={handleChange}
-        >
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt="avatar"
-              style={{ width: "90%", borderRadius: "5%" }}
-            />
-          ) : (
-            uploadButton
-          )}
-        </Upload>
-      </>
-    );
-  };
-
-  // : ColumnsType<DataType>
   const columns = [
     {
-      title: "ID",
+      title: "Serial",
       dataIndex: "key",
       editable: false,
     },
@@ -259,8 +106,18 @@ export const RestaurantCategories: React.FC = () => {
     },
     {
       title: "Restaurant Image",
-      dataIndex: "picture",
-      render: () => <App />,
+      dataIndex: "image",
+      render: (_: any, record: DataType) => (
+        <Picture
+          currentData={record}
+          updateDataSource={(key: string, file: RcFile) => {
+            const updatedData = dataSource.map((item: DataType) =>
+              item.key === key ? { ...item, image: file } : item
+            );
+            setDataSource(updatedData);
+          }}
+        />
+      ),
     },
     {
       title: "Operation",
@@ -344,14 +201,31 @@ export const RestaurantCategories: React.FC = () => {
       },
     })
   );
+  const handleOnFinish = (values: any) => {
+    console.log("Received values: ", values);
+  };
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active.id !== over?.id) {
-      setDataSource((previous: any) => {
-        const activeIndex = previous.findIndex((i: any) => i.key === active.id);
-        const overIndex = previous.findIndex((i: any) => i.key === over?.id);
-        return arrayMove(previous, activeIndex, overIndex);
-      });
+    if (active?.id !== over?.id && over) {
+      const sourceIndex = dataSource.findIndex(
+        (item: any) => item.key === active.id
+      );
+      const targetIndex = dataSource.findIndex(
+        (item: any) => item.key === over.id
+      );
+
+      if (sourceIndex > -1 && targetIndex > -1) {
+        const reorderedData = Array.from(dataSource);
+        const [movedItem] = reorderedData.splice(sourceIndex, 1);
+        reorderedData.splice(targetIndex, 0, movedItem);
+
+        const updatedData = reorderedData.map((item: any, index) => ({
+          ...item,
+          key: (index + 1).toString(),
+        })) as DataType[];
+
+        setDataSource(updatedData);
+      }
     }
   };
 
@@ -359,12 +233,7 @@ export const RestaurantCategories: React.FC = () => {
     <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
       <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
         Restaurant Categories
-        <Button
-          onClick={handleAdd}
-          type="primary"
-          className=""
-          style={{ float: "right" }}
-        >
+        <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
         </Button>
       </div>
@@ -374,11 +243,10 @@ export const RestaurantCategories: React.FC = () => {
         onDragEnd={onDragEnd}
       >
         <SortableContext
-          // rowKey array
           items={dataSource.map((i: any) => i.key)}
           strategy={verticalListSortingStrategy}
         >
-          <Form form={form} component={false}>
+          <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
               className="mx-5"
               components={{
