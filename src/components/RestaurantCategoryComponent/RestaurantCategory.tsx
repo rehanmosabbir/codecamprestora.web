@@ -19,6 +19,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Popconfirm,
   Table,
   Typography,
@@ -29,7 +30,17 @@ import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
 import { TbPencilCancel } from "react-icons/tb";
 import type { ColumnsType } from "antd/es/table";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import {
+  RcFile,
+  UploadChangeParam,
+  UploadFile,
+  UploadProps,
+} from "antd/es/upload";
 
 interface DataType {
   key: string;
@@ -81,6 +92,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
   );
 };
 
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
+
 interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
   "data-row-key": string;
 }
@@ -101,7 +118,7 @@ const Row = (props: RowProps) => {
     ...props.style,
     transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
     transition,
-    ...(isDragging ? { position: "relative", zIndex: 9999 } : {}),
+    ...(isDragging ? { position: "relative" } : {}),
   };
 
   return (
@@ -116,13 +133,7 @@ const Row = (props: RowProps) => {
 };
 
 export const RestaurantCategories: React.FC = () => {
-  const [dataSource, setDataSource] = useState([
-    {
-      key: "1",
-      name: "Add Restaurant Name",
-      picture: "",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState<any>([]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
 
@@ -161,7 +172,7 @@ export const RestaurantCategories: React.FC = () => {
     }
   };
 
-  const [count, setCount] = useState<number>(2);
+  const [count, setCount] = useState<number>(1);
 
   const handleAdd = () => {
     const newData: DataType = {
@@ -185,31 +196,52 @@ export const RestaurantCategories: React.FC = () => {
   };
 
   const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
+    const newData = dataSource.filter((item: any) => item.key !== key);
     setDataSource(newData);
   };
 
-  const ImageUpload = () => {
-    const handleChange = (info: any) => {
+  const App: React.FC = () => {
+    const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>();
+
+    const handleChange: UploadProps["onChange"] = (
+      info: UploadChangeParam<UploadFile>
+    ) => {
       if (info.file.status === "done") {
-        console.log("File uploaded successfully: ", info.file.originFileObj);
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj as RcFile, (url) => {
+          setLoading(false);
+          setImageUrl(url);
+        });
       }
     };
 
-    const customRequest = ({ file, onSuccess }: any) => {
-      setTimeout(() => {
-        onSuccess("ok");
-      }, 0);
-    };
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
     return (
-      <Upload
-        customRequest={customRequest}
-        onChange={handleChange}
-        showUploadList={false}
-        beforeUpload={() => false}
-      >
-        <Button icon={<UploadOutlined />} />
-      </Upload>
+      <>
+        <Upload
+          name="avatar"
+          listType="picture-card"
+          className="avatar-uploader"
+          showUploadList={false}
+          onChange={handleChange}
+        >
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="avatar"
+              style={{ width: "90%", borderRadius: "5%" }}
+            />
+          ) : (
+            uploadButton
+          )}
+        </Upload>
+      </>
     );
   };
 
@@ -228,7 +260,7 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Restaurant Image",
       dataIndex: "picture",
-      render: () => <ImageUpload />,
+      render: () => <App />,
     },
     {
       title: "Operation",
@@ -238,7 +270,9 @@ export const RestaurantCategories: React.FC = () => {
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => {
+                save(record.key);
+              }}
               style={{ marginRight: 8 }}
             >
               <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
@@ -295,7 +329,7 @@ export const RestaurantCategories: React.FC = () => {
       ...col,
       onCell: (record: DataType) => ({
         record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
+        inputType: col.dataIndex === "key" ? "number" : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -313,23 +347,27 @@ export const RestaurantCategories: React.FC = () => {
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (active.id !== over?.id) {
-      setDataSource((previous) => {
-        const activeIndex = previous.findIndex((i) => i.key === active.id);
-        const overIndex = previous.findIndex((i) => i.key === over?.id);
+      setDataSource((previous: any) => {
+        const activeIndex = previous.findIndex((i: any) => i.key === active.id);
+        const overIndex = previous.findIndex((i: any) => i.key === over?.id);
         return arrayMove(previous, activeIndex, overIndex);
       });
     }
   };
 
   return (
-    <div className="">
-      <Button
-        onClick={handleAdd}
-        type="primary"
-        style={{ float: "right", margin: "0px 64px 16px" }}
-      >
-        Add Item
-      </Button>
+    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
+      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+        Restaurant Categories
+        <Button
+          onClick={handleAdd}
+          type="primary"
+          className=""
+          style={{ float: "right" }}
+        >
+          Add Item
+        </Button>
+      </div>
       <DndContext
         sensors={sensors}
         modifiers={[restrictToVerticalAxis]}
@@ -337,12 +375,12 @@ export const RestaurantCategories: React.FC = () => {
       >
         <SortableContext
           // rowKey array
-          items={dataSource.map((i) => i.key)}
+          items={dataSource.map((i: any) => i.key)}
           strategy={verticalListSortingStrategy}
         >
           <Form form={form} component={false}>
             <Table
-              className="mx-16"
+              className="mx-5"
               components={{
                 body: {
                   row: Row,
