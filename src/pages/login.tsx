@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "../assets/logo.png";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface FieldType {
   username?: string;
@@ -15,6 +15,7 @@ interface FieldType {
 const LoginPage = () => {
   const router = useRouter();
   const [logError, setError] = useState<boolean>(false);
+  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
   const onFinish = async (values: any) => {
     const { username, password } = values;
     try {
@@ -37,9 +38,23 @@ const LoginPage = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 600);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  const formStyles = {
+    padding: isLargeScreen ? "30px" : "15px",
+  };
   return (
     <div className="min-h-screen flex items-center bg-gray-100">
-      <div className="w-full py-20 px-3 flex justify-center">
+      <div className="w-full py-20 px-7 flex justify-center">
         <Form
           layout="vertical"
           name="basic"
@@ -47,8 +62,8 @@ const LoginPage = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          style={{ padding: "30px" }}
-          className="py-10 px-4 sm:px-6 shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]"
+          style={formStyles}
+          className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]"
         >
           <div className="flex justify-center items-center pb-8">
             <div>
@@ -66,7 +81,16 @@ const LoginPage = () => {
           <Form.Item<FieldType>
             label="Email Address / Username"
             name="username"
-            rules={[{ required: true, message: "Email is required" }]}
+            rules={[
+              {
+                required: true,
+                message: "Email Address / Username is required",
+              },
+              {
+                pattern: /^[A-Za-z0-9_.@]+(?:-[A-Za-z0-9]+)*$/,
+                message: "Use A-Z, a-z, 0-9, @, _, and . characters",
+              },
+            ]}
           >
             <Input placeholder="Email Address / Username" size="large" />
           </Form.Item>
