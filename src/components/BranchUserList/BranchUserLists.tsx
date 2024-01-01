@@ -169,10 +169,9 @@ export const BranchUserLists: React.FC = () => {
     {
       title: "Role",
       dataIndex: "role",
-      editable: true,
+      editable: false,
       render: (_: any, record: DataType) => {
-        const editing = isEditing(record);
-        return editing ? (
+        return (
           <Space wrap>
             <Select
               defaultValue="Select Role"
@@ -185,8 +184,6 @@ export const BranchUserLists: React.FC = () => {
               ]}
             />
           </Space>
-        ) : (
-          record.role
         );
       },
     },
