@@ -1,127 +1,84 @@
+import React, { useState } from "react";
+import EditableCell from "./UserListsEditable";
+import { DataType } from "./branchtype";
 import type { DragEndEvent } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { RiEdit2Fill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
+import { IoMdSave } from "react-icons/io";
+import { TbPencilCancel } from "react-icons/tb";
+import { Row } from "./BranchRow";
+import {
+  Button,
+  Form,
+  Popconfirm,
+  Table,
+  Typography,
+  Select,
+  Space,
+} from "antd";
 import {
   DndContext,
   PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   SortableContext,
-  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import React, { useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Popconfirm,
-  Table,
-  Typography,
-  Upload,
-} from "antd";
-import { RiEdit2Fill } from "react-icons/ri";
-import { MdDelete } from "react-icons/md";
-import { IoMdSave } from "react-icons/io";
-import { TbPencilCancel } from "react-icons/tb";
-import type { ColumnsType } from "antd/es/table";
-import { UploadOutlined } from "@ant-design/icons";
 
-
-interface DataType {
-  key: string;
-  name: string;
-  picture: any;
-}
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: string;
-  inputType: "number" | "text" | "file";
-  record: DataType;
-  index: number;
-  children: React.ReactNode;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
-
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  "data-row-key": string;
-}
-
-const Row = (props: RowProps) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props["data-row-key"],
-  });
-
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-    transition,
-    ...(isDragging ? { position: "relative", zIndex: "5" } : {}),
-  };
-
-  return (
-    <tr
-      {...props}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    />
-  );
-};
-
-export const BranchUserList: React.FC = () => {
-  const [dataSource, setDataSource] = useState([
+export const BranchUserLists: React.FC = () => {
+  const [dataSource, setDataSource] = useState<DataType[]>([
     {
       key: "1",
-      name: "Add Restaurant Name",
-      picture: "",
+      username: "Maheen",
+      role: "Service",
+      email: "mehedi@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "2",
+      username: "Masud",
+      role: "manager",
+      email: "mehedi@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "3",
+      username: "Ahmed",
+      role: "kitchen Stuff",
+      email: "ah@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "4",
+      username: "Shafayet",
+      role: "Service",
+      email: "mehedi@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "5",
+      username: "Sabbir",
+      role: "kitchen Stuff",
+      email: "sa@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "6",
+      username: "Sirajul",
+      role: "kitchen Stuff",
+      email: "sirj@gmail.com",
+      password: "*********",
+    },
+    {
+      key: "7",
+      username: "Mehedi",
+      role: "manager",
+      email: "mehedi@gmail.com",
+      password: "*********",
     },
   ]);
   const [form] = Form.useForm();
@@ -130,7 +87,13 @@ export const BranchUserList: React.FC = () => {
   const isEditing = (record: DataType) => record.key === editingKey;
 
   const edit = (record: Partial<DataType> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", picture: "", ...record });
+    form.setFieldsValue({
+      username: "",
+      role: "",
+      email: "",
+      password: "",
+      ...record,
+    });
     setEditingKey(record.key);
   };
 
@@ -162,13 +125,15 @@ export const BranchUserList: React.FC = () => {
     }
   };
 
-  const [count, setCount] = useState<number>(2);
+  const [count, setCount] = useState<number>(8);
 
   const handleAdd = () => {
     const newData: DataType = {
       key: count.toString(),
-      name: "Edit Manager Name",
-      picture: "",
+      username: "User Name",
+      role: "Role",
+      email: "Email",
+      password: "Password",
     };
     setDataSource([...dataSource, newData]);
     setCount(count + 1);
@@ -186,35 +151,10 @@ export const BranchUserList: React.FC = () => {
   };
 
   const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
+    const newData = dataSource.filter((item: any) => item.key !== key);
     setDataSource(newData);
   };
-
-  // const ImageUpload = () => {
-  //   const handleChange = (info: any) => {
-  //     if (info.file.status === "done") {
-  //       console.log("File uploaded successfully: ", info.file.originFileObj);
-  //     }
-  //   };
-
-  //   const customRequest = ({ file, onSuccess }: any) => {
-  //     setTimeout(() => {
-  //       onSuccess("ok");
-  //     }, 0);
-  //   };
-  //   return (
-  //     <Upload
-  //       customRequest={customRequest}
-  //       onChange={handleChange}
-  //       showUploadList={false}
-  //       beforeUpload={() => false}
-  //     >
-  //       <Button icon={<UploadOutlined />} />
-  //     </Upload>
-  //   );
-  // };
-
-  // : ColumnsType<DataType>
+  //: ColumnsType<DataType>
   const columns = [
     {
       title: "ID",
@@ -222,8 +162,42 @@ export const BranchUserList: React.FC = () => {
       editable: false,
     },
     {
-      title: "Manager Name",
-      dataIndex: "name",
+      title: "User Name",
+      dataIndex: "username",
+      editable: true,
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      editable: true,
+      render: (_: any, record: DataType) => {
+        const editing = isEditing(record);
+        return editing ? (
+          <Space wrap>
+            <Select
+              defaultValue="Select Role"
+              style={{ width: 150 }}
+              bordered={false}
+              options={[
+                { value: "Manager", label: "Manager" },
+                { value: "Service", label: "Service" },
+                { value: "Kitchen Stuff", label: "Kitchen Stuff" },
+              ]}
+            />
+          </Space>
+        ) : (
+          record
+        );
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      editable: true,
+    },
+    {
+      title: "Password",
+      dataIndex: "password",
       editable: true,
     },
     {
@@ -291,7 +265,7 @@ export const BranchUserList: React.FC = () => {
       ...col,
       onCell: (record: DataType) => ({
         record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
+        inputType: col.dataIndex,
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -299,66 +273,39 @@ export const BranchUserList: React.FC = () => {
     };
   });
 
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor, {
-  //     activationConstraint: {
-  //       distance: 1,
-  //     },
-  //   })
-  // );
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 1,
+      },
+    })
+  );
 
-  // const onDragEnd = ({ active, over }: DragEndEvent) => {
-  //   if (active.id !== over?.id) {
-  //     setDataSource((previous) => {
-  //       const activeIndex = previous.findIndex((i) => i.key === active.id);
-  //       const overIndex = previous.findIndex((i) => i.key === over?.id);
-  //       return arrayMove(previous, activeIndex, overIndex);
-  //     });
-  //   }
-  // };
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (active.id !== over?.id) {
+      setDataSource((previous: any) => {
+        const activeIndex = previous.findIndex((i: any) => i.key === active.id);
+        const overIndex = previous.findIndex((i: any) => i.key === over?.id);
+        return arrayMove(previous, activeIndex, overIndex);
+      });
+    }
+  };
 
   return (
     <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
-      <div className="bg-white mx-5 font-bold text-lg p-5 rounded-lg">
-        Restaurant Categories
-        <Button
-          onClick={handleAdd}
-          type="primary"
-          className=""
-          style={{ float: "right" }}
-        >
-          Add Item
+      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+        Users List
+        <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
+          Add User
         </Button>
       </div>
-      <div>
-      <Form form={form} component={false}>
-            <Table
-              className="mx-5 "
-              components={{
-                body: {
-                  row: Row,
-                  cell: EditableCell,
-                },
-              }}
-              bordered
-              rowKey="key"
-              columns={mergedColumns}
-              dataSource={dataSource}
-              rowClassName={"editable-row"}
-              pagination={{
-                onChange: cancel,
-              }}
-            />
-          </Form>
-      </div>
-      {/* <DndContext
+      <DndContext
         sensors={sensors}
         modifiers={[restrictToVerticalAxis]}
         onDragEnd={onDragEnd}
       >
         <SortableContext
-          // rowKey array
-          items={dataSource.map((i) => i.key)}
+          items={dataSource.map((i: any) => i.key)}
           strategy={verticalListSortingStrategy}
         >
           <Form form={form} component={false}>
@@ -381,8 +328,7 @@ export const BranchUserList: React.FC = () => {
             />
           </Form>
         </SortableContext>
-      </DndContext> */}
+      </DndContext>
     </div>
   );
 };
-
