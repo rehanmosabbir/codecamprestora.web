@@ -186,7 +186,7 @@ export const BranchUserLists: React.FC = () => {
             />
           </Space>
         ) : (
-          record
+          record.role
         );
       },
     },
