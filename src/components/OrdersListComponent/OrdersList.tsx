@@ -38,6 +38,12 @@ interface DataType {
   key: string;
   foodItem: string;
   quantity: string;
+  name: string;
+  phone: string;
+  seat: string;
+  date: string;
+  time: string;
+  comment: string;
   price: string;
   status: string[];
 }
@@ -46,7 +52,7 @@ interface EditableCellProps {
   editing: boolean;
   dataIndex: keyof DataType;
   title: any;
-  inputType: "number" | "text" | "select";
+  inputType: "number" | "text" | "select" | "date" | "timeRange";
   record: DataType;
   index: number;
   children: React.ReactNode;
@@ -198,8 +204,14 @@ export const OrdersList: React.FC = () => {
   const handleAdd = () => {
     const newData: DataType = {
       key: count.toString(),
-      foodItem: "",
       quantity: "",
+      name: "",
+      phone: "",
+      seat: "",
+      date: "",
+      time: "",
+      comment: "",
+      foodItem: "",
       price: "",
       status: [],
     };
@@ -207,103 +219,51 @@ export const OrdersList: React.FC = () => {
     setCount(count + 1);
   };
 
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
-
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item: any) => item.key !== key);
-    setDataSource(newData);
-  };
-
-  // : ColumnsType<DataType>
   const columns = [
     {
-      title: "Serial",
-      dataIndex: "key",
+      title: "Food Items",
+      dataIndex: "foodItem",
       editable: false,
     },
     {
-      title: "Food Item",
-      dataIndex: "foodItem",
-      editable: true,
+      title: "Customer's Name",
+      dataIndex: "name",
+      editable: false,
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      editable: true,
+      title: "Phone Number",
+      dataIndex: "phone",
+      editable: false,
+    },
+    {
+      title: "Number of Seats",
+      dataIndex: "seat",
+      editable: false,
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      editable: false,
+    },
+    {
+      title: "Time",
+      dataIndex: "time",
+      editable: false,
+    },
+    {
+      title: "Comment",
+      dataIndex: "comment",
+      editable: false,
     },
     {
       title: "Total Price",
       dataIndex: "price",
-      editable: true,
+      editable: false,
     },
     {
       title: "Order Status",
       dataIndex: "status",
       editable: true,
-    },
-    {
-      title: "Operation",
-      dataIndex: "operation",
-      render: (_: any, record: DataType) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
-                <div className="flex items-center">
-                  <IoMdSave />
-                  Save
-                </div>
-              </button>
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
-                <div className="flex items-center">
-                  <TbPencilCancel />
-                  Cancel
-                </div>
-              </button>
-            </Popconfirm>
-          </span>
-        ) : (
-          <div className="space-x-2">
-            <Typography.Link
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-            >
-              <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
-                <div className="flex items-center">
-                  <RiEdit2Fill />
-                  Edit
-                </div>
-              </button>
-            </Typography.Link>
-            <Popconfirm
-              title={"Sure to Delete?"}
-              onConfirm={() => handleDelete(record.key)}
-            >
-              <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
-                <div className="flex items-center">
-                  <MdDelete />
-                  Delete
-                </div>
-              </button>
-            </Popconfirm>
-          </div>
-        );
-      },
     },
   ];
 
@@ -315,7 +275,7 @@ export const OrdersList: React.FC = () => {
       ...col,
       onCell: (record: DataType) => ({
         record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
+        inputType: col.dataIndex === "key" ? "number" : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -344,7 +304,7 @@ export const OrdersList: React.FC = () => {
   return (
     <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
       <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
-        Restaurant Categories
+        Orders List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
         </Button>
