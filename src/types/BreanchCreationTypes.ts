@@ -3,5 +3,6 @@ export interface FieldType {
   contactNumber?: string;
   location?: string;
   openingHours?: string;
+  BranchID?:number;
   agreement?: string;
 }

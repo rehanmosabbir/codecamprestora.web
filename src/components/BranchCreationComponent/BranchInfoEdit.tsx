@@ -89,18 +89,18 @@ export const BranchInfoEdit = ({
 
             <Col span={12}>
               <Form.Item<FieldType>
-                label="Opening Hours:"
+                label="Branch ID"
                 labelCol={{ span: 24 }}
-                name="openingHours"
+                name="BranchID"
                 rules={[
-                  { required: true, message: "Please input Contact Number!" },
+                  { required: true, message: "Please input Branch ID!" },
                 ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                  placeholder="Enter Opening Hours"
+                  placeholder="Enter Branch ID"
                   size="large"
-                  type="tel"
+                  type="number"
                 />
               </Form.Item>
             </Col>

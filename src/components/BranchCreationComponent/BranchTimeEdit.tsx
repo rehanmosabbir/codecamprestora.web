@@ -92,7 +92,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         </Form.Item>
       ) : (
         children
-      )}
+      )} 
     </td>
   );
 };
@@ -162,21 +162,21 @@ const BranchTimeEdit = () => {
       dataIndex: "Days",
       align: "center",
       width: "25%",
-      editable: true,
+      // editable: true,
     },
     {
       title: "Opening Hours",
       dataIndex: "OpeningHours",
       align: 'center',
       width: "25%",
-      editable: true,
+      // editable: true,
     },
     {
       title: "Closing Hours",
       dataIndex: "ClosingHours",
       align: "center",
       width: "25%",
-      editable: true,
+      // editable: true,
     },
     {
       width: "25%",
@@ -218,7 +218,7 @@ const BranchTimeEdit = () => {
       ...col,
       onCell: (record: Item) => ({
         record,
-        inputType: "number",
+        inputType: "string",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -234,10 +234,10 @@ const BranchTimeEdit = () => {
             cell: EditableCell,
           },
         }}
-        rowSelection={{
-          type: selectionType,
-          ...rowSelection,
-        }}
+        // rowSelection={{
+        //   type: selectionType,
+        //   ...rowSelection,
+        // }}
         bordered
         dataSource={data}
         columns={mergedColumns}
