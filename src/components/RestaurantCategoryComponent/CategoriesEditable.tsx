@@ -1,20 +1,5 @@
 import { Form, Input, InputNumber } from "antd";
 
-interface DataType {
-  key: string;
-  name: string;
-  url: string;
-}
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: string;
-  inputType: "number" | "text";
-  record: DataType;
-  index: number;
-  children: React.ReactNode;
-}
 const EditableCell: React.FC<EditableCellProps> = ({
   editing,
   dataIndex,
