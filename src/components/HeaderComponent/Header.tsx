@@ -17,10 +17,10 @@ const content = (
   </div>
 );
 
-export const Header = () => {
+export const AppHeader = () => {
   const { setCollapsed } = useHeaderStore();
   return (
-    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white">
+    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white w-full">
       <div className={`flex gap-0 md:gap-28 justify-start items-center`}>
         <Link href={"/dashboard/"}>
           <div className="hidden md:flex">

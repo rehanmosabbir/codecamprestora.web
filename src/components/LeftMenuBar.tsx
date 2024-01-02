@@ -8,7 +8,6 @@ import { BiCategory } from "react-icons/bi";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { useRouter } from "next/router";
-import useHeaderStore from "@/useHeaderStore";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -47,11 +46,6 @@ const rootSubmenuKeys = ["branches", "categories"];
 const LeftMenuBar: React.FC = () => {
   const [openKeys, setOpenKeys] = useState(["branches"]);
 
-  const { collapsed } = useHeaderStore();
-
-  let width = 235;
-  collapsed ? (width = 60) : width;
-
   const router = useRouter();
   const query = router.query.branchid;
 
@@ -83,9 +77,7 @@ const LeftMenuBar: React.FC = () => {
       openKeys={openKeys}
       onOpenChange={onOpenChange}
       onSelect={handleSelect}
-      inlineCollapsed={collapsed}
       style={{
-        width: width,
         fontSize: 15,
         paddingRight: 10,
         paddingLeft: 10,
