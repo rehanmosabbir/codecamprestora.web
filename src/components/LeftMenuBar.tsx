@@ -86,14 +86,12 @@ const LeftMenuBar: React.FC = () => {
       inlineCollapsed={collapsed}
       style={{
         width: width,
-        flex: "auto",
         fontSize: 15,
-        paddingRight: 8,
-        paddingLeft: 8,
+        paddingRight: 10,
+        paddingLeft: 10,
         border: 0,
       }}
       items={showMenu ? menuItems : rootItems}
-      className="min-h-screen fixed gap-5 pr-2"
     />
   );
 };
