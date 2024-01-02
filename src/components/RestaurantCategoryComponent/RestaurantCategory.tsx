@@ -21,6 +21,7 @@ import Row from "./CategoriesAddRow";
 import Picture from "./CategoriesPicture";
 import { DragEndEvent } from "@dnd-kit/core";
 import { RcFile, UploadFile } from "antd/es/upload";
+import { DataType } from "./CategoryDataType/Types";
 
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<any>([]);
@@ -207,8 +208,8 @@ export const RestaurantCategories: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5">
-      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Restaurant Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
@@ -225,8 +226,8 @@ export const RestaurantCategories: React.FC = () => {
         >
           <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
-              className="mx-5 min-w-[700px] text-center"
               style={{ position: "relative", zIndex: "0" }}
+              scroll={{ x: 1200 }}
               components={{
                 body: {
                   row: Row,

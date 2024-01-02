@@ -1,82 +1,33 @@
-import type { DragEndEvent } from "@dnd-kit/core";
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import React, { useState } from "react";
-import { Button, Form, Input, InputNumber, Select, Space, Table } from "antd";
-
-interface DataType {
-  foodItem: string;
-  quantity: string;
-  name: string;
-  phone: string;
-  seat: string;
-  date: string;
-  time: string;
-  comment: string;
-  price: string;
-  status: string[];
-}
-
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  "data-row-key": string;
-}
-
-const Row = (props: RowProps) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: props["data-row-key"],
-  });
-
-  const style: React.CSSProperties = {
-    ...props.style,
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
-    transition,
-    ...(isDragging ? { position: "relative", zIndex: 9999 } : {}),
-  };
-
-  return (
-    <tr
-      {...props}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    />
-  );
-};
+import { Button, Form, Select, Space, Table } from "antd";
+import { DataType } from "./OrderListDataType/Types";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
 };
 
-const App: React.FC = () => (
+const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
   <Space wrap>
     <Select
       defaultValue="placed"
-      style={{ width: 120 }}
+      style={{ width: 120, position: "relative", zIndex: 10, ...style }}
       onChange={handleChange}
       options={[
-        { value: "placed", label: "Placed" },
-        { value: "inProgress", label: "In Progress" },
-        { value: "served", label: "Served" },
+        {
+          value: "placed",
+          label: "Placed",
+          style: { color: "#FF0000" },
+        },
+        {
+          value: "inProgress",
+          label: "In Progress",
+          style: { color: "#001FFF" },
+        },
+        {
+          value: "served",
+          label: "Served",
+          style: { color: "#10AD00" },
+        },
       ]}
     />
   </Space>
@@ -85,8 +36,8 @@ const App: React.FC = () => (
 export const OrdersList: React.FC = () => {
   const [dataSource, setDataSource] = useState<any>([]);
   const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
 
+  //Will be Deleted whenever database is connected
   const handleAdd = () => {
     const newData: DataType = {
       quantity: "",
@@ -98,10 +49,11 @@ export const OrdersList: React.FC = () => {
       comment: "",
       foodItem: "",
       price: "",
-      status: [],
+      status: "",
     };
     setDataSource([...dataSource, newData]);
   };
+  //Will be Deleted whenever database is connected
 
   const columns = [
     {
@@ -143,6 +95,15 @@ export const OrdersList: React.FC = () => {
   ];
 
   const mergedColumns = columns.map((col) => {
+    if (col.dataIndex === "status") {
+      return {
+        ...col,
+        render: (_: any, record: DataType) => ({
+          children: <SelectOption style={{ zIndex: 10 }} />,
+        }),
+      };
+    }
+
     return {
       ...col,
       onCell: (record: DataType) => ({
@@ -155,26 +116,23 @@ export const OrdersList: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
-      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Orders List
+        {/* Will be Deleted whenever database is connected */}
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
         </Button>
+        {/* Will be Deleted whenever database is connected */}
       </div>
       <Form form={form} component={false}>
         <Table
-          className="mx-5"
-          components={{
-            body: {
-              row: Row,
-            },
-          }}
+          scroll={{ x: 1200 }}
+          style={{ position: "relative", zIndex: 0 }}
           bordered
           rowKey="key"
           columns={mergedColumns}
           dataSource={dataSource}
-          rowClassName={"editable-row"}
         />
       </Form>
     </div>

@@ -1,10 +1,10 @@
-interface DataType {
+export interface DataType {
     key: string;
     name: string;
     image: {};
 }
 
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
+export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
     dataIndex: string;
     title: string;
@@ -14,6 +14,6 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     children: React.ReactNode;
 }
 
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+export interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
     "data-row-key": string;
 }
