@@ -1,25 +1,20 @@
-import type { DragEndEvent } from '@dnd-kit/core';
-import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import {
-    arrayMove,
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import React, { useId, useState } from 'react';
-import { Button, Checkbox, Form, Input, InputNumber, Popconfirm, Select, Table, Typography, Upload, UploadProps } from 'antd';
-import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { RcFile, UploadChangeParam, UploadFile } from 'antd/es/upload';
+import type { UploadFile, UploadProps } from 'antd';
+import { Button, Checkbox, Form, Input, InputNumber, Popconfirm, Select, Table, Typography } from 'antd';
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import Upload, { RcFile, UploadChangeParam } from 'antd/es/upload';
+import { DeleteFilled, EditFilled, LoadingOutlined, PlusOutlined, SaveFilled } from '@ant-design/icons';
 
 interface DataType {
-    key: string;
-    image: any;
+    key: React.Key;
+    image: string;
     name: string;
     description: string;
     ingredients: string;
-    price: string;
+    price: number;
     category: string[];
     isAvailable: boolean;
 }
@@ -29,10 +24,29 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     dataIndex: string;
     title: any;
     inputType: 'number' | 'text';
-    record: DataType;
+    record: Item;
     index: number;
     children: React.ReactNode;
 }
+
+interface Item {
+    key: string;
+    image: string;
+    name: string;
+    description: string;
+    ingredients: string;
+    price: number;
+    category: string[];
+    isAvailable: boolean;
+}
+
+interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
+    'data-row-key': string;
+}
+
+type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+
+type EditableTableProps = Parameters<typeof Table>[0];
 
 const EditableCell: React.FC<EditableCellProps> = ({
     editing,
@@ -68,19 +82,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
     );
 };
 
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-    'data-row-key': string;
-}
-
 const Row = (props: RowProps) => {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: props['data-row-key'],
     });
 
@@ -88,6 +91,7 @@ const Row = (props: RowProps) => {
         ...props.style,
         transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
         transition,
+        cursor: 'move',
         ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
     };
 
@@ -100,14 +104,109 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
     reader.readAsDataURL(img);
 };
 
-export const FoodItemsComponent: React.FC = () => {
+export function FoodItemsComponent() {
     const [count, setCount] = useState<number>(1);
-    const [dataSource, setDataSource] = useState<any>([]);
-    const [editingKey, setEditingKey] = useState<string>('0');
-    const [form] = Form.useForm<any>();
+    const [dataSource, setDataSource] = useState<DataType[]>([
+        // {
+        //     key: '1',
+        //     image: "image 1",
+        //     name: "name 1",
+        //     description: "description 1",
+        //     ingredients: "ingredients 1",
+        //     price: 123,
+        //     category: ["cat1", "cat2"],
+        //     isAvailable: true,
+        // },
+        // {
+        //     key: '2',
+        //     image: "image 2",
+        //     name: "name 2",
+        //     description: "description 2",
+        //     ingredients: "ingredients 2",
+        //     price: 123,
+        //     category: ["cat1", "cat2"],
+        //     isAvailable: true,
+        // },
+        // {
+        //     key: '3',
+        //     image: "image 3",
+        //     name: "name 3",
+        //     description: "description 3",
+        //     ingredients: "ingredients 3",
+        //     price: 123,
+        //     category: ["cat1", "cat2"],
+        //     isAvailable: false,
+        // }
+    ]);
+    const [editingKey, setEditingKey] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [imageUrl, setImageUrl] = useState<string>('');
 
-    const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
+    const [form] = Form.useForm();
+
+    const cancel = () => {
+        setEditingKey('');
+    };
+
+    const edit = (record: Partial<Item> & { key: React.Key }) => {
+        form.setFieldsValue({ name: '', age: '', address: '', ...record });
+        setEditingKey(record.key);
+    };
+
+    const isEditing = (record: Item) => record.key === editingKey;
+
+    const save = async (key: React.Key) => {
+        try {
+            const row = (await form.validateFields()) as Item;
+
+            const newData = [...dataSource];
+            const index = newData.findIndex((item) => key === item.key);
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, {
+                    ...item,
+                    ...row,
+                });
+                setDataSource(newData);
+                setEditingKey('');
+            } else {
+                newData.push(row);
+                setDataSource(newData);
+                setEditingKey('');
+            }
+        } catch (errInfo) {
+            console.log('Validate Failed:', errInfo);
+        }
+    };
+
+    const handleAdd = () => {
+        const newData: DataType = {
+            key: count,
+            image: "image",
+            name: "name",
+            description: "description",
+            ingredients: "ingredients",
+            price: 123,
+            category: ["cat1", "cat2"],
+            isAvailable: true
+        };
+        setDataSource([...dataSource, newData]);
+        setCount(count + 1);
+    };
+
+    const handleCheckboxChange = (key: React.Key) => {
+        setDataSource((prevDataSource) => {
+            const newData = prevDataSource.map((item) =>
+                item.key === key ? { ...item, isAvailable: !item.isAvailable } : item
+            );
+            return newData;
+        });
+    };
+
+    const handleDelete = (key: React.Key) => {
+        const newData = dataSource.filter((item) => item.key !== key);
+        setDataSource(newData);
+    };
 
     const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
         if (info.file.status === 'done') {
@@ -119,114 +218,76 @@ export const FoodItemsComponent: React.FC = () => {
         }
     };
 
-    const isEditing = (record: DataType) => record.key === editingKey;
-
-    const edit = (record: Partial<DataType> & { key: React.Key }) => {
-        form.setFieldsValue({ name: '', age: '', address: '', ...record });
-        setEditingKey(record.key);
-    };
-
-    const cancel = () => {
-        setEditingKey('0');
-    }
-
-    const save = async (key: React.Key) => {
-        try {
-            const row = (await form.validateFields()) as DataType;
-
-            const newData = [...dataSource];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setDataSource(newData);
-                setEditingKey('0');
-            } else {
-                newData.push(row);
-                setDataSource(newData);
-                setEditingKey('0');
-            }
-        } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
-        }
-    };
-
-    const handleAdd = () => {
-        const newData: DataType = {
-            key: count.toString(),
-            image: 'Image',
-            name: 'Name',
-            description: 'Description',
-            ingredients: 'Ingredients',
-            price: 'Price',
-            category: ['xyz1', 'xyz2'],
-            isAvailable: false
-        };
-        setDataSource([...dataSource, newData]);
-        setCount(count + 1);
-    };
-
-    const handleDelete = (key: React.Key) => {
-        const newData = dataSource.filter((item: any) => item.key !== key);
+    const handleSave = (row: DataType) => {
+        const newData = [...dataSource];
+        const index = newData.findIndex((item) => row.key === item.key);
+        const item = newData[index];
+        newData.splice(index, 1, {
+            ...item,
+            ...row,
+        });
         setDataSource(newData);
     };
 
-    const handleCheckboxChange = (rowIndex: any, columnKey: any) => (event: any) => {
-        const newDataSource: any = [...dataSource];
-        newDataSource[rowIndex][columnKey] = event.target.checked;
-        setDataSource(newDataSource);
-    }
-
     const uploadButton = (
-        <span>
+        <button type="button" className="border rounded-full w-10 h-10">
             {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            {/* Add Image */}
-        </span>
+        </button>
     );
 
-    const ImageUpload = () => {
-        return (
-            <Upload
-                fileList={undefined}
-                onChange={handleImageChange}
-            >
-                {imageUrl ? <img className="rounded-full w-10 h-10" src={imageUrl} alt="avatar" style={{ width: "100%" }} /> : uploadButton}
-            </Upload>
-        );
-    };
+    const SelectInput: React.FC<{ record: Item }> = ({ record }) => {
+        const handleSelectChange = (selectedValues: string[]) => {
+            setDataSource((prevDataSource) => {
+                const newData = prevDataSource.map((item) =>
+                    item.key === record.key ? { ...item, category: selectedValues } : item
+                );
+                return newData;
+            });
+        };
 
-    const SelectInput = ({ value }: any) => {
         return (
-            <Select style={{ width: "fixed" }} defaultValue={"Add Category"}>
-                {
-                    value.map((item: any) => <Select.Option key={item} value={item}>{item}</Select.Option>)
-                }
+            <Select value={record.category} onChange={handleSelectChange}>
+                <Select.Option value="cat1">Category 1</Select.Option>
+                <Select.Option value="cat2">Category 2</Select.Option>
             </Select>
         );
     };
 
-    const columns = [
+    const UploadButtonInput = () => {
+        return (
+            <Upload
+                name="avatar"
+                // listType="picture-circle"
+                className="avatar-uploader"
+                showUploadList={false}
+                onChange={handleImageChange}
+            >
+                {imageUrl ? <img className="rounded-full w-8 h-8" src={imageUrl} alt="Image" /> : uploadButton}
+            </Upload>
+        );
+    }
+
+    const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
         {
-            title: 'ID',
-            dataIndex: 'key'
+            title: 'Id',
+            dataIndex: 'key',
+            editable: false,
         },
         {
             title: 'Image',
             dataIndex: 'image',
-            render: () => <ImageUpload />
+            editable: false,
+            render: (value, record, rowIndex) => <UploadButtonInput />
         },
         {
             title: 'Name',
             dataIndex: 'name',
-            editable: true
+            editable: true,
         },
         {
             title: 'Description',
             dataIndex: 'description',
-            editable: true
+            editable: true,
         },
         {
             title: 'Ingredients',
@@ -236,45 +297,67 @@ export const FoodItemsComponent: React.FC = () => {
         {
             title: 'Price',
             dataIndex: 'price',
-            editable: true
+            editable: true,
         },
         {
             title: 'Category',
             dataIndex: 'category',
-            render: (value: any, record: any, rowIndex: any) => <SelectInput value={value} />
+            editable: false,
+            render: (value, record, rowIndex) => <SelectInput record={record as Item} />
         },
         {
             title: 'Is Available',
             dataIndex: 'isAvailable',
-            render: (value: boolean, record: any, rowIndex: any) => <Checkbox checked={value} onChange={handleCheckboxChange(rowIndex, 'isAvailable')} />
+            editable: false,
+            render: (value, record, rowIndex) => <Checkbox checked={value} onChange={() => handleCheckboxChange(record.key)} />
         },
         {
             title: 'Operation',
             dataIndex: 'operation',
-            render: (_: any, record: DataType) => {
+            render: (_: any, record: any /*{ key: React.Key }*/) => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
                         <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-                            Save
+                            <SaveFilled /> Save
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
                             <a>Cancel</a>
                         </Popconfirm>
                     </span>
                 ) : (
-                    <div className="space-x-4">
-                        <Typography.Link disabled={editingKey !== '0'} onClick={() => edit(record)}>
-                            <EditTwoTone /> Edit
-                        </Typography.Link>
-                        <Popconfirm title={"Sure to Delete?"} onConfirm={() => handleDelete(record.key)}>
-                            <a><DeleteTwoTone /> Delete</a>
-                        </Popconfirm>
+                    <div className="space-x-2">
+                        <span>
+                            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                                <EditFilled /> Edit
+                            </Typography.Link>
+                        </span>
+                        <span>
+                            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                                <a><DeleteFilled /> Delete</a>
+                            </Popconfirm>
+                        </span>
                     </div>
                 );
-            },
+            }
         },
     ];
+
+    const columns = defaultColumns.map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record: DataType) => ({
+                record,
+                editable: col.editable,
+                dataIndex: col.dataIndex,
+                title: col.title,
+                handleSave,
+            }),
+        };
+    });
 
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
@@ -282,7 +365,7 @@ export const FoodItemsComponent: React.FC = () => {
         }
         return {
             ...col,
-            onCell: (record: DataType) => ({
+            onCell: (record: Item) => ({
                 record,
                 inputType: col.dataIndex === 'age' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
@@ -294,10 +377,10 @@ export const FoodItemsComponent: React.FC = () => {
 
     const onDragEnd = ({ active, over }: DragEndEvent) => {
         if (active.id !== over?.id) {
-            setDataSource((previous: any) => {
-                const activeIndex = previous.findIndex((i: any) => i.key === active.id);
-                const overIndex = previous.findIndex((i: any) => i.key === over?.id);
-                return arrayMove(previous, activeIndex, overIndex);
+            setDataSource((prev) => {
+                const activeIndex = prev.findIndex((i) => i.key === active.id);
+                const overIndex = prev.findIndex((i) => i.key === over?.id);
+                return arrayMove(prev, activeIndex, overIndex);
             });
         }
     };
@@ -314,36 +397,35 @@ export const FoodItemsComponent: React.FC = () => {
     const id = useId();
 
     return (
-        <div className="">
-            <Button onClick={handleAdd} type="primary" style={{ float: "right", margin: "16px" }}>
-                Add Item
+        <div>
+            <Button onClick={handleAdd} type="default" style={{ marginBottom: 16 }}>
+                Add a row
             </Button>
             <DndContext id={id} sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
-                <SortableContext
-                    // rowKey array
-                    items={dataSource.map((i: any) => i.key)}
-                    strategy={verticalListSortingStrategy}
-                >
-                    <Form form={form} component={false}>
+                <Form form={form} component={false}>
+                    <SortableContext
+                        // rowKey array
+                        items={dataSource.map((i) => i.key) as any}
+                        strategy={verticalListSortingStrategy}
+                    >
                         <Table
                             components={{
                                 body: {
-                                    row: Row,
-                                    cell: EditableCell
+                                    cell: EditableCell,
+                                    row: Row
                                 },
                             }}
+                            rowClassName='editable-row'
                             bordered
-                            rowKey="key"
-                            columns={mergedColumns}
                             dataSource={dataSource}
-                            rowClassName={"editable-row"}
+                            columns={mergedColumns as ColumnTypes}
                             pagination={{
-                                onChange: cancel
+                                onChange: cancel,
                             }}
                         />
-                    </Form>
-                </SortableContext>
+                    </SortableContext>
+                </Form>
             </DndContext>
-        </div>
+        </div >
     );
 };
