@@ -1,7 +1,7 @@
 export interface FieldType {
   branchName?: string;
   contactNumber?: string;
-  location?: string;
+  branchAddress?: string;
   openingHours?: string;
   BranchID?:number;
   agreement?: string;

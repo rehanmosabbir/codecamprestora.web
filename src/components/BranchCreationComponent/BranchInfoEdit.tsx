@@ -3,14 +3,34 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import { Divider } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
+import { useState } from "react";
+import { useBranchDetails } from "./Zustand/Zustand";
 
 export const BranchInfoEdit = ({
   editInfoOff,
 }: {
   editInfoOff: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  // const [saturday, setSaturday] = useState({ start: "", end: "" });
+  const {
+    branchName,
+    contactNumber,
+    branchAddress,
+  //   openingHoursDetails,
+    updateBranchName,
+    updateContactNumber,
+    updateBranchAddress,
+  //   updateOpeningHoursDetails,
+  } = useBranchDetails();
+  
+ /// get Value function
+
   const onFinish = (values: any) => {
     console.log("Success:", values);
+    updateBranchName(values.branchName);
+    updateContactNumber(values.contactNumber);
+    updateBranchAddress(values.branchAddress);
+    // console.log(saturday);
     editInfoOff(true);
   };
 
@@ -31,7 +51,7 @@ export const BranchInfoEdit = ({
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="bg-white  rounded-lg"
+          className="bg-white rounded-lg"
         >
           <Row gutter={16}>
             <Col span={12}>
@@ -73,7 +93,7 @@ export const BranchInfoEdit = ({
             <Col span={12}>
               <Form.Item<FieldType>
                 label="Branch Address:"
-                name="location"
+                name="branchAddress"
                 labelCol={{ span: 24 }}
                 rules={[
                   { required: true, message: "Please input your Branch Name!" },
@@ -87,7 +107,7 @@ export const BranchInfoEdit = ({
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item<FieldType>
                 label="Branch ID"
                 labelCol={{ span: 24 }}
@@ -103,15 +123,18 @@ export const BranchInfoEdit = ({
                   type="number"
                 />
               </Form.Item>
+            </Col> */}
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <div>
+                <Meta title="Opening Hours" />
+                <Divider />
+                <BranchTimeEdit  />
+              </div>
             </Col>
           </Row>
 
-          <div>
-            <Meta title="Opening Hours" />
-            <Divider />
-            <BranchTimeEdit />
-          </div>
-          
           <hr className="mb-3" />
           <div className="flex ">
             <Form.Item>

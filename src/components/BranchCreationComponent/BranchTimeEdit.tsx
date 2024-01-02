@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from "antd";
-import { EditableCellProps, Item } from "./types/BranchTypes";
+import { DataType, EditableCellProps, Item } from "./types/BranchTypes";
 import {  ColumnsType } from "antd/es/table";
+import { AiTwotoneCheckCircle } from "react-icons/ai";
 
 
 const rowSelection = {
+  columnTitle:'Is Open',
   onChange: (selectedRowKeys: React.Key[], selectedRows: Item[]) => {
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
@@ -12,9 +14,10 @@ const rowSelection = {
       selectedRows
     );
   },
+  
   // getCheckboxProps: (record: DataType) => ({
-  //   disabled: record.name === "Disabled User", // Column configuration not to be checked
-  //   name: record.name,
+  //   // disabled: record.Days === "Disabled User", // Column configuration not to be checked
+  //   name: record.Days,
   // }),
 };
 
@@ -100,6 +103,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 const BranchTimeEdit = () => {
   const selectionType = "checkbox";
   const [form] = Form.useForm();
+  console.log({form});
   const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
 
@@ -156,12 +160,12 @@ const BranchTimeEdit = () => {
     render?: (_: any, record: Item) => React.JSX.Element
   }
 
-  const columns: ColumnType[]  = [
+  const columns: any  = [
     {
       title: "Days",
       dataIndex: "Days",
       align: "center",
-      width: "25%",
+      width: "25%"
       // editable: true,
     },
     {
@@ -169,6 +173,7 @@ const BranchTimeEdit = () => {
       dataIndex: "OpeningHours",
       align: 'center',
       width: "25%",
+      render: (record : Item) =><Input type="text"/>
       // editable: true,
     },
     {
@@ -176,40 +181,58 @@ const BranchTimeEdit = () => {
       dataIndex: "ClosingHours",
       align: "center",
       width: "25%",
-      // editable: true,
+      editable: true,
+      render: (record : Item) =><Input type="text"/>
+      // onCell: 'mehedi'
     },
-    {
-      width: "25%",
-      title: "Operation",
-      dataIndex: "operation",
-      align: "center",
-      render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
-            Edit
-          </Typography.Link>
-        );
-      },
-    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "Status",
+    //   align: "center",
+    //   width: "25%",
+    
+    //   render: (record : Item) =><button className="bg-green-500 hover:bg-green-400 active:bg-green-500 px-2 py-1 rounded text-white transition">
+    //   <div className="flex items-center">
+    //     Enable
+    //   </div>
+    // </button>
+    // }
+    // {
+    //   width: "25%",
+    //   title: "Operation",
+    //   dataIndex: "operation",
+    //   align: "center",
+    //   render: (record : Item) =><Input type="text"/>
+     
+      // render: (_: any, record: Item) => {
+        // const editable = isEditing(record);
+        // return editable ? (
+        //   <span>
+        //     <Typography.Link
+        //       onClick={() => save(record.key)}
+        //       style={{ marginRight: 8 }}
+        //     >
+        //       Save
+        //     </Typography.Link>
+        //     <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+        //       <a>Cancel</a>
+        //     </Popconfirm>
+        //   </span>
+        // ) : (
+        //   <Typography.Link
+        //     // disabled={editingKey !== ""}
+          //  edit(record)
+        //   >
+        //     Edit
+        //   </Typography.Link>
+        // );
+      // },
+    // },
+    Table.SELECTION_COLUMN,
   ];
 
-  const mergedColumns: ColumnsType<Item> = columns.map((col) => {
+  const mergedColumns: ColumnsType<Item> = columns.map((col:any) => {
+   console.log({col});
     if (!col.editable) {
       return col;
     }
@@ -217,31 +240,52 @@ const BranchTimeEdit = () => {
     return {
       ...col,
       onCell: (record: Item) => ({
-        record,
+        record,  
         inputType: "string",
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+        // editing: isEditing(record),
       }),
+      // onRow:(record:Item, rowIndex) => {
+      //   return {
+      //     onChange: (event: ChangeEvent<HTMLInputElement>) => {
+      //       console.log(record, rowIndex);
+      //       console.log(event.target.value);
+      //       setSaturday(event.target.value);
+      //     }
+      //   };
+      // }
     };
   });
 
   return (
     <Form form={form} component={false}>
       <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
+        onRow={(record, rowIndex) => {
+          return {
+            onChange: (event: ChangeEvent<HTMLInputElement>) => {
+              console.log(record, rowIndex);
+              console.log(event.target.value);
+              // setSaturday(event.target.value);
+            },
+            // onClick: (event) => {console.log("hello")},
+          };
         }}
-        // rowSelection={{
-        //   type: selectionType,
-        //   ...rowSelection,
+        // components={{
+        //   body: {
+        //     cell: EditableCell,
+        //   },
         // }}
+       
         bordered
         dataSource={data}
         columns={mergedColumns}
-        rowClassName="editable-row"
+
+         rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        // rowClassName="editable-row"
         // pagination={{
         //   onChange: cancel,
         // }}

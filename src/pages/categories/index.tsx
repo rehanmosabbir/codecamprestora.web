@@ -1,7 +1,7 @@
 import { RestaurantCategories } from "@/components/RestaurantCategoryComponent/RestaurantCategory";
 
 const categories = () => {
-  return <RestaurantCategories />;
+  // return <RestaurantCategories />;
 };
 
 export default categories;

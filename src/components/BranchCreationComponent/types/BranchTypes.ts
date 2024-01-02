@@ -1,8 +1,12 @@
+import { AntdIconProps } from "@ant-design/icons/lib/components/AntdIcon";
+import React from "react";
+
 export interface DataType {
   key: React.Key;
   Days: string;
   OpeningHours: string;
   ClosingHours: string;
+  IsOpen: any;
 }
 
 export interface Item {
