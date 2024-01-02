@@ -46,7 +46,6 @@ const rootSubmenuKeys = ["sub1", "sub2", "sub4"];
 const LeftMenuBar: React.FC = () => {
   const [openKeys, setOpenKeys] = useState(["sub1"]);
   const router = useRouter();
-  // console.log(router);
   const showMenu = router.pathname.includes("/branchlist/[branchid]");
 
   const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
@@ -59,22 +58,18 @@ const LeftMenuBar: React.FC = () => {
   };
 
   return (
-    <div className="">
-      <Menu
-        mode="inline"
-        openKeys={openKeys}
-        onOpenChange={onOpenChange}
-        style={{
-          width: 250,
-          flex: "auto",
-          fontSize: 15,
-          paddingRight: 10,
-          border: 0,
-        }}
-        items={showMenu ? menuItems : rootItems}
-        className="min-h-screen fixed gap-5"
-      />
-    </div>
+    <Menu
+      mode="inline"
+      openKeys={openKeys}
+      onOpenChange={onOpenChange}
+      style={{
+        fontSize: 15,
+        paddingRight: 10,
+        paddingLeft: 10,
+        border: 0,
+      }}
+      items={showMenu ? menuItems : rootItems}
+    />
   );
 };
 
