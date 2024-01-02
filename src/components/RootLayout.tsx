@@ -1,8 +1,10 @@
 import React, { ReactNode } from "react";
-import { Button, Layout, theme } from "antd";
+import { Grid, Layout, theme } from "antd";
+import { useRouter } from "next/router";
 
 import LeftMenuBar from "./LeftMenuBar";
-import { useRouter } from "next/router";
+import useHeaderStore from "@/useHeaderStore";
+import { AppHeader } from "./HeaderComponent/Header";
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -11,9 +13,13 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const router = useRouter();
-
+  const { collapsed } = useHeaderStore();
+  const { useBreakpoint } = Grid;
+  const { lg, xs } = useBreakpoint();
+  // console.log(lg);
   const isShow =
     router.asPath !== "/login" && router.asPath !== "/registration";
+  const width = lg ? "17%" : xs ? "50%" : "25%";
 
   return (
     <Layout>
@@ -27,8 +33,11 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             display: "flex",
             alignItems: "center",
             background: colorBgContainer,
+            padding: 0,
           }}
-        ></Header>
+        >
+          <AppHeader />
+        </Header>
       )}
       <Layout
         hasSider
@@ -39,13 +48,18 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       >
         {isShow && (
           <Sider
-            width="17%"
+            trigger={null}
+            breakpoint="sm"
+            collapsible
+            // collapsedWidth="5%"
+            collapsed={collapsed}
+            width={width}
             style={{
               overflow: "auto",
               height: "100vh",
               position: "fixed",
               background: colorBgContainer,
-              top: 60,
+              top: 75,
               left: 0,
             }}
           >
@@ -55,7 +69,13 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <Layout style={{ padding: "5px" }}>
           <Content
             style={{
-              marginLeft: `${isShow ? "19%" : ""}`,
+              marginLeft: `${
+                isShow
+                  ? collapsed
+                    ? `${lg ? "7.5%" : xs ? "25%" : "14%"}`
+                    : `${lg ? "19%" : "28%"}`
+                  : ""
+              }`,
               marginTop: `${isShow ? "15px" : ""}`,
               marginRight: `${isShow ? "15px" : ""}`,
               minHeight: 280,
@@ -67,7 +87,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           </Content>
           <Footer
             style={{
-              marginLeft: `${isShow ? "17%" : ""}`,
+              marginLeft: `${isShow ? (collapsed ? "7%" : "19%") : ""}`,
               textAlign: "center",
             }}
           >
