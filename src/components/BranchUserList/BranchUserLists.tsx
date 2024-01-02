@@ -59,27 +59,6 @@ export const BranchUserLists: React.FC = () => {
       email: "mehedi@gmail.com",
       password: "*********",
     },
-    {
-      key: "5",
-      username: "Sabbir",
-      role: "kitchen Stuff",
-      email: "sa@gmail.com",
-      password: "*********",
-    },
-    {
-      key: "6",
-      username: "Sirajul",
-      role: "kitchen Stuff",
-      email: "sirj@gmail.com",
-      password: "*********",
-    },
-    {
-      key: "7",
-      username: "Mehedi",
-      role: "manager",
-      email: "mehedi@gmail.com",
-      password: "*********",
-    },
   ]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
@@ -115,6 +94,7 @@ export const BranchUserLists: React.FC = () => {
         });
         setDataSource(newData);
         setEditingKey("");
+        console.log(newData);
       } else {
         newData.push(row);
         setDataSource(newData);
@@ -135,20 +115,21 @@ export const BranchUserLists: React.FC = () => {
       email: "Email",
       password: "Password",
     };
+    edit(newData);
     setDataSource([...dataSource, newData]);
     setCount(count + 1);
   };
 
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
+  // const handleSave = (row: DataType) => {
+  //   const newData = [...dataSource];
+  //   const index = newData.findIndex((item) => row.key === item.key);
+  //   const item = newData[index];
+  //   newData.splice(index, 1, {
+  //     ...item,
+  //     ...row,
+  //   });
+  //   setDataSource(newData);
+  // };
 
   const handleDelete = (key: React.Key) => {
     const newData = dataSource.filter((item: any) => item.key !== key);
@@ -168,22 +149,24 @@ export const BranchUserLists: React.FC = () => {
     },
     {
       title: "Role",
-      dataIndex: "role",
+      //dataIndex: "role",
       editable: false,
       render: (_: any, record: DataType) => {
-        return (
+        const editable = isEditing(record);
+        return editable ? (
           <Space wrap>
             <Select
               defaultValue="Select Role"
-              style={{ width: 150 }}
-              bordered={false}
+              style={{ width: 180 }}
               options={[
                 { value: "Manager", label: "Manager" },
-                { value: "Service", label: "Service" },
-                { value: "Kitchen Stuff", label: "Kitchen Stuff" },
+                { value: "Waiter", label: "Waiter" },
+                { value: "Kitchen Staff", label: "Kitchen Staff" },
               ]}
             />
           </Space>
+        ) : (
+          record.role
         );
       },
     },

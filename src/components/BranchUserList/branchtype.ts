@@ -9,7 +9,7 @@ export interface DataType {
 export interface EditableCellProps {
   editing: boolean;
   dataIndex: keyof DataType;
-  title: any;
+  title: string;
   inputType: "number" | "text" | "select";
   record: DataType;
   index: number;
