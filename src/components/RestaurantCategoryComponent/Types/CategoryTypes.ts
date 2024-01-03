@@ -1,7 +1,7 @@
 export interface DataType {
     key: string;
     name: string;
-    image: {};
+    image: any;
 }
 
 export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {

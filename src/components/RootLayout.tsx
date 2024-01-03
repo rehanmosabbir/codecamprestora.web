@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import LeftMenuBar from "./LeftMenuBar";
 import useHeaderStore from "@/useHeaderStore";
 import { AppHeader } from "./HeaderComponent/Header";
+import { AppFooter } from "./FooterComponent/Footer";
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -14,12 +15,11 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   } = theme.useToken();
   const router = useRouter();
   const { collapsed } = useHeaderStore();
-  const { useBreakpoint } = Grid;
-  const { lg, xs } = useBreakpoint();
-  // console.log(lg);
   const isShow =
-    router.asPath !== "/login" && router.asPath !== "/registration";
-  const width = lg ? "17%" : xs ? "50%" : "25%";
+    router.asPath !== "/login" &&
+    router.asPath !== "/registration" &&
+    router.asPath !== "/dashboard/test";
+  const width = "250px";
 
   return (
     <Layout>
@@ -29,6 +29,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             position: "sticky",
             top: 0,
             zIndex: 1,
+            height: 88,
             width: "100%",
             display: "flex",
             alignItems: "center",
@@ -51,48 +52,45 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             trigger={null}
             breakpoint="sm"
             collapsible
-            // collapsedWidth="5%"
             collapsed={collapsed}
             width={width}
             style={{
               overflow: "auto",
               height: "100vh",
-              position: "fixed",
+              top: 0,
+              paddingLeft: "10px",
+              paddingRight: "10px",
+              display: "flex",
               background: colorBgContainer,
-              top: 75,
               left: 0,
             }}
           >
-            <LeftMenuBar />
+            <div className="">
+              <LeftMenuBar />
+            </div>
           </Sider>
         )}
-        <Layout style={{ padding: "5px" }}>
+        <Layout>
           <Content
             style={{
-              marginLeft: `${
-                isShow
-                  ? collapsed
-                    ? `${lg ? "7.5%" : xs ? "25%" : "14%"}`
-                    : `${lg ? "19%" : "28%"}`
-                  : ""
-              }`,
-              marginTop: `${isShow ? "15px" : ""}`,
-              marginRight: `${isShow ? "15px" : ""}`,
-              minHeight: 280,
-              background: colorBgContainer,
+              margin: `${isShow ? "20px" : ""}`,
+              background: "#F5F5F5",
               borderRadius: borderRadiusLG,
             }}
           >
             {children}
           </Content>
-          <Footer
-            style={{
-              marginLeft: `${isShow ? (collapsed ? "7%" : "19%") : ""}`,
-              textAlign: "center",
-            }}
-          >
-            Restora App ©2023
-          </Footer>
+          {isShow && (
+            <Footer
+              style={{
+                zIndex: 1,
+                width: "100%",
+                padding: 0,
+              }}
+            >
+              <AppFooter />
+            </Footer>
+          )}
         </Layout>
       </Layout>
     </Layout>

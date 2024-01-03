@@ -1,5 +1,5 @@
 import { Form, Input, InputNumber } from "antd";
-import { EditableCellProps } from "./CategoryDataType/Types";
+import { EditableCellProps } from "./Types/CategoryTypes";
 
 const EditableCell: React.FC<EditableCellProps> = ({
   editing,
@@ -11,7 +11,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
   children,
   ...restProps
 }) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+  const inputNode =
+    inputType === "number" ? (
+      <InputNumber />
+    ) : (
+      <Input placeholder={`${title}`} />
+    );
   return (
     <td {...restProps}>
       {editing ? (

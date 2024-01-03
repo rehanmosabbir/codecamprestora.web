@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Select, Space, Table } from "antd";
-import { DataType } from "./OrderListDataType/Types";
+import { DataType } from "./Types/OrdersListTypes";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -16,17 +16,18 @@ const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
         {
           value: "placed",
           label: "Placed",
-          style: { color: "#FF0000" },
         },
         {
           value: "inProgress",
           label: "In Progress",
-          style: { color: "#001FFF" },
         },
         {
           value: "served",
           label: "Served",
-          style: { color: "#10AD00" },
+        },
+        {
+          value: "canceled",
+          label: "Canceled",
         },
       ]}
     />
@@ -99,7 +100,7 @@ export const OrdersList: React.FC = () => {
       return {
         ...col,
         render: (_: any, record: DataType) => ({
-          children: <SelectOption style={{ zIndex: 10 }} />,
+          children: <SelectOption />,
         }),
       };
     }

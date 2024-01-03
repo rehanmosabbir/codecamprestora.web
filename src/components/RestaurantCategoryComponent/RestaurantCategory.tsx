@@ -18,20 +18,71 @@ import { IoMdSave } from "react-icons/io";
 import { TbPencilCancel } from "react-icons/tb";
 import EditableCell from "./CategoriesEditable";
 import Row from "./CategoriesAddRow";
-import Picture from "./CategoriesPicture";
 import { DragEndEvent } from "@dnd-kit/core";
-import { RcFile, UploadFile } from "antd/es/upload";
-import { DataType } from "./CategoryDataType/Types";
+import Upload, {
+  RcFile,
+  UploadChangeParam,
+  UploadFile,
+  UploadProps,
+} from "antd/es/upload";
+import { DataType } from "./Types/CategoryTypes";
+import { PlusOutlined } from "@ant-design/icons";
+
+const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
 
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<any>([]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const isEditing = (record: DataType) => record.key === editingKey;
 
   const handleOnFinish = (values: any) => {
     console.log("Received values:", values);
+  };
+
+  const UploadButtonInput = ({ record }: any) => {
+    const handleImageChange: UploadProps["onChange"] = (
+      info: UploadChangeParam<UploadFile>
+    ) => {
+      if (info.file.status === "done") {
+        getBase64(info.file.originFileObj as RcFile, (url) => {
+          setDataSource((prevDataSource: any) => {
+            const newData = prevDataSource.map((item: any) =>
+              item.key === record.key ? { ...item, image: url } : item
+            );
+            return newData;
+          });
+        });
+      }
+    };
+    return (
+      <Upload
+        name="avatar"
+        className="avatar-uploader"
+        listType="picture-card"
+        showUploadList={false}
+        onChange={handleImageChange}
+      >
+        {record.image !== "" ? (
+          <img
+            style={{ padding: 5, borderRadius: "10%" }}
+            src={record.image}
+            alt="Image"
+          />
+        ) : (
+          <div className="text-gray-400 text-center">
+            <PlusOutlined />
+            <p>Upload</p>
+          </div>
+        )}
+      </Upload>
+    );
   };
 
   const edit = (record: Partial<DataType> & { key: React.Key }) => {
@@ -45,23 +96,24 @@ export const RestaurantCategories: React.FC = () => {
 
   const save = async (key: React.Key) => {
     try {
-      const formData = await form.validateFields();
-      const { name, image } = formData;
+      const row = (await form.validateFields()) as DataType;
 
       const newData = [...dataSource];
       const index = newData.findIndex((item) => key === item.key);
-
       if (index > -1) {
+        const item = newData[index];
         newData.splice(index, 1, {
-          ...newData[index],
-          name,
-          image,
+          ...item,
+          ...row,
         });
         setDataSource(newData);
         setEditingKey("");
-        console.log("Updated Data:", newData);
-        form.submit();
+      } else {
+        newData.push(row);
+        setDataSource(newData);
+        setEditingKey("");
       }
+      console.log(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -99,19 +151,8 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Restaurant Image",
       dataIndex: "image",
-      render: (_: any, record: DataType) => (
-        <Picture
-          updateDataSource={(key: string, file: RcFile) => {
-            const updatedData = dataSource.map((item: DataType) =>
-              item.key === key ? { ...item, image: file } : item
-            );
-            setDataSource(updatedData);
-          }}
-          currentData={{
-            key: "",
-            image: "",
-          }}
-        />
+      render: (value: any, record: any, rowIndex: any) => (
+        <UploadButtonInput record={record} />
       ),
     },
     {
@@ -208,7 +249,7 @@ export const RestaurantCategories: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
+    <div className="bg-gray-100  rounded-lg">
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Restaurant Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>

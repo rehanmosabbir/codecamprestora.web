@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { RowProps } from "./CategoryDataType/Types";
+import { RowProps } from "./Types/CategoryTypes";
 
 const Row = (props: RowProps) => {
   const {

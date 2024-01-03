@@ -21,17 +21,16 @@ export const AppHeader = () => {
   const { setCollapsed } = useHeaderStore();
   return (
     <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white w-full">
-      <div className={`flex gap-0 md:gap-28 justify-start items-center`}>
+      <div className={`flex gap-4 sm:gap-24 justify-start items-center`}>
         <Link href={"/dashboard/"}>
-          <div className="hidden md:flex">
-            <AppLogo />
-          </div>
+          <AppLogo />
         </Link>
-        <div>
+        <div className="hidden sm:block">
           <Button
             className="border-none"
             onClick={setCollapsed}
             style={{
+              marginTop: 20,
               paddingLeft: 8,
               paddingRight: 8,
               border: 0,
