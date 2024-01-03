@@ -6,7 +6,11 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import Upload, { RcFile, UploadChangeParam } from 'antd/es/upload';
-import { DeleteFilled, EditFilled, LoadingOutlined, PlusOutlined, SaveFilled } from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
+import { IoMdSave } from 'react-icons/io';
+import { TbPencilCancel } from 'react-icons/tb';
+import { RiEdit2Fill } from 'react-icons/ri';
+import { MdDelete } from 'react-icons/md';
 
 interface DataType {
     key: React.Key;
@@ -139,7 +143,6 @@ export function FoodItemsComponent() {
         // }
     ]);
     const [editingKey, setEditingKey] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
     const [imageUrl, setImageUrl] = useState<string>('');
 
     const [form] = Form.useForm();
@@ -208,16 +211,6 @@ export function FoodItemsComponent() {
         setDataSource(newData);
     };
 
-    const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj as RcFile, (url) => {
-                setLoading(false);
-                setImageUrl(url);
-            });
-        }
-    };
-
     const handleSave = (row: DataType) => {
         const newData = [...dataSource];
         const index = newData.findIndex((item) => row.key === item.key);
@@ -228,12 +221,6 @@ export function FoodItemsComponent() {
         });
         setDataSource(newData);
     };
-
-    const uploadButton = (
-        <button type="button" className="border rounded-full w-10 h-10">
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        </button>
-    );
 
     const SelectInput: React.FC<{ record: Item }> = ({ record }) => {
         const handleSelectChange = (selectedValues: string[]) => {
@@ -253,31 +240,54 @@ export function FoodItemsComponent() {
         );
     };
 
-    const UploadButtonInput = () => {
+    const UploadButtonInput = ({ record }: any) => {
+        const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
+          if (info.file.status === 'done') {
+            getBase64(info.file.originFileObj as RcFile, (url) => {
+              // Update only the image URL for the specific record
+              setDataSource((prevDataSource) => {
+                const newData = prevDataSource.map((item) =>
+                  item.key === record.key ? { ...item, image: url } : item
+                );
+                return newData;
+              });
+            });
+          }
+        };
+
+        console.log(record.image)
+      
         return (
-            <Upload
-                name="avatar"
-                // listType="picture-circle"
-                className="avatar-uploader"
-                showUploadList={false}
-                onChange={handleImageChange}
-            >
-                {imageUrl ? <img className="rounded-full w-8 h-8" src={imageUrl} alt="Image" /> : uploadButton}
-            </Upload>
+          <Upload
+            name="avatar"
+            className="avatar-uploader"
+            showUploadList={false}
+            onChange={handleImageChange}
+          >
+            {record.image !== "image" ? (
+              <img className="rounded-full w-8 h-8" src={record.image} alt="" />
+            ) : (
+            <button type="button" className="border rounded-lg px-2 py-1">
+                <UploadOutlined /> Upload
+            </button>
+            )}
+          </Upload>
         );
-    }
+      };
+      
 
     const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
         {
-            title: 'Id',
+            title: 'Serial',
             dataIndex: 'key',
             editable: false,
         },
         {
             title: 'Image',
             dataIndex: 'image',
+            width: '10%',
             editable: false,
-            render: (value, record, rowIndex) => <UploadButtonInput />
+            render: (value, record, rowIndex) => <UploadButtonInput record={record} />
         },
         {
             title: 'Name',
@@ -303,38 +313,65 @@ export function FoodItemsComponent() {
             title: 'Category',
             dataIndex: 'category',
             editable: false,
-            render: (value, record, rowIndex) => <SelectInput record={record as Item} />
+            render: (value, record, rowIndex) => {
+                const editable = isEditing(record as Item);
+                return editable ? <SelectInput record={record as Item} /> : record.category
+            } 
         },
         {
             title: 'Is Available',
             dataIndex: 'isAvailable',
             editable: false,
-            render: (value, record, rowIndex) => <Checkbox checked={value} onChange={() => handleCheckboxChange(record.key)} />
+            render: (value, record, rowIndex) => {
+                const editable = isEditing(record as Item);
+                return editable ? <Checkbox checked={value} onChange={() => handleCheckboxChange(record.key)} /> : value ? 'Yes' : 'No';
+            }
         },
         {
             title: 'Operation',
             dataIndex: 'operation',
+            width: '20%',
             render: (_: any, record: any /*{ key: React.Key }*/) => {
                 const editable = isEditing(record);
                 return editable ? (
                     <span>
                         <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-                            <SaveFilled /> Save
+                            <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
+                                <div className="flex items-center">
+                                    <IoMdSave />
+                                    Save
+                                </div>
+                            </button>
                         </Typography.Link>
                         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a>Cancel</a>
+                            <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+                                <div className="flex items-center">
+                                    <TbPencilCancel />
+                                    Cancel
+                                </div>
+                            </button>
                         </Popconfirm>
                     </span>
                 ) : (
                     <div className="space-x-2">
                         <span>
                             <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                <EditFilled /> Edit
+                                <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
+                                    <div className="flex items-center">
+                                        <RiEdit2Fill />
+                                        Edit
+                                    </div>
+                                </button>
                             </Typography.Link>
                         </span>
                         <span>
                             <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                                <a><DeleteFilled /> Delete</a>
+                                <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+                                    <div className="flex items-center">
+                                        <MdDelete />
+                                        Delete
+                                    </div>
+                                </button>
                             </Popconfirm>
                         </span>
                     </div>
@@ -367,7 +404,7 @@ export function FoodItemsComponent() {
             ...col,
             onCell: (record: Item) => ({
                 record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
+                inputType: col.dataIndex === 'price' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
@@ -397,10 +434,13 @@ export function FoodItemsComponent() {
     const id = useId();
 
     return (
-        <div>
-            <Button onClick={handleAdd} type="default" style={{ marginBottom: 16 }}>
-                Add a row
-            </Button>
+        <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg overflow-x-scroll">
+            <div className="bg-white font-[500] text-lg p-5 rounded-lg">
+                List of Food Items
+                <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
+                    Add Item
+                </Button>
+            </div>
             <DndContext id={id} sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
                 <Form form={form} component={false}>
                     <SortableContext
@@ -415,8 +455,9 @@ export function FoodItemsComponent() {
                                     row: Row
                                 },
                             }}
-                            rowClassName='editable-row'
+                            scroll={{x:1000}}
                             bordered
+                            rowClassName='editable-row'
                             dataSource={dataSource}
                             columns={mergedColumns as ColumnTypes}
                             pagination={{
