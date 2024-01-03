@@ -27,59 +27,7 @@ const columns: ColumnsType<DataType> = [
     title: "Is Open",
     dataIndex: "IsOpen",
     align: "center",
-  },
-];
-
-
-const data: DataType[] = [
-  {
-    key: "1",
-    Days: "Saturday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CheckOutlined />,
-  },
-  {
-    key: "2",
-    Days: "Sunday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CloseOutlined />,
-  },
-  {
-    key: "3",
-    Days: "Monday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CheckOutlined />,
-  },
-  {
-    key: "4",
-    Days: "Tuesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CloseOutlined />,
-  },
-  {
-    key: "5",
-    Days: "Wednesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CheckOutlined />,
-  },
-  {
-    key: "6",
-    Days: "Thursday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CloseOutlined />,
-  },
-  {
-    key: "7",
-    Days: "Friday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-    IsOpen: <CheckOutlined />,
+    render: (value ,record:DataType) => (record?.IsOpen==='true')? <CheckOutlined disabled={true}/>:<CloseOutlined/>,
   },
 ];
 
@@ -89,26 +37,15 @@ export const BranchInfo = () => {
     branchName,
     contactNumber,
     branchAddress,
-    openingHoursDetails,
-    // updateBranchName,
-    // updateContactNumber,
-    // updateBranchAddress,
-    // updateOpeningHoursDetails,
+    // openingHoursDetails,
+    mainArrayOfOpeningDetails
   } = useBranchDetails();
 
-  // updateBranchName('shymoli');
-  // console.log(BranchName);
-// console.log('data length ',data.length);
-  // useEffect(() => {
-    // for(let i=0;i<data.length;i++)
-    {
-      
-      // updateOpeningHoursDetails(data[i]);
-    }
-    // console.log('zustand data',)
-  // });
+  // const data = mainArrayOfOpeningDetails;
 
-
+  console.log('BranchInformation page -->>');
+  console.log({mainArrayOfOpeningDetails});
+  
   return editInfo ? (
     <div className=" bg-slate-100 rounded-lg flex justify-center min-h-[calc(100vh-130px)]">
       <div className="flex justify-center items-center">
@@ -138,7 +75,8 @@ export const BranchInfo = () => {
                 <Divider />
                 <Table
                   columns={columns}
-                  dataSource={data}
+                  dataSource={mainArrayOfOpeningDetails}
+                  // rowClassName={record => record?.IsOpen}
                   pagination={{ hideOnSinglePage: true }}
                 />
               </div>

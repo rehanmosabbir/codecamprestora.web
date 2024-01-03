@@ -3,7 +3,6 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import { Divider } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
-import { useState } from "react";
 import { useBranchDetails } from "./Zustand/Zustand";
 
 export const BranchInfoEdit = ({
@@ -11,27 +10,36 @@ export const BranchInfoEdit = ({
 }: {
   editInfoOff: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  // const [saturday, setSaturday] = useState({ start: "", end: "" });
   const {
     branchName,
     contactNumber,
     branchAddress,
-  //   openingHoursDetails,
+    openingHoursDetails,
     updateBranchName,
     updateContactNumber,
     updateBranchAddress,
-  //   updateOpeningHoursDetails,
+    setMainArrayOfOpeningDetails,
   } = useBranchDetails();
   
- /// get Value function
+ /// get Values function
+  
+  console.log('Branch Information Edit page--')
 
   const onFinish = (values: any) => {
-    console.log("Success:", values);
+    console.log("Success:------", values);
+
+    if(values.branchName!==undefined)
     updateBranchName(values.branchName);
+    if(values.contactNumber!==undefined)
     updateContactNumber(values.contactNumber);
+    if(values.branchAddress!==undefined)
     updateBranchAddress(values.branchAddress);
-    // console.log(saturday);
+    // updateOpeningHoursDetails('2','false','IsOpen');
+    console.log({openingHoursDetails});
+
+    setMainArrayOfOpeningDetails(openingHoursDetails);
     editInfoOff(true);
+
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -59,14 +67,15 @@ export const BranchInfoEdit = ({
                 label="Branch Name:"
                 name="branchName"
                 labelCol={{ span: 24 }}
-                rules={[
-                  { required: true, message: "Please input your Branch Name!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Branch Name"
                   size="large"
+                  defaultValue = {branchName}
                 />
               </Form.Item>
             </Col>
@@ -76,15 +85,16 @@ export const BranchInfoEdit = ({
                 label="Contact Number:"
                 labelCol={{ span: 24 }}
                 name="contactNumber"
-                rules={[
-                  { required: true, message: "Please input Contact Number!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input Contact Number!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Contact Number"
                   size="large"
                   type="tel"
+                  defaultValue = {contactNumber}
                 />
               </Form.Item>
             </Col>
@@ -95,14 +105,15 @@ export const BranchInfoEdit = ({
                 label="Branch Address:"
                 name="branchAddress"
                 labelCol={{ span: 24 }}
-                rules={[
-                  { required: true, message: "Please input your Branch Name!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Branch Address"
                   size="large"
+                  defaultValue = {branchAddress}
                 />
               </Form.Item>
             </Col>
@@ -124,6 +135,7 @@ export const BranchInfoEdit = ({
                 />
               </Form.Item>
             </Col> */}
+            
           </Row>
           <Row gutter={16}>
             <Col span={24}>

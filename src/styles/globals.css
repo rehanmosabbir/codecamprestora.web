@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.disabled-row {
+  background-color: #dcdcdc;
+  pointer-events: none;
+}
