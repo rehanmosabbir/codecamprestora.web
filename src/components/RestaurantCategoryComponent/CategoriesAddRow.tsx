@@ -1,9 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { RowProps } from "./CategoryDataType/Types";
 
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-  "data-row-key": string;
-}
 const Row = (props: RowProps) => {
   const {
     attributes,

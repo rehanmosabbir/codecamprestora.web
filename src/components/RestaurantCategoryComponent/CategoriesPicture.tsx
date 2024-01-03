@@ -9,6 +9,7 @@ interface PictureProps {
     image: string;
   };
   updateDataSource: (key: string, file: RcFile) => void;
+  // onSendFileList: (fileList: UploadFile[]) => void;
 }
 
 const getBase64 = (file: RcFile): Promise<string> =>
@@ -44,6 +45,8 @@ const Picture: React.FC<PictureProps> = ({ currentData, updateDataSource }) => {
   }: {
     fileList: UploadFile[];
   }) => {
+    console.log(fileList);
+
     setFileList(newFileList);
     if (newFileList.length > 0) {
       const fileObject = newFileList[0].originFileObj as RcFile;
