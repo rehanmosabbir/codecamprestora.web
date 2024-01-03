@@ -34,7 +34,7 @@ export const BranchUserLists: React.FC = () => {
     {
       key: "1",
       username: "Maheen",
-      role: "Service",
+      role: "Waiter",
       email: "mehedi@gmail.com",
       password: "*********",
     },
@@ -55,7 +55,7 @@ export const BranchUserLists: React.FC = () => {
     {
       key: "4",
       username: "Shafayet",
-      role: "Service",
+      role: "Waiter",
       email: "mehedi@gmail.com",
       password: "*********",
     },
@@ -105,40 +105,41 @@ export const BranchUserLists: React.FC = () => {
     }
   };
 
-  const [count, setCount] = useState<number>(8);
+  const [count, setCount] = useState<number>(5);
 
   const handleAdd = () => {
     const newData: DataType = {
       key: count.toString(),
-      username: "User Name",
-      role: "Role",
-      email: "Email",
-      password: "Password",
+      username: "",
+      role: "",
+      email: "",
+      password: "",
     };
     edit(newData);
     setDataSource([...dataSource, newData]);
     setCount(count + 1);
   };
 
-  // const handleSave = (row: DataType) => {
-  //   const newData = [...dataSource];
-  //   const index = newData.findIndex((item) => row.key === item.key);
-  //   const item = newData[index];
-  //   newData.splice(index, 1, {
-  //     ...item,
-  //     ...row,
-  //   });
-  //   setDataSource(newData);
-  // };
+  const handleSave = (row: DataType) => {
+    const newData = [...dataSource];
+    const index = newData.findIndex((item) => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    setDataSource(newData);
+  };
 
   const handleDelete = (key: React.Key) => {
     const newData = dataSource.filter((item: any) => item.key !== key);
     setDataSource(newData);
   };
+
   //: ColumnsType<DataType>
   const columns = [
     {
-      title: "ID",
+      title: "Serial",
       dataIndex: "key",
       editable: false,
     },
@@ -149,20 +150,26 @@ export const BranchUserLists: React.FC = () => {
     },
     {
       title: "Role",
-      //dataIndex: "role",
-      editable: false,
-      render: (_: any, record: DataType) => {
+      dataIndex: "role",
+      //editable: true,
+      render: (_: any, record: DataType, key: number) => {
+        const handleRoleChange = (value: string, key: number) => {
+          const updatedData = [...dataSource];
+          updatedData[key].role = value;
+          setDataSource(updatedData);
+        };
         const editable = isEditing(record);
         return editable ? (
           <Space wrap>
             <Select
-              defaultValue="Select Role"
+              defaultValue={`Select Value ${record.role}`}
               style={{ width: 180 }}
               options={[
                 { value: "Manager", label: "Manager" },
                 { value: "Waiter", label: "Waiter" },
                 { value: "Kitchen Staff", label: "Kitchen Staff" },
               ]}
+              onChange={(value) => handleRoleChange(value, key)}
             />
           </Space>
         ) : (
@@ -272,7 +279,7 @@ export const BranchUserLists: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
+    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5">
       <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
         Users List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
@@ -290,6 +297,7 @@ export const BranchUserLists: React.FC = () => {
         >
           <Form form={form} component={false}>
             <Table
+              scroll={{ x: 1200 }}
               className="mx-5"
               components={{
                 body: {
