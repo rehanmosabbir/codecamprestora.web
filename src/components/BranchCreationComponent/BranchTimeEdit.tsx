@@ -45,8 +45,8 @@ const BranchTimeEdit = () => {
     },
 
   };
-  type AlignType = "center" | "left" | "right";
 
+  type AlignType = "center" | "left" | "right";
   interface ColumnType {
     title: string;
     dataIndex: string;
@@ -109,8 +109,9 @@ const BranchTimeEdit = () => {
   // console.log("rows select====>>> ", rowSelection);
   return (
     // <Form form={form} component={false}>
+    <div>
       <Table
-        bordered
+        // bordered
         dataSource={mainArrayOfOpeningDetails}
         columns={columns}
         rowSelection={{
@@ -119,6 +120,7 @@ const BranchTimeEdit = () => {
         }}
         pagination={{ hideOnSinglePage: true }}
       />
+      </div>
     // </Form>
   );
 };

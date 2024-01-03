@@ -44,7 +44,7 @@ export const BranchInfo = () => {
   // const data = mainArrayOfOpeningDetails;
 
   console.log('BranchInformation page -->>');
-  console.log({mainArrayOfOpeningDetails});
+  // console.log({mainArrayOfOpeningDetails});
   
   return editInfo ? (
     <div className=" bg-slate-100 rounded-lg flex justify-center min-h-[calc(100vh-130px)]">
