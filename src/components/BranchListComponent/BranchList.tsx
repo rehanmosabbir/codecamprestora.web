@@ -135,10 +135,11 @@ export const BranchList = () => {
 
   return (
     <div className=" bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
-      <h2 className="bg-white mx-5 font-bold text-lg p-5 rounded-lg">
+      <h2 className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
         Restaurant Branch List
       </h2>
       <Table
+        bordered
         className="mx-5"
         columns={columns}
         dataSource={data}
@@ -147,5 +148,3 @@ export const BranchList = () => {
     </div>
   );
 };
-
-// export default BranchList;

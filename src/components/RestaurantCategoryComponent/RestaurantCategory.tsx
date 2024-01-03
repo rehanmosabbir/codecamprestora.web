@@ -7,18 +7,11 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
+  arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import React, { useState } from "react";
-import {
-  Button,
-  Form,
-  Modal,
-  Popconfirm,
-  Table,
-  Typography,
-  message,
-} from "antd";
+import { Button, Form, Popconfirm, Table, Typography } from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
@@ -27,13 +20,8 @@ import EditableCell from "./CategoriesEditable";
 import Row from "./CategoriesAddRow";
 import Picture from "./CategoriesPicture";
 import { DragEndEvent } from "@dnd-kit/core";
-import { RcFile } from "antd/es/upload";
-
-interface DataType {
-  key: string;
-  name: string;
-  image: string;
-}
+import { RcFile, UploadFile } from "antd/es/upload";
+import { DataType } from "./CategoryDataType/Types";
 
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<any>([]);
@@ -42,8 +30,12 @@ export const RestaurantCategories: React.FC = () => {
 
   const isEditing = (record: DataType) => record.key === editingKey;
 
+  const handleOnFinish = (values: any) => {
+    console.log("Received values:", values);
+  };
+
   const edit = (record: Partial<DataType> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", image: "", ...record });
+    form.setFieldsValue({ name: "", image: {}, ...record });
     setEditingKey(record.key);
   };
 
@@ -109,12 +101,15 @@ export const RestaurantCategories: React.FC = () => {
       dataIndex: "image",
       render: (_: any, record: DataType) => (
         <Picture
-          currentData={record}
           updateDataSource={(key: string, file: RcFile) => {
             const updatedData = dataSource.map((item: DataType) =>
               item.key === key ? { ...item, image: file } : item
             );
             setDataSource(updatedData);
+          }}
+          currentData={{
+            key: "",
+            image: "",
           }}
         />
       ),
@@ -201,37 +196,20 @@ export const RestaurantCategories: React.FC = () => {
       },
     })
   );
-  const handleOnFinish = (values: any) => {
-    console.log("Received values: ", values);
-  };
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active?.id !== over?.id && over) {
-      const sourceIndex = dataSource.findIndex(
-        (item: any) => item.key === active.id
-      );
-      const targetIndex = dataSource.findIndex(
-        (item: any) => item.key === over.id
-      );
-
-      if (sourceIndex > -1 && targetIndex > -1) {
-        const reorderedData = Array.from(dataSource);
-        const [movedItem] = reorderedData.splice(sourceIndex, 1);
-        reorderedData.splice(targetIndex, 0, movedItem);
-
-        const updatedData = reorderedData.map((item: any, index) => ({
-          ...item,
-          key: (index + 1).toString(),
-        })) as DataType[];
-
-        setDataSource(updatedData);
-      }
+    if (active.id !== over?.id) {
+      setDataSource((previous: any[]) => {
+        const activeIndex = previous.findIndex((i) => i.key === active.id);
+        const overIndex = previous.findIndex((i) => i.key === over?.id);
+        return arrayMove(previous, activeIndex, overIndex);
+      });
     }
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5 overflow-x-scroll">
-      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Restaurant Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
@@ -248,7 +226,8 @@ export const RestaurantCategories: React.FC = () => {
         >
           <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
-              className="mx-5"
+              style={{ position: "relative", zIndex: "0" }}
+              scroll={{ x: 1200 }}
               components={{
                 body: {
                   row: Row,

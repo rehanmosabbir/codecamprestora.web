@@ -1,8 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
+import { RowProps } from "./branchtype";
 import { CSS } from "@dnd-kit/utilities";
-import { RowProps } from "./CategoryDataType/Types";
 
-const Row = (props: RowProps) => {
+export const Row = (props: RowProps) => {
   const {
     attributes,
     listeners,
@@ -13,12 +13,14 @@ const Row = (props: RowProps) => {
   } = useSortable({
     id: props["data-row-key"],
   });
+
   const style: React.CSSProperties = {
     ...props.style,
     transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
     transition,
-    ...(isDragging ? { position: "relative" } : {}),
+    ...(isDragging ? { position: "relative", zIndex: 9999 } : {}),
   };
+
   return (
     <tr
       {...props}
@@ -29,5 +31,3 @@ const Row = (props: RowProps) => {
     />
   );
 };
-
-export default Row;

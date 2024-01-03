@@ -1,11 +1,13 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { AppLogo } from "./HeaderIcons/Logo";
-import { Popover } from "antd";
+import { Button, Popover } from "antd";
 import { User } from "./User/User";
 import { Account } from "./User/Account";
 import { Restaurant } from "./User/Restaurant";
 import { Logout } from "./User/Logout";
+import { FiMenu } from "react-icons/fi";
+import useHeaderStore from "@/useHeaderStore";
 
 const content = (
   <div className="border-t-[1px] border-gray-200">
@@ -15,13 +17,30 @@ const content = (
   </div>
 );
 
-export const Header = () => {
+export const AppHeader = () => {
+  const { setCollapsed } = useHeaderStore();
   return (
-    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white">
-      <div className="flex justify-start items-center invisible md:visible">
+    <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white w-full">
+      <div className={`flex gap-0 md:gap-28 justify-start items-center`}>
         <Link href={"/dashboard/"}>
-          <AppLogo />
+          <div className="hidden md:flex">
+            <AppLogo />
+          </div>
         </Link>
+        <div>
+          <Button
+            className="border-none"
+            onClick={setCollapsed}
+            style={{
+              paddingLeft: 8,
+              paddingRight: 8,
+              border: 0,
+              backgroundColor: "#ede7f6",
+            }}
+          >
+            <FiMenu color="#5E35B1" size="1.1rem" />
+          </Button>
+        </div>
       </div>
       <div className="flex justify-end items-center ">
         <Popover content={content} title="CodeCamp Dev" trigger="click">
