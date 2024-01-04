@@ -1,12 +1,9 @@
 import React, { ChangeEvent, useState } from "react";
-import {
-  Form,
-  Table,
-  TimePicker,
-} from "antd";
+import { Form, Table, TimePicker } from "antd";
 import { DataType } from "./types/BranchTypes";
 import { useBranchDetails } from "./Zustand/Zustand";
 import dayjs from "dayjs";
+import { ColumnsType } from "antd/es/table";
 
 const BranchTimeEdit = () => {
   const selectionType = "checkbox";
@@ -19,17 +16,14 @@ const BranchTimeEdit = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
-  console.log('Branch Time Edit Page--');
+  console.log("Branch Time Edit Page--");
 
   // const openingHoursDetailsData = mainArrayOfOpeningDetails;
 
   const rowSelection: any = {
     columnTitle: "Is Open",
     selectedRowKeys: rowSelectedArray,
-    onChange: (
-      selectedRowKeys: string[],
-      selectedRows: DataType[],
-    ) => {
+    onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
       // console.log(selectedRowKeys, "selectedRows: ", selectedRows);
       updateRowSelectedArray(selectedRowKeys);
       for (let i = 1; i <= 7; i++) {
@@ -43,7 +37,6 @@ const BranchTimeEdit = () => {
 
       // console.log("rowSelectedArray==>>", openingHoursDetails);
     },
-
   };
 
   type AlignType = "center" | "left" | "right";
@@ -54,7 +47,7 @@ const BranchTimeEdit = () => {
     width: string;
   }
 
-  const columns: any = [
+  const columns: ColumnsType<DataType> = [
     {
       title: "Days",
       dataIndex: "Days",
@@ -80,14 +73,13 @@ const BranchTimeEdit = () => {
           }
         />
       ),
-
     },
     {
       title: "Closing Hours",
       dataIndex: "ClosingHours",
       align: "center",
       width: "25%",
-      editable: true,
+      // editable: true,
       render: (record: ColumnType, index: any) => (
         <TimePicker
           defaultValue={dayjs(
@@ -120,7 +112,7 @@ const BranchTimeEdit = () => {
         }}
         pagination={{ hideOnSinglePage: true }}
       />
-      </div>
+    </div>
     // </Form>
   );
 };

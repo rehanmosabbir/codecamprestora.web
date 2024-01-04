@@ -27,11 +27,11 @@ const columns: ColumnsType<DataType> = [
     title: "Is Open",
     dataIndex: "IsOpen",
     align: "center",
-    render: (value ,record:DataType) => (record?.IsOpen==='true')? <CheckOutlined disabled={true}/>:<CloseOutlined/>,
+    render: (value ,record:DataType) => (record?.IsOpen==='true')? <CheckOutlined />:<CloseOutlined/>,
   },
 ];
 
-export const BranchInfo = () => {
+export const BranchInformation = () => {
   const [editInfo, setEditInfo] = useState(true);
   const {
     branchName,
@@ -95,5 +95,5 @@ export const BranchInfo = () => {
     </div>
   );
 };
-export default BranchInfo;
+export default BranchInformation;
 
