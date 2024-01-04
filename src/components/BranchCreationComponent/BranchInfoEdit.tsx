@@ -34,9 +34,8 @@ export const BranchInfoEdit = ({
     updateContactNumber(values.contactNumber);
     if(values.branchAddress!==undefined)
     updateBranchAddress(values.branchAddress);
-    // updateOpeningHoursDetails('2','false','IsOpen');
-    console.log({openingHoursDetails});
-
+  
+    // console.log({openingHoursDetails});
     setMainArrayOfOpeningDetails(openingHoursDetails);
     editInfoOff(true);
 
