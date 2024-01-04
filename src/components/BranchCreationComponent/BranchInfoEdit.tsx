@@ -3,15 +3,43 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import { Divider } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
+import { useBranchDetails } from "./Zustand/Zustand";
 
 export const BranchInfoEdit = ({
   editInfoOff,
 }: {
   editInfoOff: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const {
+    branchName,
+    contactNumber,
+    branchAddress,
+    openingHoursDetails,
+    updateBranchName,
+    updateContactNumber,
+    updateBranchAddress,
+    setMainArrayOfOpeningDetails,
+  } = useBranchDetails();
+  
+ /// get Values function
+  
+  console.log('Branch Information Edit page--')
+
   const onFinish = (values: any) => {
-    console.log("Success:", values);
+    console.log("Success:------", values);
+
+    if(values.branchName!==undefined)
+    updateBranchName(values.branchName);
+    if(values.contactNumber!==undefined)
+    updateContactNumber(values.contactNumber);
+    if(values.branchAddress!==undefined)
+    updateBranchAddress(values.branchAddress);
+    // updateOpeningHoursDetails('2','false','IsOpen');
+    console.log({openingHoursDetails});
+
+    setMainArrayOfOpeningDetails(openingHoursDetails);
     editInfoOff(true);
+
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -31,7 +59,7 @@ export const BranchInfoEdit = ({
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="bg-white  rounded-lg"
+          className="bg-white rounded-lg"
         >
           <Row gutter={16}>
             <Col span={12}>
@@ -39,14 +67,15 @@ export const BranchInfoEdit = ({
                 label="Branch Name:"
                 name="branchName"
                 labelCol={{ span: 24 }}
-                rules={[
-                  { required: true, message: "Please input your Branch Name!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Branch Name"
                   size="large"
+                  defaultValue = {branchName}
                 />
               </Form.Item>
             </Col>
@@ -56,15 +85,16 @@ export const BranchInfoEdit = ({
                 label="Contact Number:"
                 labelCol={{ span: 24 }}
                 name="contactNumber"
-                rules={[
-                  { required: true, message: "Please input Contact Number!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input Contact Number!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Contact Number"
                   size="large"
                   type="tel"
+                  defaultValue = {contactNumber}
                 />
               </Form.Item>
             </Col>
@@ -73,45 +103,50 @@ export const BranchInfoEdit = ({
             <Col span={12}>
               <Form.Item<FieldType>
                 label="Branch Address:"
-                name="location"
+                name="branchAddress"
                 labelCol={{ span: 24 }}
-                rules={[
-                  { required: true, message: "Please input your Branch Name!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Branch Address"
                   size="large"
+                  defaultValue = {branchAddress}
                 />
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item<FieldType>
-                label="Opening Hours:"
+                label="Branch ID"
                 labelCol={{ span: 24 }}
-                name="openingHours"
+                name="BranchID"
                 rules={[
-                  { required: true, message: "Please input Contact Number!" },
+                  { required: true, message: "Please input Branch ID!" },
                 ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                  placeholder="Enter Opening Hours"
+                  placeholder="Enter Branch ID"
                   size="large"
-                  type="tel"
+                  type="number"
                 />
               </Form.Item>
+            </Col> */}
+            
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <div>
+                <Meta title="Opening Hours" />
+                <Divider />
+                <BranchTimeEdit  />
+              </div>
             </Col>
           </Row>
 
-          <div>
-            <Meta title="Opening Hours" />
-            <Divider />
-            <BranchTimeEdit />
-          </div>
-          
           <hr className="mb-3" />
           <div className="flex ">
             <Form.Item>
