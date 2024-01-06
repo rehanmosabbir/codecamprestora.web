@@ -35,35 +35,83 @@ const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
 );
 
 export const OrdersList: React.FC = () => {
-  const [dataSource, setDataSource] = useState<any>([]);
   const [form] = Form.useForm();
-
-  //Will be Deleted whenever database is connected
-  const handleAdd = () => {
-    const newData: DataType = {
-      quantity: "",
-      name: "",
-      phone: "",
-      seat: "",
-      date: "",
-      time: "",
-      comment: "",
-      foodItem: "",
-      price: "",
+  const [dataSource, setDataSource] = useState<DataType[]>([
+    {
+      food: {
+        foodName: "Burger",
+        quantity: "5",
+      },
+      customerName: "James",
+      phone: "01762946384",
+      seats: "5",
+      date: "5 Jan 2024",
+      time: "3:00 PM",
+      comment: "Tasty",
+      price: {
+        foodPrice: "$50",
+        discount: "$5",
+        totalPrice: "$45",
+      },
       status: "",
-    };
-    setDataSource([...dataSource, newData]);
-  };
-  //Will be Deleted whenever database is connected
+    },
+    {
+      food: {
+        foodName: "Pizza",
+        quantity: "2",
+      },
+      customerName: "John",
+      phone: "01698543895",
+      seats: "8",
+      date: "10 Jan 2024",
+      time: "4:00 PM",
+      comment: "Better",
+      price: {
+        foodPrice: "$80",
+        discount: "$10",
+        totalPrice: "$70",
+      },
+      status: "",
+    },
+    {
+      food: {
+        foodName: "Sandwich",
+        quantity: "3",
+      },
+      customerName: "Clark",
+      phone: "01558479854",
+      seats: "4",
+      date: "15 Jan 2024",
+      time: "5:00 PM",
+      comment: "Nice",
+      price: {
+        foodPrice: "$50",
+        discount: "$0",
+        totalPrice: "$10",
+      },
+      status: "",
+    },
+  ]);
 
   const columns = [
     {
       title: "Food Items",
-      dataIndex: "foodItem",
+      dataIndex: "food",
+      render: (_: DataType, record: DataType) => (
+        <div>
+          <p>
+            <span className="font-semibold">Name :</span> {record.food.foodName}
+          </p>
+          <p>
+            <span className="font-semibold">Quantity :</span>{" "}
+            {record.food.quantity}
+          </p>
+        </div>
+      ),
     },
     {
       title: "Customer's Name",
-      dataIndex: "name",
+      dataIndex: "customerName",
     },
     {
       title: "Phone Number",
@@ -71,7 +119,7 @@ export const OrdersList: React.FC = () => {
     },
     {
       title: "Number of Seats",
-      dataIndex: "seat",
+      dataIndex: "seats",
     },
     {
       title: "Date",
@@ -88,6 +136,22 @@ export const OrdersList: React.FC = () => {
     {
       title: "Total Price",
       dataIndex: "price",
+      render: (_: DataType, record: DataType) => (
+        <div>
+          <p>
+            <span className="font-semibold">Price :</span>{" "}
+            {record.price.foodPrice}
+          </p>
+          <p>
+            <span className="font-semibold">Discount :</span>{" "}
+            {record.price.discount}
+          </p>
+          <p>
+            <span className="font-bold">Total Price :</span>{" "}
+            {record.price.totalPrice}
+          </p>
+        </div>
+      ),
     },
     {
       title: "Order Status",
@@ -99,7 +163,7 @@ export const OrdersList: React.FC = () => {
     if (col.dataIndex === "status") {
       return {
         ...col,
-        render: (_: any, record: DataType) => ({
+        render: (_: DataType, record: DataType) => ({
           children: <SelectOption />,
         }),
       };
@@ -120,11 +184,6 @@ export const OrdersList: React.FC = () => {
     <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Orders List
-        {/* Will be Deleted whenever database is connected */}
-        <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
-          Add Item
-        </Button>
-        {/* Will be Deleted whenever database is connected */}
       </div>
       <Form form={form} component={false}>
         <Table

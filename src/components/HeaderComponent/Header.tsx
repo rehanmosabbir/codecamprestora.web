@@ -25,21 +25,19 @@ export const AppHeader = () => {
         <Link href={"/dashboard/"}>
           <AppLogo />
         </Link>
-        <div className="hidden sm:block">
-          <Button
-            className="border-none"
-            onClick={setCollapsed}
-            style={{
-              marginTop: 20,
-              paddingLeft: 8,
-              paddingRight: 8,
-              border: 0,
-              backgroundColor: "#ede7f6",
-            }}
-          >
-            <FiMenu color="#5E35B1" size="1.1rem" />
-          </Button>
-        </div>
+        <Button
+          className="border-none"
+          onClick={setCollapsed}
+          style={{
+            marginTop: 20,
+            paddingLeft: 8,
+            paddingRight: 8,
+            border: 0,
+            backgroundColor: "#ede7f6",
+          }}
+        >
+          <FiMenu color="#5E35B1" size="1.1rem" />
+        </Button>
       </div>
       <div className="flex justify-end items-center ">
         <Popover content={content} title="CodeCamp Dev" trigger="click">

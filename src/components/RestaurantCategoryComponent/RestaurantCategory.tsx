@@ -28,33 +28,82 @@ import Upload, {
 import { DataType } from "./Types/CategoryTypes";
 import { PlusOutlined } from "@ant-design/icons";
 
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+type DataSourceItem = DataType[];
+
+const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result as string));
   reader.readAsDataURL(img);
 };
 
 export const RestaurantCategories: React.FC = () => {
-  const [dataSource, setDataSource] = useState<any>([]);
+  const [dataSource, setDataSource] = useState<DataSourceItem>([
+    {
+      key: "1",
+      name: "James",
+      image: {
+        name: "",
+        type: "",
+        size: 0,
+        base64: "",
+      },
+    },
+    {
+      key: "2",
+      name: "John",
+      image: {
+        name: "",
+        type: "",
+        size: 0,
+        base64: "",
+      },
+    },
+    {
+      key: "3",
+      name: "Clark",
+      image: {
+        name: "",
+        type: "",
+        size: 0,
+        base64: "",
+      },
+    },
+  ]);
   const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
+  const [editingKey, setEditingKey] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string>("");
 
   const isEditing = (record: DataType) => record.key === editingKey;
 
-  const handleOnFinish = (values: any) => {
+  const handleOnFinish = (values: DataType) => {
     console.log("Received values:", values);
   };
 
-  const UploadButtonInput = ({ record }: any) => {
+  const uploadButton = (
+    <div className="text-gray-400 text-center">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const UploadButtonInput: React.FC<{
+    isDisabled: boolean;
+    record: DataType;
+  }> = ({ isDisabled, record }) => {
     const handleImageChange: UploadProps["onChange"] = (
       info: UploadChangeParam<UploadFile>
     ) => {
       if (info.file.status === "done") {
-        getBase64(info.file.originFileObj as RcFile, (url) => {
-          setDataSource((prevDataSource: any) => {
-            const newData = prevDataSource.map((item: any) =>
-              item.key === record.key ? { ...item, image: url } : item
+        getBase64(info.file.originFileObj as RcFile, (base64) => {
+          const { name, type, size } = info.file.originFileObj as RcFile;
+          setDataSource((prevDataSource) => {
+            const newData = prevDataSource.map((item: DataType) =>
+              item.key === record.key
+                ? {
+                    ...item,
+                    image: { ...item.image, name, type, size, base64 },
+                  }
+                : item
             );
             return newData;
           });
@@ -68,18 +117,16 @@ export const RestaurantCategories: React.FC = () => {
         listType="picture-card"
         showUploadList={false}
         onChange={handleImageChange}
+        disabled={!isDisabled}
       >
-        {record.image !== "" ? (
+        {record?.image?.base64 ? (
           <img
-            style={{ padding: 5, borderRadius: "10%" }}
-            src={record.image}
-            alt="Image"
+            className="p-1 rounded-lg"
+            src={record?.image?.base64}
+            alt="Restaurant Image"
           />
         ) : (
-          <div className="text-gray-400 text-center">
-            <PlusOutlined />
-            <p>Upload</p>
-          </div>
+          uploadButton
         )}
       </Upload>
     );
@@ -119,25 +166,32 @@ export const RestaurantCategories: React.FC = () => {
     }
   };
 
-  const [count, setCount] = useState<number>(1);
-
   const handleAdd = () => {
+    const maxKey = Math.max(...dataSource.map((item) => parseInt(item.key)));
+    const newKey = (maxKey === -Infinity ? 0 : maxKey) + 1;
     const newData: DataType = {
-      key: count.toString(),
+      key: newKey.toString(),
       name: "",
-      image: "",
+      image: {
+        name: "",
+        type: "",
+        size: 0,
+        base64: "",
+      },
     };
     edit(newData);
     setDataSource([...dataSource, newData]);
-    setCount(count + 1);
   };
 
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item: any) => item.key !== key);
+  const handleDelete = (key: string) => {
+    const newData = dataSource.filter((item) => item.key !== key);
     setDataSource(newData);
   };
 
   const columns = [
+    {
+      key: "sort",
+    },
     {
       title: "Serial",
       dataIndex: "key",
@@ -151,14 +205,15 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Restaurant Image",
       dataIndex: "image",
-      render: (value: any, record: any, rowIndex: any) => (
-        <UploadButtonInput record={record} />
-      ),
+      render: (value: string, record: DataType, rowIndex: number) => {
+        const isDisabled = isEditing(record);
+        return <UploadButtonInput isDisabled={isDisabled} record={record} />;
+      },
     },
     {
       title: "Operation",
       dataIndex: "operation",
-      render: (_: any, record: DataType) => {
+      render: (_: DataType, record: DataType) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
@@ -176,7 +231,7 @@ export const RestaurantCategories: React.FC = () => {
               </button>
             </Typography.Link>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+              <button className="bg-red-500 hover:bg-red-600 active:bg-red-500 px-2 py-1 rounded text-white transition">
                 <div className="flex items-center">
                   <TbPencilCancel />
                   Cancel
@@ -201,7 +256,7 @@ export const RestaurantCategories: React.FC = () => {
               title={"Sure to Delete?"}
               onConfirm={() => handleDelete(record.key)}
             >
-              <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+              <button className="bg-red-500 hover:bg-red-600 active:bg-red-500 px-2 py-1 rounded text-white transition">
                 <div className="flex items-center">
                   <MdDelete />
                   Delete
@@ -230,17 +285,9 @@ export const RestaurantCategories: React.FC = () => {
     };
   });
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 1,
-      },
-    })
-  );
-
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (active.id !== over?.id) {
-      setDataSource((previous: any[]) => {
+      setDataSource((previous) => {
         const activeIndex = previous.findIndex((i) => i.key === active.id);
         const overIndex = previous.findIndex((i) => i.key === over?.id);
         return arrayMove(previous, activeIndex, overIndex);
@@ -256,19 +303,15 @@ export const RestaurantCategories: React.FC = () => {
           Add Item
         </Button>
       </div>
-      <DndContext
-        sensors={sensors}
-        modifiers={[restrictToVerticalAxis]}
-        onDragEnd={onDragEnd}
-      >
+      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
         <SortableContext
-          items={dataSource.map((i: any) => i.key)}
+          items={dataSource.map((i) => i.key)}
           strategy={verticalListSortingStrategy}
         >
           <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
               style={{ position: "relative", zIndex: "0" }}
-              scroll={{ x: 1200 }}
+              scroll={{ x: 800 }}
               components={{
                 body: {
                   row: Row,

@@ -1,7 +1,14 @@
 export interface DataType {
     key: string;
     name: string;
-    image: any;
+    image: ImageObject;
+}
+
+export interface ImageObject {
+    name: string;
+    type: string;
+    size: number;
+    base64: string;
 }
 
 export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -15,5 +22,5 @@ export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
-    "data-row-key": string;
+    'data-row-key': string;
 }

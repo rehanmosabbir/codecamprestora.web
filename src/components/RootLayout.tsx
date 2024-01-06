@@ -16,10 +16,8 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { collapsed } = useHeaderStore();
   const isShow =
-    router.asPath !== "/login" &&
-    router.asPath !== "/registration" &&
-    router.asPath !== "/dashboard/test";
-  const width = "250px";
+    router.asPath !== "/login" && router.asPath !== "/registration";
+  const width = "260px";
 
   return (
     <Layout>
@@ -31,7 +29,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             zIndex: 1,
             height: 88,
             width: "100%",
-            display: "flex",
             alignItems: "center",
             background: colorBgContainer,
             padding: 0,
@@ -80,19 +77,19 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           >
             {children}
           </Content>
-          {isShow && (
-            <Footer
-              style={{
-                zIndex: 1,
-                width: "100%",
-                padding: 0,
-              }}
-            >
-              <AppFooter />
-            </Footer>
-          )}
         </Layout>
       </Layout>
+      {isShow && (
+        <Footer
+          style={{
+            zIndex: 1,
+            width: "100%",
+            padding: 0,
+          }}
+        >
+          <AppFooter />
+        </Footer>
+      )}
     </Layout>
   );
 };
