@@ -1,23 +1,29 @@
-export interface DataType {
-  key: React.Key;
-  Days: string;
-  OpeningHours: string;
-  ClosingHours: string;
-}
+import { AntdIconProps } from "@ant-design/icons/lib/components/AntdIcon";
+import React from "react";
 
-export interface Item {
+export interface DataType {
   key: string;
   Days: string;
   OpeningHours: string;
   ClosingHours: string;
+  IsOpen: any;
+  enabled:boolean
 }
+
+// export interface Item {
+//   key: string;
+//   Days: string;
+//   OpeningHours: string;
+//   ClosingHours: string;
+//   enabled:boolean
+// }
 
 export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: any;
   inputType: "number" | "text";
-  record: Item;
+  record: DataType;
   index: number;
   children: React.ReactNode;
 }

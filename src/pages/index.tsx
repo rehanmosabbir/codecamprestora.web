@@ -7,7 +7,8 @@ export default function Home() {
       User Logged in : {JSON.stringify(data)}
       <h2 className="text-3xl font-bold text-center pt-[40vh] pb-[40vh]">
         Welcome to Restora.App
-      </h2>
+
+     </h2>
     </main>
   );
 }

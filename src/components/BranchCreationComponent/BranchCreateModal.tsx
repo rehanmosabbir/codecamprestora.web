@@ -63,7 +63,7 @@ const BranchCreateModal = () => {
         <Form.Item<FieldType>
           label="Branch Address:"
           labelCol={{ span: 24 }}
-          name="location"
+          name="branchAddress"
           rules={[
             { required: true, message: "Please input Branch's address!" },
           ]}
