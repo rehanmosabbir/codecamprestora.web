@@ -6,15 +6,21 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import Upload, { RcFile, UploadChangeParam } from 'antd/es/upload';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { IoMdSave } from 'react-icons/io';
 import { TbPencilCancel } from 'react-icons/tb';
 import { RiEdit2Fill } from 'react-icons/ri';
 import { MdDelete } from 'react-icons/md';
 
+interface ImageObject {
+    name: string;
+    type: string;
+    size: number;
+}
+
 interface DataType {
     key: React.Key;
-    image: string;
+    image: ImageObject;
     name: string;
     description: string;
     ingredients: string;
@@ -35,7 +41,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 
 interface Item {
     key: string;
-    image: string;
+    image: ImageObject;
     name: string;
     description: string;
     ingredients: string;
@@ -62,7 +68,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
     children,
     ...restProps
 }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+    const inputNode = inputType === 'number' ? <InputNumber placeholder={`${title}`} /> : <Input placeholder={`${title}`} />;
 
     return (
         <td {...restProps}>
@@ -102,7 +108,7 @@ const Row = (props: RowProps) => {
     return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
 };
 
-const getBase64 = (img: RcFile, callback: (url: string) => void) => {
+const getBase64 = (img: RcFile, callback: (base64Url: string) => void) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result as string));
     reader.readAsDataURL(img);
@@ -110,40 +116,8 @@ const getBase64 = (img: RcFile, callback: (url: string) => void) => {
 
 export function FoodItemsComponent() {
     const [count, setCount] = useState<number>(1);
-    const [dataSource, setDataSource] = useState<DataType[]>([
-        // {
-        //     key: '1',
-        //     image: "image 1",
-        //     name: "name 1",
-        //     description: "description 1",
-        //     ingredients: "ingredients 1",
-        //     price: 123,
-        //     category: ["cat1", "cat2"],
-        //     isAvailable: true,
-        // },
-        // {
-        //     key: '2',
-        //     image: "image 2",
-        //     name: "name 2",
-        //     description: "description 2",
-        //     ingredients: "ingredients 2",
-        //     price: 123,
-        //     category: ["cat1", "cat2"],
-        //     isAvailable: true,
-        // },
-        // {
-        //     key: '3',
-        //     image: "image 3",
-        //     name: "name 3",
-        //     description: "description 3",
-        //     ingredients: "ingredients 3",
-        //     price: 123,
-        //     category: ["cat1", "cat2"],
-        //     isAvailable: false,
-        // }
-    ]);
+    const [dataSource, setDataSource] = useState<DataType[]>([]);
     const [editingKey, setEditingKey] = useState<string>('');
-    const [imageUrl, setImageUrl] = useState<string>('');
 
     const [form] = Form.useForm();
 
@@ -177,6 +151,7 @@ export function FoodItemsComponent() {
                 setDataSource(newData);
                 setEditingKey('');
             }
+            console.log(newData);
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
@@ -185,14 +160,15 @@ export function FoodItemsComponent() {
     const handleAdd = () => {
         const newData: DataType = {
             key: count,
-            image: "image",
-            name: "name",
-            description: "description",
-            ingredients: "ingredients",
-            price: 123,
-            category: ["cat1", "cat2"],
-            isAvailable: true
+            image: { name: '', type: '', size: 0 },
+            name: '',
+            description: '',
+            ingredients: '',
+            price: 0,
+            category: ['Starters', 'Main Course', 'Side Dishes', 'Desert'],
+            isAvailable: false
         };
+        // edit(newData);
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
     };
@@ -222,7 +198,7 @@ export function FoodItemsComponent() {
         setDataSource(newData);
     };
 
-    const SelectInput: React.FC<{ record: Item }> = ({ record }) => {
+    const SelectInput: React.FC<{ isDisabled: boolean, record: Item }> = ({ isDisabled, record }) => {
         const handleSelectChange = (selectedValues: string[]) => {
             setDataSource((prevDataSource) => {
                 const newData = prevDataSource.map((item) =>
@@ -233,48 +209,58 @@ export function FoodItemsComponent() {
         };
 
         return (
-            <Select value={record.category} onChange={handleSelectChange}>
-                <Select.Option value="cat1">Category 1</Select.Option>
-                <Select.Option value="cat2">Category 2</Select.Option>
-            </Select>
+            <Select
+                disabled={!isDisabled}
+                value={record.category}
+                options={[
+                    { value: 'starters', label: 'Starters' },
+                    { value: 'mainCourse', label: 'Main Course' },
+                    { value: 'sideDishes', label: 'Side Dishes' },
+                    { value: 'desert', label: 'Desert' }
+                ]}
+                onChange={handleSelectChange}
+            />
         );
     };
 
-    const UploadButtonInput = ({ record }: any) => {
+    const uploadButton = (
+        <div className="text-gray-400 text-center">
+            <PlusOutlined />
+            <p>Upload</p>
+        </div>
+    )
+
+    const UploadButtonInput = ({ isDisabled, record }: any) => {
         const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-          if (info.file.status === 'done') {
-            getBase64(info.file.originFileObj as RcFile, (url) => {
-              // Update only the image URL for the specific record
-              setDataSource((prevDataSource) => {
-                const newData = prevDataSource.map((item) =>
-                  item.key === record.key ? { ...item, image: url } : item
-                );
-                return newData;
-              });
-            });
-          }
+            if (info.file.status === 'done') {
+                getBase64(info.file.originFileObj as RcFile, (base64Url) => {
+                    // Update only the image URL for the specific record
+                    const { name, type, size } = info.file.originFileObj as RcFile;
+                    setDataSource((prevDataSource) => {
+                        const newData = prevDataSource.map((item) =>
+                            item.key === record.key ? { ...item, image: {...item.image, name, type, size, base64Url} } : item
+                        );
+                        return newData;
+                    });
+                });
+            }
         };
 
-        console.log(record.image)
-      
         return (
-          <Upload
-            name="avatar"
-            className="avatar-uploader"
-            showUploadList={false}
-            onChange={handleImageChange}
-          >
-            {record.image !== "image" ? (
-              <img className="rounded-full w-8 h-8" src={record.image} alt="" />
-            ) : (
-            <button type="button" className="border rounded-lg px-2 py-1">
-                <UploadOutlined /> Upload
-            </button>
-            )}
-          </Upload>
+            <Upload
+                name="avatar"
+                className="avatar-uploader"
+                listType="picture-card"
+                showUploadList={false}
+                onChange={handleImageChange}
+                disabled={!isDisabled}
+            >
+                {
+                    record.image.base64Url ? <img src={record.image.base64Url} alt="Image" /> : uploadButton
+                }
+            </Upload>
         );
-      };
-      
+    };
 
     const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
         {
@@ -285,9 +271,13 @@ export function FoodItemsComponent() {
         {
             title: 'Image',
             dataIndex: 'image',
-            width: '10%',
             editable: false,
-            render: (value, record, rowIndex) => <UploadButtonInput record={record} />
+            render: (value, record, rowIndex) => {
+                const isDisabled = isEditing(record as Item);
+                // console.log("value: ", value);
+                // console.log("record: ", record);
+                return <UploadButtonInput isDisabled={isDisabled} value={value} record={record} />
+            }
         },
         {
             title: 'Name',
@@ -314,9 +304,9 @@ export function FoodItemsComponent() {
             dataIndex: 'category',
             editable: false,
             render: (value, record, rowIndex) => {
-                const editable = isEditing(record as Item);
-                return editable ? <SelectInput record={record as Item} /> : record.category
-            } 
+                const isDisabled = isEditing(record as Item);
+                return <SelectInput isDisabled={isDisabled} record={record as Item} />
+            }
         },
         {
             title: 'Is Available',
@@ -330,7 +320,7 @@ export function FoodItemsComponent() {
         {
             title: 'Operation',
             dataIndex: 'operation',
-            width: '20%',
+            width: '15%',
             render: (_: any, record: any /*{ key: React.Key }*/) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -455,7 +445,7 @@ export function FoodItemsComponent() {
                                     row: Row
                                 },
                             }}
-                            scroll={{x:1000}}
+                            scroll={{ x: 1000 }}
                             bordered
                             rowClassName='editable-row'
                             dataSource={dataSource}
