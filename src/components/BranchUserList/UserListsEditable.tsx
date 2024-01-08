@@ -1,5 +1,5 @@
 import { Form, Input, InputNumber } from "antd";
-import { EditableCellProps } from "./Types/CategoryTypes";
+import { EditableCellProps } from "./branchtype";
 
 const EditableCell: React.FC<EditableCellProps> = ({
   editing,

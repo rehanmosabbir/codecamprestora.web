@@ -1,253 +1,119 @@
-import React, { useState } from "react";
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from "antd";
-import { EditableCellProps, Item } from "./types/BranchTypes";
-import {  ColumnsType } from "antd/es/table";
-
-
-const rowSelection = {
-  onChange: (selectedRowKeys: React.Key[], selectedRows: Item[]) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  // getCheckboxProps: (record: DataType) => ({
-  //   disabled: record.name === "Disabled User", // Column configuration not to be checked
-  //   name: record.name,
-  // }),
-};
-
-const originData: Item[] = [
-  {
-    key: "1",
-    Days: "Saturday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "2",
-    Days: "Sunday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "3",
-    Days: "Monday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "4",
-    Days: "Tuesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "5",
-    Days: "Wednesday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "6",
-    Days: "Thursday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-  {
-    key: "7",
-    Days: "Friday",
-    OpeningHours: "10 AM",
-    ClosingHours: "10 PM",
-  },
-];
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
+import React, { ChangeEvent, useState } from "react";
+import { Form, Table, TimePicker } from "antd";
+import { DataType } from "./types/BranchTypes";
+import { useBranchDetails } from "./Zustand/Zustand";
+import dayjs from "dayjs";
+import { ColumnsType } from "antd/es/table";
 
 const BranchTimeEdit = () => {
   const selectionType = "checkbox";
-  const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
-  const [editingKey, setEditingKey] = useState("");
+  // const [form] = Form.useForm();
+  const {
+    mainArrayOfOpeningDetails,
+    openingHoursDetails,
+    rowSelectedArray,
+    updateOpeningHoursDetails,
+    updateRowSelectedArray,
+  } = useBranchDetails();
 
-  const isEditing = (record: Item) => record.key === editingKey;
+  console.log("Branch Time Edit Page--");
 
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({
-      Days: "",
-      OpeningHours: "",
-      ClosingHours: "",
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
+  // const openingHoursDetailsData = mainArrayOfOpeningDetails;
 
-  const cancel = () => {
-    setEditingKey("");
-  };
-
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
-
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        console.log({ newData });
-
-        setData(newData);
-        setEditingKey("");
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey("");
+  const rowSelection: any = {
+    columnTitle: "Is Open",
+    selectedRowKeys: rowSelectedArray,
+    onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
+      // console.log(selectedRowKeys, "selectedRows: ", selectedRows);
+      updateRowSelectedArray(selectedRowKeys);
+      for (let i = 1; i <= 7; i++) {
+        const isAble = selectedRowKeys.filter(
+          (element) => element === i.toString()
+        );
+        if (isAble.length === 1)
+          updateOpeningHoursDetails(i.toString(), "true", "IsOpen");
+        else updateOpeningHoursDetails(i.toString(), "false", "IsOpen");
       }
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
-    }
+
+      // console.log("rowSelectedArray==>>", openingHoursDetails);
+    },
   };
 
-  type AlignType = 'center' | 'left' | 'right';
-
+  type AlignType = "center" | "left" | "right";
   interface ColumnType {
-    title: string,
-    dataIndex: string,
-    align?: AlignType,
-    width: string,
-    editable?: boolean,
-    render?: (_: any, record: Item) => React.JSX.Element
+    title: string;
+    dataIndex: string;
+    align?: AlignType;
+    width: string;
   }
 
-  const columns: ColumnType[]  = [
+  const columns: ColumnsType<DataType> = [
     {
       title: "Days",
       dataIndex: "Days",
       align: "center",
       width: "25%",
-      editable: true,
     },
     {
       title: "Opening Hours",
       dataIndex: "OpeningHours",
-      align: 'center',
+      align: "center",
       width: "25%",
-      editable: true,
+
+      render: (record: ColumnType, index: any) => (
+        <TimePicker
+          defaultValue={dayjs(
+            openingHoursDetails[index?.key - ("1" as any)]?.OpeningHours,
+            "h:mm A"
+          )}
+          use12Hours
+          format="h:mm A"
+          onChange={(value: any, dateString: string) =>
+            updateOpeningHoursDetails(index?.key, dateString, "OpeningHours")
+          }
+        />
+      ),
     },
     {
       title: "Closing Hours",
       dataIndex: "ClosingHours",
       align: "center",
       width: "25%",
-      editable: true,
+      // editable: true,
+      render: (record: ColumnType, index: any) => (
+        <TimePicker
+          defaultValue={dayjs(
+            openingHoursDetails[index?.key - ("1" as any)]?.ClosingHours,
+            "h:mm A"
+          )}
+          use12Hours
+          format="h:mm A"
+          onChange={(value: any, dateString: string) =>
+            updateOpeningHoursDetails(index?.key, dateString, "ClosingHours")
+          }
+        />
+      ),
     },
-    {
-      width: "25%",
-      title: "Operation",
-      dataIndex: "operation",
-      align: "center",
-      render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
-            Edit
-          </Typography.Link>
-        );
-      },
-    },
+
+    Table.SELECTION_COLUMN,
   ];
 
-  const mergedColumns: ColumnsType<Item> = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record: Item) => ({
-        record,
-        inputType: "number",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-
+  // console.log("rows select====>>> ", rowSelection);
   return (
-    <Form form={form} component={false}>
+    // <Form form={form} component={false}>
+    <div>
       <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
+        // bordered
+        dataSource={mainArrayOfOpeningDetails}
+        columns={columns}
         rowSelection={{
           type: selectionType,
           ...rowSelection,
         }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        // pagination={{
-        //   onChange: cancel,
-        // }}
         pagination={{ hideOnSinglePage: true }}
       />
-    </Form>
+    </div>
+    // </Form>
   );
 };
 
