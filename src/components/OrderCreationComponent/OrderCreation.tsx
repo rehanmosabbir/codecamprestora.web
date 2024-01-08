@@ -1,41 +1,10 @@
 import React, { useState } from "react";
-import { Button, Form, Select, Space, Table } from "antd";
-import { DataType } from "./Types/OrdersListTypes";
+import { Button, Modal, Table } from "antd";
+import { DataType } from "./types/OrderCreationTypes";
+import OrderCreationModal from "./OrderCreationModal";
 
-const handleChange = (value: string) => {
-  console.log(`selected ${value}`);
-};
-
-const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
-  <Space wrap>
-    <Select
-      defaultValue="placed"
-      style={{ width: 120, position: "relative", zIndex: 10, ...style }}
-      onChange={handleChange}
-      options={[
-        {
-          value: "placed",
-          label: "Placed",
-        },
-        {
-          value: "inProgress",
-          label: "In Progress",
-        },
-        {
-          value: "served",
-          label: "Served",
-        },
-        {
-          value: "canceled",
-          label: "Canceled",
-        },
-      ]}
-    />
-  </Space>
-);
-
-export const OrdersList: React.FC = () => {
-  const [form] = Form.useForm();
+export const OrderCreation: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
       food: {
@@ -45,15 +14,11 @@ export const OrdersList: React.FC = () => {
       customerName: "James",
       phone: "01762946384",
       seats: 5,
-      date: "5 Jan 2024",
-      time: "3:00 PM",
-      comment: "Tasty",
       price: {
         foodPrice: 50,
         discount: 5,
         totalPrice: 45,
       },
-      status: "",
     },
     {
       food: {
@@ -63,15 +28,11 @@ export const OrdersList: React.FC = () => {
       customerName: "John",
       phone: "01698543895",
       seats: 8,
-      date: "10 Jan 2024",
-      time: "4:00 PM",
-      comment: "Better",
       price: {
         foodPrice: 80,
         discount: 10,
         totalPrice: 70,
       },
-      status: "",
     },
     {
       food: {
@@ -81,21 +42,25 @@ export const OrdersList: React.FC = () => {
       customerName: "Clark",
       phone: "01558479854",
       seats: 4,
-      date: "15 Jan 2024",
-      time: "5:00 PM",
-      comment: "Nice",
       price: {
         foodPrice: 50,
         discount: 10,
         totalPrice: 40,
       },
-      status: "",
     },
   ]);
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const columns = [
     {
-      title: "Food Items",
+      title: "Food Item",
       dataIndex: "food",
       render: (_: DataType, record: DataType) => (
         <div>
@@ -122,18 +87,6 @@ export const OrdersList: React.FC = () => {
       dataIndex: "seats",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-    },
-    {
-      title: "Time",
-      dataIndex: "time",
-    },
-    {
-      title: "Comment",
-      dataIndex: "comment",
-    },
-    {
       title: "Total Price",
       dataIndex: "price",
       render: (_: DataType, record: DataType) => (
@@ -153,22 +106,9 @@ export const OrdersList: React.FC = () => {
         </div>
       ),
     },
-    {
-      title: "Order Status",
-      dataIndex: "status",
-    },
   ];
 
   const mergedColumns = columns.map((col) => {
-    if (col.dataIndex === "status") {
-      return {
-        ...col,
-        render: (_: DataType, record: DataType) => ({
-          children: <SelectOption />,
-        }),
-      };
-    }
-
     return {
       ...col,
       onCell: (record: DataType) => ({
@@ -181,20 +121,29 @@ export const OrdersList: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
-      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
-        Orders List
+    <div className="bg-gray-100 rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 sm:p-5 rounded-lg">
+        Create Orders
+        <Button onClick={showModal} type="primary" style={{ float: "right" }}>
+          Add Order
+        </Button>
+        <Modal
+          visible={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+          destroyOnClose
+        >
+          {isModalOpen && <OrderCreationModal onCancel={handleCancel} />}{" "}
+        </Modal>
       </div>
-      <Form form={form} component={false}>
-        <Table
-          scroll={{ x: 1200 }}
-          style={{ position: "relative", zIndex: 0 }}
-          bordered
-          rowKey="key"
-          columns={mergedColumns}
-          dataSource={dataSource}
-        />
-      </Form>
+      <Table
+        scroll={{ x: "800px" }}
+        bordered
+        rowKey="key"
+        columns={mergedColumns}
+        dataSource={dataSource}
+        rowClassName={"editable-row"}
+      />
     </div>
   );
 };
