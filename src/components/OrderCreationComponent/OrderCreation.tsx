@@ -8,44 +8,44 @@ export const OrderCreation: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
       food: {
-        foodName: "Burger",
-        quantity: "5",
+        foodName: "Hamburger",
+        quantity: 5,
       },
       customerName: "James",
       phone: "01762946384",
-      seats: "5",
+      seats: 5,
       price: {
-        foodPrice: "$50",
-        discount: "$5",
-        totalPrice: "$45",
+        foodPrice: 50,
+        discount: 5,
+        totalPrice: 45,
       },
     },
     {
       food: {
         foodName: "Pizza",
-        quantity: "2",
+        quantity: 2,
       },
       customerName: "John",
       phone: "01698543895",
-      seats: "8",
+      seats: 8,
       price: {
-        foodPrice: "$80",
-        discount: "$10",
-        totalPrice: "$70",
+        foodPrice: 80,
+        discount: 10,
+        totalPrice: 70,
       },
     },
     {
       food: {
         foodName: "Sandwich",
-        quantity: "3",
+        quantity: 3,
       },
       customerName: "Clark",
       phone: "01558479854",
-      seats: "4",
+      seats: 4,
       price: {
-        foodPrice: "$50",
-        discount: "$0",
-        totalPrice: "$10",
+        foodPrice: 50,
+        discount: 10,
+        totalPrice: 40,
       },
     },
   ]);
@@ -93,15 +93,15 @@ export const OrderCreation: React.FC = () => {
         <div>
           <p>
             <span className="font-semibold">Price :</span>{" "}
-            {record.price.foodPrice}
+            {record.price.foodPrice} Tk
           </p>
           <p>
             <span className="font-semibold">Discount :</span>{" "}
-            {record.price.discount}
+            {record.price.discount} Tk
           </p>
           <p>
             <span className="font-bold">Total Price :</span>{" "}
-            {record.price.totalPrice}
+            {record.price.totalPrice} Tk
           </p>
         </div>
       ),
@@ -121,14 +121,19 @@ export const OrderCreation: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-100  rounded-lg">
+    <div className="bg-gray-100 rounded-lg">
       <div className="bg-white font-[500] text-lg p-5 sm:p-5 rounded-lg">
         Create Orders
         <Button onClick={showModal} type="primary" style={{ float: "right" }}>
           Add Order
         </Button>
-        <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
-          <OrderCreationModal />
+        <Modal
+          visible={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+          destroyOnClose
+        >
+          {isModalOpen && <OrderCreationModal onCancel={handleCancel} />}{" "}
         </Modal>
       </div>
       <Table

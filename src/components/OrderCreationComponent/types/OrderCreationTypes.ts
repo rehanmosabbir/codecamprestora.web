@@ -1,29 +1,33 @@
 export interface DataType {
     food: {
         foodName: string;
-        quantity: string;
+        quantity: number;
     };
     customerName: string;
     phone: string;
-    seats: string;
+    seats: number;
     price: {
-        foodPrice: string;
-        discount: string;
-        totalPrice: string;
+        foodPrice: number;
+        discount: number;
+        totalPrice: number;
     };
 }
 
 export interface FieldType {
     food: {
         foodName: string;
-        quantity: string;
+        quantity: number;
     };
     customerName: string;
     phone: string;
-    seats: string;
+    seats: number;
     price: {
-        foodPrice: string;
-        discount: string;
-        totalPrice: string;
+        foodPrice: number;
+        discount: number;
+        totalPrice: number;
     };
+}
+
+export interface OrderCreationModalProps {
+    onCancel: () => void;
 }

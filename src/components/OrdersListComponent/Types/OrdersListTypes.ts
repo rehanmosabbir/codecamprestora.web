@@ -1,18 +1,18 @@
 export interface DataType {
     food: {
         foodName: string;
-        quantity: string;
+        quantity: number;
     };
     customerName: string;
     phone: string;
-    seats: string;
+    seats: number;
     date: string;
     time: string;
     comment: string;
     price: {
-        foodPrice: string;
-        discount: string;
-        totalPrice: string;
+        foodPrice: number;
+        discount: number;
+        totalPrice: number;
     };
     status: string;
 }

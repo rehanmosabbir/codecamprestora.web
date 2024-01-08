@@ -39,55 +39,55 @@ export const OrdersList: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
       food: {
-        foodName: "Burger",
-        quantity: "5",
+        foodName: "Hamburger",
+        quantity: 5,
       },
       customerName: "James",
       phone: "01762946384",
-      seats: "5",
+      seats: 5,
       date: "5 Jan 2024",
       time: "3:00 PM",
       comment: "Tasty",
       price: {
-        foodPrice: "$50",
-        discount: "$5",
-        totalPrice: "$45",
+        foodPrice: 50,
+        discount: 5,
+        totalPrice: 45,
       },
       status: "",
     },
     {
       food: {
         foodName: "Pizza",
-        quantity: "2",
+        quantity: 2,
       },
       customerName: "John",
       phone: "01698543895",
-      seats: "8",
+      seats: 8,
       date: "10 Jan 2024",
       time: "4:00 PM",
       comment: "Better",
       price: {
-        foodPrice: "$80",
-        discount: "$10",
-        totalPrice: "$70",
+        foodPrice: 80,
+        discount: 10,
+        totalPrice: 70,
       },
       status: "",
     },
     {
       food: {
         foodName: "Sandwich",
-        quantity: "3",
+        quantity: 3,
       },
       customerName: "Clark",
       phone: "01558479854",
-      seats: "4",
+      seats: 4,
       date: "15 Jan 2024",
       time: "5:00 PM",
       comment: "Nice",
       price: {
-        foodPrice: "$50",
-        discount: "$0",
-        totalPrice: "$10",
+        foodPrice: 50,
+        discount: 10,
+        totalPrice: 40,
       },
       status: "",
     },
@@ -140,15 +140,15 @@ export const OrdersList: React.FC = () => {
         <div>
           <p>
             <span className="font-semibold">Price :</span>{" "}
-            {record.price.foodPrice}
+            {record.price.foodPrice} Tk
           </p>
           <p>
             <span className="font-semibold">Discount :</span>{" "}
-            {record.price.discount}
+            {record.price.discount} Tk
           </p>
           <p>
             <span className="font-bold">Total Price :</span>{" "}
-            {record.price.totalPrice}
+            {record.price.totalPrice} Tk
           </p>
         </div>
       ),
