@@ -181,7 +181,7 @@ export const OrdersList: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg">
+    <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Orders List
       </div>

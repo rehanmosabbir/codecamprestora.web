@@ -285,7 +285,7 @@ export const BranchUserLists: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5">
+    <div>
       <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
         Users List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
