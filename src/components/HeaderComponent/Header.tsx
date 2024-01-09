@@ -7,7 +7,7 @@ import { Account } from "./User/Account";
 import { Restaurant } from "./User/Restaurant";
 import { Logout } from "./User/Logout";
 import { FiMenu } from "react-icons/fi";
-import useHeaderStore from "@/useHeaderStore";
+import useHeaderStore from "@/useHooks/useHeaderStore";
 
 const content = (
   <div className="border-t-[1px] border-gray-200">
@@ -29,7 +29,7 @@ export const AppHeader = () => {
           className="border-none"
           onClick={setCollapsed}
           style={{
-            marginTop: 20,
+            marginTop: 5,
             paddingLeft: 8,
             paddingRight: 8,
             border: 0,

@@ -193,17 +193,12 @@ export const RestaurantCategories: React.FC = () => {
       key: "sort",
     },
     {
-      title: "Serial",
-      dataIndex: "key",
-      editable: false,
-    },
-    {
-      title: "Restaurant Name",
+      title: "Category Name",
       dataIndex: "name",
       editable: true,
     },
     {
-      title: "Restaurant Image",
+      title: "Category Image",
       dataIndex: "image",
       render: (value: string, record: DataType, rowIndex: number) => {
         const isDisabled = isEditing(record);
@@ -296,7 +291,7 @@ export const RestaurantCategories: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100  rounded-lg">
+    <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Restaurant Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>

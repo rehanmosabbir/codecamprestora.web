@@ -80,7 +80,6 @@ const LeftMenuBar: React.FC = () => {
       style={{
         fontSize: 15,
         border: 0,
-        width: 240,
       }}
       items={showMenu ? menuItems : rootItems}
     />

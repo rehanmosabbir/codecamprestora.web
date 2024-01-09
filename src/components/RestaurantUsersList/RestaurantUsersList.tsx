@@ -94,8 +94,8 @@ const RestaurantUsersList = () => {
   ];
 
   return (
-    <>
-      <div className="bg-white  font-[500] text-lg p-5 rounded-lg">
+    <div>
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Restaurent Users List
       </div>
       <Table
@@ -104,7 +104,7 @@ const RestaurantUsersList = () => {
         dataSource={data}
         onChange={handleChange}
       />
-    </>
+    </div>
   );
 };
 
