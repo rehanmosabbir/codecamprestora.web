@@ -445,7 +445,7 @@ export function FoodItemsComponent() {
                                     row: Row
                                 },
                             }}
-                            scroll={{ x: 1200 }}
+                            scroll={{ x: 1000 }}
                             bordered
                             rowClassName='editable-row'
                             dataSource={dataSource}
