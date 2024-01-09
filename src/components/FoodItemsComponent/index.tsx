@@ -439,7 +439,6 @@ export function FoodItemsComponent() {
                         strategy={verticalListSortingStrategy}
                     >
                         <Table
-                        style={{position: "relative", zIndex: 0}}
                             components={{
                                 body: {
                                     cell: EditableCell,
