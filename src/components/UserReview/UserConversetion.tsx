@@ -1,42 +1,54 @@
-import { Button, Input, Space } from "antd";
-import { IoIosSend } from "react-icons/io";
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Input, Space } from "antd";
 import {UserCommentHeader} from "./UserCommentHeader";
 import { RestoraCommentHeader } from "./RestoraCommentHeader";
 import { RestoraImage } from "./RestoraImage";
 const UserConversetion = () => {
+  const [comment, setComment]= useState("")
+  const [displayedComment, setDisplayedComment] = useState('');
+  
+  const handleChnage = (e:any)=>{
+    e.preventDefault, 
+    setComment(e.target.value)
+  }
+  const handleClick=()=>{
+    setDisplayedComment(comment)
+    setComment("")
+    
+  }
   return (
     <div className="mx-5 mb-10">
+      
       <div>
-      <div className=" bg-gray-100 rounded-lg">
+      <div className="bg-gray-100 rounded-lg p-2 pl-2 mb-5">
+      <RestoraCommentHeader />
+      <div className=" mt-2 mb-5 px-3">
+        <p className="text-justify pr-5">
+        {displayedComment}
+        </p>
+        </div>
+      </div> 
+      <div className=" bg-gray-100 rounded-lg p-2 pl-2 mb-5">
       <UserCommentHeader />
-        <p className="rounded-md p-4 text-[20px]">
+      <div className=" mt-2 mb-5 px-3">
+        <p className="text-justify pr-5">
         The food was good,the steak was cooked perfectly and had a great flavor.
         environment was welcoming, great service.
         </p>
-        {/* <div className="flex justify-end"><Button>reply</Button></div> */}
+        </div>
       </div>
-      <div className=" bg-gray-100 rounded-lg mt-5">
-      <RestoraCommentHeader />
-        <p className="rounded-md p-4 text-[20px]">
-        Thank you Sir!
-        </p>
-        {/* <div className="flex justify-end"><Button>reply</Button></div> */}
-      </div>
-      
-      </div>
-      
-      <div className="mt-10 ml-20 ">
+           
+      </div>     
+      <div className="mt-10 ">
         <div className="flex">
           <RestoraImage />
-        <Space.Compact style={{ width: '100%' ,height: '60px' }}>
-      <Input defaultValue="" placeholder="Write a Comment...." />
-      <Button type="primary" style={{height: '60px' }}>
-        <div className="flex items-center  text-[20px] ">
-            <IoIosSend />
-            send
-        </div>
+       <div className="flex w-[100%] gap-5">
+     
+      <Input value= {comment} onChange={handleChnage} placeholder="Write a Comment...." />
+      <Button type="primary" style={{ height: '48px' }} htmlType="submit" onClick={handleClick}>
+            Comment
       </Button>
-    </Space.Compact>
+      </div>
         </div>
        
       </div>
