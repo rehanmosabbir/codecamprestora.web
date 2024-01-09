@@ -8,6 +8,7 @@ import {
   OrderCreationModalProps,
 } from "./types/OrderCreationTypes";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
+import { IoMdCheckmark } from "react-icons/io";
 
 const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onCancel,
@@ -221,14 +222,19 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           labelCol={{ span: 24 }}
           rules={[{ required: true, message: "Please select Food!" }]}
         >
-          <Select
-            mode="multiple"
-            value={selectedFoods}
-            onChange={handleChange}
-            options={options}
-            placeholder={"Select Food"}
-            size="large"
-          />
+          <div className="flex gap-3">
+            <Select
+              mode="multiple"
+              value={selectedFoods}
+              onChange={handleChange}
+              options={options}
+              placeholder={"Select Food"}
+              size="large"
+            />
+            <Button size="large" className="text-gray-600">
+              <IoMdCheckmark />
+            </Button>
+          </div>
         </Form.Item>
         {selectedFoodsWithQuantity.length === 0 && (
           <div className="text-center my-10">Please select food items</div>
