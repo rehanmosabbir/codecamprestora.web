@@ -439,13 +439,14 @@ export function FoodItemsComponent() {
                         strategy={verticalListSortingStrategy}
                     >
                         <Table
+                        style={{position: "relative", zIndex: 0}}
                             components={{
                                 body: {
                                     cell: EditableCell,
                                     row: Row
                                 },
                             }}
-                            scroll={{ x: 1000 }}
+                            scroll={{ x: 1200 }}
                             bordered
                             rowClassName='editable-row'
                             dataSource={dataSource}
