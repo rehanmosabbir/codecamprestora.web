@@ -1,8 +1,6 @@
 import { Popconfirm, Popover } from "antd";
 import { HiDotsVertical } from "react-icons/hi";
 import { UserInfo } from "./UserInfo";
-import { GoDotFill } from "react-icons/go";
-import { AiTwotoneCheckCircle, AiTwotoneCloseCircle } from "react-icons/ai";
 import { useState } from "react";
 export const UserInfoHeader = () => {
   const [isActive, setIsActive] = useState(true);
@@ -17,13 +15,13 @@ export const UserInfoHeader = () => {
           {isActive ? (
             <button className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
-                <AiTwotoneCloseCircle /> Deactive
+                 Deactive
               </div>
             </button>
           ) : (
             <button className="bg-green-500 hover:bg-green-400 active:bg-green-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
-                <AiTwotoneCheckCircle /> Active
+                Active
               </div>
             </button>
           )}
@@ -37,11 +35,15 @@ export const UserInfoHeader = () => {
       <div className="flex items-center">
         <UserInfo />
         <h2 className="font-semibold text-[20px] mr-2"> John Doe</h2>
-        <div className="flex items-center text-gray-400">
-          {" "}
-          <GoDotFill />
-          <h6>{isActive ? "active" : "inactive"}</h6>{" "}
-        </div>
+        {isActive ? (
+          <div className="flex items-center text-white bg-green-500 py-1 px-2 text-[10px] rounded-lg">
+            <p>active</p>
+          </div>
+        ) : (
+          <div className="flex items-center text-white bg-red-500 py-1 px-2 text-[10px] rounded-lg">
+            <p>inactive</p>
+          </div>
+        )}
       </div>
 
       <Popover content={content} placement="bottom" trigger="click">
