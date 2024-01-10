@@ -9,6 +9,7 @@ import {
 } from "./types/OrderCreationTypes";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
 import { IoMdCheckmark } from "react-icons/io";
+import { AppLogo } from "@/assets/Logo";
 
 const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onCancel,
@@ -164,7 +165,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         className="bg-white"
       >
         <div className="flex justify-center mb-3">
-          <Image src={logo} width={100} height={100} alt="logo" priority />
+          <AppLogo />
         </div>
         <h1 className="p-3 text-[16px] font-semibold text-center mb-3">
           Create New Order

@@ -10,7 +10,7 @@ import useMediaQuery from "@/useHooks/useMediaQueryHook";
 const { Header, Content, Sider, Footer } = Layout;
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
-  const isDesktop = useMediaQuery("(min-width: 600px)");
+  const isDesktop = useMediaQuery("(min-width: 900px)");
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -74,7 +74,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           <Content
             style={{
               margin: `${isShow ? "20px" : ""}`,
-              paddingLeft: `${isDesktop ? "0" : "10px"}`,
+              paddingLeft: `${isShow ? `${isDesktop ? "0" : "10px"}` : ""}`,
               borderRadius: borderRadiusLG,
               minHeight: `calc(100vh - 170px)`,
             }}
