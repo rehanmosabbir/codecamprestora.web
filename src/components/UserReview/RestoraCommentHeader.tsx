@@ -1,4 +1,4 @@
-import { Popconfirm, Popover } from "antd";
+import { Popover } from "antd";
 import restora from "@/assets/berry.png";
 import Image from "next/image";
 import { HiDotsVertical } from "react-icons/hi";
@@ -49,7 +49,6 @@ export const RestoraCommentHeader = () => {
         </div>
         <h2 className="font-semibold text-[15px] mr-2">Restora</h2>
         <div className="flex items-center text-gray-400">
-          {" "}
           <GoDotFill />
           <h6>{isActive ? "active" : "inactive"}</h6>
         </div>

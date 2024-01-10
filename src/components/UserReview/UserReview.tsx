@@ -3,6 +3,10 @@ import UserConversetion from "./UserConversetion";
 
 const UserReview = () => {
   return (
+    <div className="bg-gray-100 rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
+        Users Review
+      </div>
     <div className=" bg-white rounded-lg mt-5 ">
       <div className="p-2 pl-5">
         <UserInfoHeader />
@@ -19,6 +23,7 @@ const UserReview = () => {
         </div>
         <UserConversetion />
       </div>
+    </div>
     </div>
   );
 };
