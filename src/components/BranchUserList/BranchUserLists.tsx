@@ -152,6 +152,12 @@ export const BranchUserLists: React.FC = () => {
       title: "Role",
       dataIndex: "role",
       //editable: true,
+      filters: [
+        { text: "Waiter", value: "Waiter" },
+        { text: "Manager", value: "Manager" },
+        { text: "kitchen Stuff", value: "kitchen Stuff" },
+      ],
+
       render: (_: any, record: DataType, key: number) => {
         const handleRoleChange = (value: string, key: number) => {
           const updatedData = [...dataSource];
@@ -279,7 +285,7 @@ export const BranchUserLists: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg pt-5">
+    <div>
       <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
         Users List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>

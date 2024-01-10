@@ -79,8 +79,6 @@ const LeftMenuBar: React.FC = () => {
       onSelect={handleSelect}
       style={{
         fontSize: 15,
-        paddingRight: 10,
-        paddingLeft: 10,
         border: 0,
       }}
       items={showMenu ? menuItems : rootItems}

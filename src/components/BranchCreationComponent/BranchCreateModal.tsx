@@ -3,6 +3,7 @@ import { Button, Form, Input } from "antd";
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import { FieldType } from "@/types/BreanchCreationTypes";
+import { AppLogo } from "@/assets/Logo";
 
 const BranchCreateModal = () => {
   const onFinish = (values: any) => {
@@ -24,7 +25,7 @@ const BranchCreateModal = () => {
         className="bg-white !p-10"
       >
         <div className="flex justify-center mb-8">
-          <Image src={logo} width={100} height={100} alt="logo" priority />
+          <AppLogo />
         </div>
 
         <h1 className="p-3 text-[16px] font-semibold text-center mb-3">
@@ -63,7 +64,7 @@ const BranchCreateModal = () => {
         <Form.Item<FieldType>
           label="Branch Address:"
           labelCol={{ span: 24 }}
-          name="location"
+          name="branchAddress"
           rules={[
             { required: true, message: "Please input Branch's address!" },
           ]}

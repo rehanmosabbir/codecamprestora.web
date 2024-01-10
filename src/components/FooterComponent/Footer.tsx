@@ -1,7 +1,11 @@
-export const Footer = () => {
+export const AppFooter = () => {
   return (
     <div className="h-10 flex items-center justify-center bg-white">
-      <p>Dashboard Footer</p>
+      <p className="text-center text-[12px]">
+        Restora.App ©{new Date().getFullYear()}
+        <br />
+        Developed by CodeCampers | Astha.IT
+      </p>
     </div>
   );
 };
