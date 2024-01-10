@@ -60,8 +60,8 @@ export function RestaurantSettings() {
     };
 
     return (
-        <div className="">
-            <h3 className="font-bold py-2 text-[23px] text-purple-700">
+        <div className="bg-white px-10 sm:px-20 py-10 rounded-md">
+            <h3 className="font-bold py-2 text-[23px] text-purple-700 pb-8">
                 Restaurant Settings
             </h3>
             <Form
@@ -81,13 +81,13 @@ export function RestaurantSettings() {
                     <Upload
                         beforeUpload={beforeUpload}
                         fileList={undefined}
-                        listType="picture-circle"
+                        listType="picture-card"
                         name="restaurantImageUpload"
                         onChange={handleImageChange}
                         showUploadList={false}
                     >
                         {
-                            imageUrl ? <img src={imageUrl} alt="Image" /> : (
+                            imageUrl ? <img className='rounded-lg p-1' src={imageUrl} alt="Image" /> : (
                                 <button className="text-gray-500" type="button">
                                     {
                                         loading ? <Spin /> :

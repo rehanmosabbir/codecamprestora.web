@@ -60,8 +60,8 @@ export function AccountSettings() {
     };
 
     return (
-        <div className="">
-            <h3 className="font-bold py-2 text-[23px] text-purple-700">
+        <div className="bg-white px-10 sm:px-20 py-10 rounded-md">
+            <h3 className="font-bold py-2 text-[23px] text-purple-700 pb-8">
                 Account Settings
             </h3>
             <Form
@@ -81,13 +81,13 @@ export function AccountSettings() {
                     <Upload
                         beforeUpload={beforeUpload}
                         fileList={undefined}
-                        listType="picture-circle"
+                        listType="picture-card"
                         name="ownerImageUpload"
                         onChange={handleImageChange}
                         showUploadList={false}
                     >
                         {
-                            imageUrl ? <img src={imageUrl} alt="Image" /> : (
+                            imageUrl ? <img className='rounded-lg p-1' src={imageUrl} alt="Image" /> : (
                                 <button className="text-gray-500" type="button">
                                     {
                                         loading ? <Spin /> :
@@ -101,6 +101,7 @@ export function AccountSettings() {
                         }
                     </Upload>
                 </Form.Item>
+                <div className='block gap-5 md:flex'>
                 <Form.Item
                     label="Owner Name"
                     name="ownerName"
@@ -126,6 +127,7 @@ export function AccountSettings() {
                         placeholder="Update Restaurant Name"
                     />
                 </Form.Item>
+                </div>
 
                 <Form.Item
                     label="Restaurant Address"
@@ -141,15 +143,15 @@ export function AccountSettings() {
 
                     />
                 </Form.Item>
+                <div className='block gap-5 md:flex'>
                 <Form.Item
-                    label="Owner Email"
-                    name="email"
+                    label="Email Address / Username"
+                    name="username"
                     rules={[
-                        { required: true, message: 'Please Enter Owner Email' }
+                        { required: true, message: 'Please Enter Email Address / Username' }
                     ]}
                 >
                     <Input
-                        type="email"
                         size={"large"}
                         placeholder="Update Owner Email"
                     />
@@ -167,6 +169,7 @@ export function AccountSettings() {
                         placeholder="Update Owner Password"
                     />
                 </Form.Item>
+                </div>
 
                 <Form.Item>
                     <Button
