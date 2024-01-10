@@ -9,8 +9,8 @@ export const RestoraImage = () => {
           className="rounded-3xl mr-3 -ml-2"
           src={restora}
           alt={"images"}
-          width={50}
-          height={50}
+          width={40}
+          height={40}
           priority
         />
       </div>

@@ -6,7 +6,6 @@ const UserReviewRoute = () => {
         Users Review
       </div>
       <UserReview />
-      <UserReview />
     </div>
   );
 };
