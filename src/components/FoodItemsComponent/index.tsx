@@ -102,7 +102,7 @@ const Row = (props: RowProps) => {
         transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
         transition,
         cursor: 'move',
-        ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+        ...(isDragging ? { position: 'relative' } : {}),
     };
 
     return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
@@ -424,7 +424,7 @@ export function FoodItemsComponent() {
     const id = useId();
 
     return (
-        <div className="bg-gray-100 min-h-[calc(100vh-(130px))] rounded-lg overflow-x-scroll">
+        <div>
             <div className="bg-white font-[500] text-lg p-5 rounded-lg">
                 List of Food Items
                 <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
@@ -445,7 +445,8 @@ export function FoodItemsComponent() {
                                     row: Row
                                 },
                             }}
-                            scroll={{ x: 1000 }}
+                            style={{ position: "relative", zIndex: "0" }}
+                            scroll={{ x: 1150 }}
                             bordered
                             rowClassName='editable-row'
                             dataSource={dataSource}
