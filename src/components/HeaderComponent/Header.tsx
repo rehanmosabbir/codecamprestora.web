@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { useState } from "react";
-import { AppLogo } from "./HeaderIcons/Logo";
+import { AppLogo } from "../../assets/Logo";
 import { Button, Popover } from "antd";
 import { User } from "./User/User";
 import { Account } from "./User/Account";
@@ -21,7 +21,7 @@ export const AppHeader = () => {
   const { setCollapsed } = useHeaderStore();
   return (
     <div className="h-[88px] grid grid-cols-2 sm:px-6 px-3 bg-white w-full">
-      <div className={`flex gap-4 sm:gap-24 justify-start items-center`}>
+      <div className="flex gap-4 sm:gap-24 justify-start items-center">
         <Link href={"/dashboard/"}>
           <AppLogo />
         </Link>
