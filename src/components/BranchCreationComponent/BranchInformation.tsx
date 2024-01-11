@@ -41,7 +41,7 @@ const getLabel = (priceRange: number) => {
 };
 
 export const BranchInformation = () => {
-  const [editInfo, setEditInfo] = useState(true);
+  const [editInfo, setEditInfo] = useState(false);
   const {
     branchName,
     isAvailable,
@@ -56,7 +56,7 @@ export const BranchInformation = () => {
   // const data = mainArrayOfOpeningDetails;
   console.log("BranchInformation page -->>");
 
-  return editInfo ? (
+  return !editInfo ? (
     <div className=" flex justify-center">
       <div className="flex justify-center items-center">
         <div className="w-full m-10">
@@ -65,7 +65,7 @@ export const BranchInformation = () => {
             extra={
               <div>
                 <Button
-                  onClick={() => setEditInfo(false)}
+                  onClick={() => setEditInfo(true)}
                   className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
                   type="primary"
                 >
@@ -139,7 +139,7 @@ export const BranchInformation = () => {
     <div className="flex justify-center items-center">
       <div>
         <div className="w-full m-11">
-          <BranchInfoEdit editInfoOff={setEditInfo} />
+          <BranchInfoEdit formClose={setEditInfo} />
         </div>
       </div>
     </div>

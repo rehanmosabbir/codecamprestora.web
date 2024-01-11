@@ -17,8 +17,13 @@ export const BranchCreation = () => {
       <Button type="primary" onClick={showModal}>
         Create New Branch
       </Button>
-      <Modal width={950} open={isModalOpen} onCancel={handleCancel} footer={null}>
-        <BranchCreateModal></BranchCreateModal>
+      <Modal
+        width={950}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <BranchCreateModal formClose={setIsModalOpen}></BranchCreateModal>
       </Modal>
     </>
   );
