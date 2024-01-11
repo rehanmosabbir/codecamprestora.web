@@ -1,8 +1,14 @@
 export interface FieldType {
   branchName?: string;
   contactNumber?: string;
-  branchAddress?: string;
+  areaDetails?: string;
+  divisionName?: string;
+  districtName?: string;
+  thanaName?: string;
   openingHours?: string;
   BranchID?:number;
-  agreement?: string;
+  isAvailable?: string;
+  priceRangeValue?:string;
+  cuisineTypes?:string[];
+  oprninghours?:string;
 }

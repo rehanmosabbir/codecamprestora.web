@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, FunctionComponent, useEffect, useState } from "react";
 import { BranchInfoEdit } from "./BranchInfoEdit";
-import { Button, Card, Divider, Table } from "antd";
+import { Button, Card, Col, Divider, Radio, Row, Table } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ColumnsType } from "antd/es/table";
 import { DataType } from "./types/BranchTypes";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useBranchDetails } from "./Zustand/Zustand";
+import Title from "antd/es/typography/Title";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -27,35 +28,44 @@ const columns: ColumnsType<DataType> = [
     title: "Is Open",
     dataIndex: "IsOpen",
     align: "center",
-    render: (value ,record:DataType) => (record?.IsOpen==='true')? <CheckOutlined />:<CloseOutlined/>,
+    render: (value, record: DataType) =>
+      record?.IsOpen === "true" ? <CheckOutlined /> : <CloseOutlined />,
   },
 ];
 
+const getLabel = (priceRange: number) => {
+  if (priceRange == 1) return "Low";
+  if (priceRange == 2) return "Medium";
+
+  return "High";
+};
+
 export const BranchInformation = () => {
-  const [editInfo, setEditInfo] = useState(true);
+  const [editInfo, setEditInfo] = useState(false);
   const {
     branchName,
-    contactNumber,
-    branchAddress,
-    // openingHoursDetails,
-    mainArrayOfOpeningDetails
+    isAvailable,
+    priceRangeValue,
+    cuisineTypes,
+    areaDetails,
+    divisionName,
+    districtName,
+    thanaName,
+    mainArrayOfOpeningDetails,
   } = useBranchDetails();
-
   // const data = mainArrayOfOpeningDetails;
+  console.log("BranchInformation page -->>");
 
-  console.log('BranchInformation page -->>');
-  // console.log({mainArrayOfOpeningDetails});
-  
-  return editInfo ? (
-    <div className=" bg-slate-100 rounded-lg flex justify-center min-h-[calc(100vh-130px)]">
+  return !editInfo ? (
+    <div className=" flex justify-center">
       <div className="flex justify-center items-center">
         <div className="w-full m-10">
           <Card
-            title="Branch Information"
+            title={<Title level={4}>Branch Information</Title>}
             extra={
               <div>
                 <Button
-                  onClick={() => setEditInfo(false)}
+                  onClick={() => setEditInfo(true)}
                   className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
                   type="primary"
                 >
@@ -66,17 +76,57 @@ export const BranchInformation = () => {
             style={{ width: 900 }}
           >
             <div className="grid gap-3 col-span-4">
-              <label>Branch Name: {branchName}</label>
-              {/* <p></p> */}
-              <label>Contact Number: {contactNumber}</label>
-              <label>Branch Address: {branchAddress}</label>
+              <Row gutter={40}>
+                <Col span={12}>
+                  <Title level={5}>Branch Name:</Title>
+                  <p className="text-base">{branchName}</p>
+                </Col>
+
+                <Col span={12}>
+                  <Title level={5}>Is Available:</Title>
+                  {isAvailable === 1 ? <p>YES</p> : <p>NO</p>}
+                </Col>
+              </Row>
+
+              <Row gutter={40}>
+                <Col span={12}>
+                  <Title level={5}>Price Range:</Title>
+                  {getLabel(priceRangeValue)}
+                </Col>
+
+                <Col span={12}>
+                  <Title level={5}>Cuisine Types:</Title>
+                  <p className="text-base">
+                    Chicken grill
+                    {cuisineTypes.map((value: string) => ", " + value)}{" "}
+                  </p>
+                </Col>
+              </Row>
+
+              <Row gutter={40}>
+                <Col>
+                  <Title level={5}>Branch Address: </Title>
+                  <p className="text-base">
+                    {areaDetails}{" "}
+                    {thanaName !== "" ? (
+                      ", " +
+                      thanaName +
+                      ", " +
+                      districtName +
+                      ", " +
+                      divisionName
+                    ) : (
+                      <></>
+                    )}
+                  </p>
+                </Col>
+              </Row>
               <div>
-                <Meta title="Opening Hours" />
+                <Meta title="Opening Hours:" />
                 <Divider />
                 <Table
                   columns={columns}
                   dataSource={mainArrayOfOpeningDetails}
-                  // rowClassName={record => record?.IsOpen}
                   pagination={{ hideOnSinglePage: true }}
                 />
               </div>
@@ -86,14 +136,13 @@ export const BranchInformation = () => {
       </div>
     </div>
   ) : (
-    <div className="bg-slate-100 rounded-lg flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <div>
         <div className="w-full m-11">
-          <BranchInfoEdit editInfoOff={setEditInfo} />
+          <BranchInfoEdit formClose={setEditInfo} />
         </div>
       </div>
     </div>
   );
 };
 export default BranchInformation;
-
