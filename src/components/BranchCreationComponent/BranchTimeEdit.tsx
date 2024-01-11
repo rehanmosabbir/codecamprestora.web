@@ -1,5 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
-import { Form, Table, TimePicker } from "antd";
+import { Table, TimePicker } from "antd";
 import { DataType } from "./types/BranchTypes";
 import { useBranchDetails } from "./Zustand/Zustand";
 import dayjs from "dayjs";
@@ -34,7 +33,6 @@ const BranchTimeEdit = () => {
           updateOpeningHoursDetails(i.toString(), "true", "IsOpen");
         else updateOpeningHoursDetails(i.toString(), "false", "IsOpen");
       }
-
       // console.log("rowSelectedArray==>>", openingHoursDetails);
     },
   };
@@ -94,16 +92,12 @@ const BranchTimeEdit = () => {
         />
       ),
     },
-
     Table.SELECTION_COLUMN,
   ];
-
   // console.log("rows select====>>> ", rowSelection);
   return (
-    // <Form form={form} component={false}>
     <div>
       <Table
-        // bordered
         dataSource={mainArrayOfOpeningDetails}
         columns={columns}
         rowSelection={{
@@ -113,7 +107,6 @@ const BranchTimeEdit = () => {
         pagination={{ hideOnSinglePage: true }}
       />
     </div>
-    // </Form>
   );
 };
 

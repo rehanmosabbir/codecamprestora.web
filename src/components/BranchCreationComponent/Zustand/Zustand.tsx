@@ -4,25 +4,58 @@ import { DataType } from "../types/BranchTypes";
 
 type BranchDetailsType = {
   branchName: string;
-  contactNumber: string;
-  branchAddress: string;
+  isAvailable: number;
+  priceRangeValue: number;
+  areaDetails: string;
+  divisionName: string;
+  districtName: string;
+  thanaName: string;
+  cuisineTypes: string[];
   openingHoursDetails: any[];
   rowSelectedArray: string[];
-  mainArrayOfOpeningDetails:any [],
-  updateRowSelectedArray:(rowSelectedArray: string[]) => void;
+  mainArrayOfOpeningDetails: any[];
   updateBranchName: (branchName: string) => void;
-  updateContactNumber: (contactNumber: string) => void;
-  updateBranchAddress: (branchAddress: string) => void;
-  updateOpeningHoursDetails: (key:string, data:string,keyField:string) =>void;
-  setMainArrayOfOpeningDetails:(openingHoursDetails:any[]) => void
+  updateRowSelectedArray: (rowSelectedArray: string[]) => void;
+  updateDivisionName: (divisionName: string) => void;
+  updateDistrictName: (districtName: string) => void;
+  updateThanaName: (ThanaName: string) => void;
+  updateIsAvailable: (isAvailable: number) => void;
+  updatePriceRangeValue: (priceRangeValue: number) => void;
+  updateCuisineTypes: (cuisineTypes: string[]) => void;
+  updateAreaDetails: (areaDetails: string) => void;
+  updateOpeningHoursDetails: (
+    key: string,
+    data: string,
+    keyField: string
+  ) => void;
+  setMainArrayOfOpeningDetails: (openingHoursDetails: any[]) => void;
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
   branchName: "Shymoli",
-  contactNumber: "12345678",
-  branchAddress: "Shymoli, Dhaka",
-
+  isAvailable: 1,
+  priceRangeValue: 2,
+  cuisineTypes: ["Biriyani", "Shorma"],
+  areaDetails: "Shymoli",
+  divisionName: "",
+  districtName: "",
+  thanaName: "",
   rowSelectedArray: ["1", "2", "3", "4", "5", "6", "7"],
+
+  updateBranchName: (branchName: string) =>
+    set((state) => ({ branchName: branchName })),
+  updateIsAvailable: (isAvailable) => set(() => ({ isAvailable: isAvailable })),
+  updatePriceRangeValue: (priceRangeValue: number) =>
+    set(() => ({ priceRangeValue: priceRangeValue })),
+  updateAreaDetails: (areaDetails: string) =>
+    set(() => ({ areaDetails: areaDetails })),
+  updateCuisineTypes: (cuisineTypes: string[]) =>
+    set(() => ({ cuisineTypes: cuisineTypes })),
+  updateDivisionName: (divisionName: string) =>
+    set(() => ({ divisionName: divisionName })),
+  updateDistrictName: (districtName: string) =>
+    set(() => ({ districtName: districtName })),
+  updateThanaName: (thanaName: string) => set(() => ({ thanaName: thanaName })),
   updateRowSelectedArray: (rowSelectedArray) =>
     set(() => ({ rowSelectedArray: rowSelectedArray })),
 
@@ -144,30 +177,20 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     },
   ] as DataType[],
 
-  updateBranchName: (branchName: string) =>
-    set((state) => ({ branchName: branchName })),
-  updateContactNumber: (contactNumber) =>
-    set(() => ({ contactNumber: contactNumber })),
-  updateBranchAddress: (branchAddress) =>
-    set(() => ({ branchAddress: branchAddress })),
-
   setMainArrayOfOpeningDetails: (mainArrayOfOpeningDetails) =>
     set((state) => {
-      // var prev = mainArrayOfOpeningDetails;
-      // var next = [...mainArrayOfOpeningDetails];
-      // console.log(prev === next);
-
-      var s = { mainArrayOfOpeningDetails: mainArrayOfOpeningDetails.map(x=> ({...x})) };
-      // console.log('this one', state);
-
-      return s;
+      var data = {
+        mainArrayOfOpeningDetails: mainArrayOfOpeningDetails.map((x) => ({
+          ...x,
+        })),
+      };
+      return data;
     }),
 
   updateOpeningHoursDetails: (key, data, keyField) =>
     set((state) => ({
       openingHoursDetails: state.openingHoursDetails.map((item, index) => {
-        //  item.key === key ? { ...item, ...data } : item
-        console.log("item", item);
+        // console.log("item", item);
         if (item?.key == key) {
           if (keyField == "OpeningHours") item.OpeningHours = data;
           else if (keyField == "ClosingHours") item.ClosingHours = data;

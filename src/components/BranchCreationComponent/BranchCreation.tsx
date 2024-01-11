@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import BranchCreateModal from "./BranchCreateModal";
 import { Button, Modal } from "antd";
+import { BranchCreateModal } from "./BranchCreateModal";
 export const BranchCreation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -17,7 +17,7 @@ export const BranchCreation = () => {
       <Button type="primary" onClick={showModal}>
         Create New Branch
       </Button>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <Modal width={950} open={isModalOpen} onCancel={handleCancel} footer={null}>
         <BranchCreateModal></BranchCreateModal>
       </Modal>
     </>

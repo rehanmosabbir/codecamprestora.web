@@ -1,58 +1,115 @@
 import { FieldType } from "@/types/BreanchCreationTypes";
-import { Button, Card, Col, Form, Input, Row } from "antd";
-import { Divider } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Select,
+  Divider,
+} from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
 import { useBranchDetails } from "./Zustand/Zustand";
+import Title from "antd/es/typography/Title";
+import { useState } from "react";
+import {
+  districtData,
+  divisionData,
+  thanaData,
+} from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
+import { BranchInformationForm } from "./BranchInformationForm";
 
 export const BranchInfoEdit = ({
   editInfoOff,
 }: {
   editInfoOff: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const {
-    branchName,
-    contactNumber,
-    branchAddress,
-    openingHoursDetails,
-    updateBranchName,
-    updateContactNumber,
-    updateBranchAddress,
-    setMainArrayOfOpeningDetails,
-  } = useBranchDetails();
-  
- /// get Values function
-  
-  console.log('Branch Information Edit page--')
+  // const {
+  //   branchName,
+  //   isAvailable,
+  //   priceRangeValue,
+  //   openingHoursDetails,
+  //   cuisineTypes,
+  //   areaDetails,
+  //   divisionName,
+  //   districtName,
+  //   thanaName,
+  //   updateBranchName,
+  //   updateIsAvailable,
+  //   updateDivisionName,
+  //   updateDistrictName,
+  //   updateThanaName,
+  //   updatePriceRangeValue,
+  //   updateCuisineTypes,
+  //   updateAreaDetails,
+  //   setMainArrayOfOpeningDetails,
+  // } = useBranchDetails();
 
-  const onFinish = (values: any) => {
-    console.log("Success:------", values);
+  // const [district, setDistrict] = useState([] as any);
+  // const [thana, setThana] = useState([] as any);
 
-    if(values.branchName!==undefined)
-    updateBranchName(values.branchName);
-    if(values.contactNumber!==undefined)
-    updateContactNumber(values.contactNumber);
-    if(values.branchAddress!==undefined)
-    updateBranchAddress(values.branchAddress);
-  
-    // console.log({openingHoursDetails});
-    setMainArrayOfOpeningDetails(openingHoursDetails);
-    editInfoOff(true);
+  // const handleDivisionChange = (value: string) => {
+  //   // console.log("thanaaaaaa----------", value);
+  //   setDistrict(districtData[value]);
+  // };
 
-  };
+  // const handleDistrictChange = (value: string) => {
+  //   console.log("thanaaaaaa----------", value);
+  //   setThana(thanaData[value]);
+  // };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
+  // const handelPriceRange = (e: RadioChangeEvent) => {
+  //   console.log("radio checked", e.target.value);
+  // };
+
+  // const handelResturentisAvailable = (e: RadioChangeEvent) => {
+  //   console.log("radio checked", e.target.value);
+  // };
+
+  // const handleCusineType = (value: string) => {
+  //   console.log(`selected ${value}`);
+  // };
+
+  // console.log("Branch Information Edit page--");
+
+  // const onFinish = (values: any) => {
+  //   console.log("Success:------", values);
+
+  //   if (values.branchName !== undefined) updateBranchName(values.branchName);
+  //   if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
+  //   if (values.priceRangeValue !== undefined)
+  //     updatePriceRangeValue(values.priceRangeValue);
+  //   if (values.cuisineTypes !== undefined)
+  //     updateCuisineTypes(values.cuisineTypes);
+  //   if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
+  //   if (values.divisionName !== undefined)
+  //     updateDivisionName(values.divisionName);
+  //   if (values.districtName !== undefined)
+  //     updateDistrictName(values.districtName);
+  //   if (values.thanaName !== undefined) updateThanaName(values.thanaName);
+
+  //   setMainArrayOfOpeningDetails(openingHoursDetails);
+  //   editInfoOff(true);
+  // };
+
+  // const onFinishFailed = (errorInfo: any) => {
+  //   console.log("Failed:", errorInfo);
+  // };
 
   return (
     <div>
       <Card
-        title="Branch Information"
+        title={<Title level={4}>Branch Information</Title>}
         className="grid col-span-2 justify-center"
         style={{ width: 900 }}
       >
-        <Form
+        <BranchInformationForm ></BranchInformationForm>
+
+        {/* <Form
           name="basic"
           style={{ width: 850 }}
           onFinish={onFinish}
@@ -60,10 +117,10 @@ export const BranchInfoEdit = ({
           autoComplete="off"
           className="bg-white rounded-lg"
         >
-          <Row gutter={16}>
+          <Row gutter={25}>
             <Col span={12}>
               <Form.Item<FieldType>
-                label="Branch Name:"
+                label={<Title level={5}>Branch Name:</Title>}
                 name="branchName"
                 labelCol={{ span: 24 }}
                 // rules={[
@@ -74,74 +131,175 @@ export const BranchInfoEdit = ({
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                   placeholder="Enter Branch Name"
                   size="large"
-                  defaultValue = {branchName}
+                  defaultValue={branchName}
                 />
               </Form.Item>
             </Col>
 
             <Col span={12}>
               <Form.Item<FieldType>
-                label="Contact Number:"
+                label={<Title level={5}>Is Available:</Title>}
                 labelCol={{ span: 24 }}
-                name="contactNumber"
+                name="isAvailable"
+                // rules={[
+                //   { required: true, message: "Please input Contact Number!" },
+                // ]}
+              >
+                <Radio.Group
+                  onChange={handelResturentisAvailable}
+                  defaultValue={isAvailable}
+                >
+                  <Radio value={1}>YES</Radio>
+                  <Radio value={2}>NO</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={25}>
+            <Col span={12}>
+              <Form.Item<FieldType>
+                label={<Title level={5}>Price Range:</Title>}
+                name="priceRangeValue"
+                labelCol={{ span: 24 }}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
+              >
+                <Radio.Group
+                  onChange={handelPriceRange}
+                  defaultValue={priceRangeValue}
+                >
+                  <Radio value={1}>Low</Radio>
+                  <Radio value={2}>Medium</Radio>
+                  <Radio value={3}>High</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item<FieldType>
+                label={<Title level={5}>Cuisine Types:</Title>}
+                labelCol={{ span: 24 }}
+                name="cuisineTypes"
+                // rules={[
+                //   { required: true, message: "Please input Contact Number!" },
+                // ]}
+              >
+                <Select
+                  size="large"
+                  placeholder="Enter cuisine types"
+                  mode="tags"
+                  style={{ width: "100%" }}
+                  onChange={(e: string[]) => {
+                    handleCusineType;
+                  }}
+                  tokenSeparators={[","]}
+                  defaultValue={cuisineTypes}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Meta title="Branch Address:" />
+          <Divider />
+          <Row gutter={25}>
+            <Col span={12}>
+              <Form.Item<FieldType>
+                label="Area Details:"
+                labelCol={{ span: 24 }}
+                name="areaDetails"
                 // rules={[
                 //   { required: true, message: "Please input Contact Number!" },
                 // ]}
               >
                 <Input
                   className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                  placeholder="Enter Contact Number"
+                  placeholder="Enter Street Number"
                   size="large"
                   type="tel"
-                  defaultValue = {contactNumber}
+                  defaultValue={areaDetails}
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={12}>
               <Form.Item<FieldType>
-                label="Branch Address:"
-                name="branchAddress"
+                label="Division"
+                name="divisionName"
                 labelCol={{ span: 24 }}
                 // rules={[
                 //   { required: true, message: "Please input your Branch Name!" },
                 // ]}
               >
-                <Input
-                  className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                  placeholder="Enter Branch Address"
+                <Select
                   size="large"
-                  defaultValue = {branchAddress}
-                />
+                  placeholder="Select a Division"
+                  onChange={handleDivisionChange}
+                  options={divisionData.map((division: string) => ({
+                    label: division,
+                    value: division,
+                  }))}
+                  defaultValue={divisionName}
+                  allowClear
+                ></Select>
               </Form.Item>
             </Col>
 
-            {/* <Col span={12}>
+            <Col span={12}>
               <Form.Item<FieldType>
-                label="Branch ID"
+                label="District"
                 labelCol={{ span: 24 }}
-                name="BranchID"
-                rules={[
-                  { required: true, message: "Please input Branch ID!" },
-                ]}
+                name="districtName"
+                // rules={[
+                //   { required: true, message: "Please input Contact Number!" },
+                // ]}
               >
-                <Input
-                  className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                  placeholder="Enter Branch ID"
+                <Select
+                  placeholder="Select a District"
+                  onChange={handleDistrictChange}
+                  options={district.map((data: any) => ({
+                    label: data,
+                    value: data,
+                  }))}
+                  // onChange={onGenderChange}
+                  defaultValue={districtName}
                   size="large"
-                  type="number"
-                />
+                  allowClear
+                >
+                   <p >No Options</p> 
+                </Select>
               </Form.Item>
-            </Col> */}
-            
+            </Col>
+
+            <Col span={12}>
+              <Form.Item<FieldType>
+                label="Thana"
+                name="thanaName"
+                labelCol={{ span: 24 }}
+                // rules={[
+                //   { required: true, message: "Please input your Branch Name!" },
+                // ]}
+              >
+                <Select
+                  placeholder="Select a Thana"
+                  size="large"
+                  options={thana?.map((data: string) => ({
+                    label: data,
+                    value: data,
+                  }))}
+                  defaultValue={thanaName}
+                  allowClear
+                ></Select>
+              </Form.Item>
+            </Col>
           </Row>
+
           <Row gutter={16}>
             <Col span={24}>
               <div>
-                <Meta title="Opening Hours" />
+                <Meta title="Opening Hours:" />
                 <Divider />
-                <BranchTimeEdit  />
+                <BranchTimeEdit />
               </div>
             </Col>
           </Row>
@@ -165,7 +323,7 @@ export const BranchInfoEdit = ({
               Cancel
             </Button>
           </div>
-        </Form>
+        </Form> */}
       </Card>
     </div>
   );
