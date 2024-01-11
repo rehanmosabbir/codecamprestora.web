@@ -9,12 +9,8 @@ export const BranchInfoEdit = ({
 }) => {
   console.log({ formClose });
   return (
-    <div>
-      <Card
-        title={<Title level={4}>Branch Information</Title>}
-        className="grid col-span-2 justify-center"
-        style={{ width: 900 }}
-      >
+    <div className="w-full">
+      <Card title={<Title level={4}>Branch Information</Title>}>
         <BranchInformationForm formClose={formClose}></BranchInformationForm>
       </Card>
     </div>

@@ -98,6 +98,7 @@ const BranchTimeEdit = () => {
   return (
     <div>
       <Table
+        scroll={{ x: 400 }}
         dataSource={mainArrayOfOpeningDetails}
         columns={columns}
         rowSelection={{
