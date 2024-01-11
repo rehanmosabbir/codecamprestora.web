@@ -72,11 +72,12 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         )}
         <Layout>
           <Content
+            className="bg-[#EEF2F6]"
             style={{
-              margin: `${isShow ? "20px" : ""}`,
-              paddingLeft: `${isShow ? `${isDesktop ? "0" : "10px"}` : ""}`,
+              padding: `${isShow ? "20px" : ""}`,
+              paddingLeft: `${isShow ? `${isDesktop ? "20px" : "30px"}` : ""}`,
               borderRadius: borderRadiusLG,
-              minHeight: `calc(100vh - 170px)`,
+              minHeight: `calc(100vh - 130px)`,
             }}
           >
             {children}

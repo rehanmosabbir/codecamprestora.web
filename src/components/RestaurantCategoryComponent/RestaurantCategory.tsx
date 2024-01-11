@@ -11,7 +11,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import React, { useState } from "react";
-import { Button, Form, Popconfirm, Table, Typography } from "antd";
+import { Button, Form, Popconfirm, Table, Typography, message } from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
@@ -36,11 +36,23 @@ const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   reader.readAsDataURL(img);
 };
 
+const beforeUpload = (file: RcFile) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+  const isLT5M = file.size / 1024 / 1024 < 5;
+  if (!isLT5M) {
+    message.error("Image must less than 5MB!");
+  }
+  return isJpgOrPng && isLT5M;
+};
+
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataSourceItem>([
     {
       key: "1",
-      name: "James",
+      name: "Fast food",
       image: {
         name: "",
         type: "",
@@ -50,7 +62,7 @@ export const RestaurantCategories: React.FC = () => {
     },
     {
       key: "2",
-      name: "John",
+      name: "Vegetable",
       image: {
         name: "",
         type: "",
@@ -60,7 +72,7 @@ export const RestaurantCategories: React.FC = () => {
     },
     {
       key: "3",
-      name: "Clark",
+      name: "Drinks",
       image: {
         name: "",
         type: "",
@@ -71,6 +83,7 @@ export const RestaurantCategories: React.FC = () => {
   ]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
 
   const isEditing = (record: DataType) => record.key === editingKey;
@@ -112,6 +125,7 @@ export const RestaurantCategories: React.FC = () => {
     };
     return (
       <Upload
+        beforeUpload={beforeUpload}
         name="avatar"
         className="avatar-uploader"
         listType="picture-card"
@@ -191,6 +205,8 @@ export const RestaurantCategories: React.FC = () => {
   const columns = [
     {
       key: "sort",
+      width: 80,
+      align: "center" as const,
     },
     {
       title: "Category Name",
@@ -208,6 +224,7 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Operation",
       dataIndex: "operation",
+      width: 200,
       render: (_: DataType, record: DataType) => {
         const editable = isEditing(record);
         return editable ? (

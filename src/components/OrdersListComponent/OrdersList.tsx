@@ -132,6 +132,7 @@ export const OrdersList: React.FC = () => {
     {
       title: "Comment",
       dataIndex: "comment",
+      width: 200,
     },
     {
       title: "Total Price",
@@ -187,7 +188,7 @@ export const OrdersList: React.FC = () => {
       </div>
       <Form form={form} component={false}>
         <Table
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1300 }}
           style={{ position: "relative", zIndex: 0 }}
           bordered
           rowKey="key"
