@@ -2,9 +2,8 @@ import type { AppProps } from "next/app";
 import { ConfigProvider } from "antd";
 import theme from "../../theme/themeConfig";
 import { SessionProvider } from "next-auth/react";
-
-import "@/styles/globals.css";
 import RootLayout from "@/components/RootLayout";
+import "@/styles/globals.css";
 
 export default function App({
   Component,

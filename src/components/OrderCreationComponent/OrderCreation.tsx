@@ -1,7 +1,39 @@
 import React, { useState } from "react";
-import { Button, Modal, Table } from "antd";
+import { Button, Modal, Select, Space, Table } from "antd";
 import { DataType } from "./types/OrderCreationTypes";
 import OrderCreationModal from "./OrderCreationModal";
+
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`);
+};
+
+const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
+  <Space wrap>
+    <Select
+      defaultValue="placed"
+      style={{ width: 120, position: "relative", zIndex: 1, ...style }}
+      onChange={handleChange}
+      options={[
+        {
+          value: "placed",
+          label: "Placed",
+        },
+        {
+          value: "inProgress",
+          label: "In Progress",
+        },
+        {
+          value: "served",
+          label: "Served",
+        },
+        {
+          value: "canceled",
+          label: "Canceled",
+        },
+      ]}
+    />
+  </Space>
+);
 
 export const OrderCreation: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,9 +138,22 @@ export const OrderCreation: React.FC = () => {
         </div>
       ),
     },
+    {
+      title: "Order Status",
+      dataIndex: "status",
+    },
   ];
 
   const mergedColumns = columns.map((col) => {
+    if (col.dataIndex === "status") {
+      return {
+        ...col,
+        render: (_: DataType, record: DataType) => ({
+          children: <SelectOption />,
+        }),
+      };
+    }
+
     return {
       ...col,
       onCell: (record: DataType) => ({
@@ -121,7 +166,7 @@ export const OrderCreation: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-100 rounded-lg">
+    <div>
       <div className="bg-white font-[500] text-lg p-5 sm:p-5 rounded-lg">
         Create Orders
         <Button onClick={showModal} type="primary" style={{ float: "right" }}>
