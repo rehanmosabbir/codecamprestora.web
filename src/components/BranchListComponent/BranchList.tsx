@@ -143,7 +143,6 @@ export const BranchList = () => {
 
       <Table
         bordered
-        className="mx-5"
         columns={columns}
         dataSource={data}
         style={{ borderRadius: 0 }}

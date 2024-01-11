@@ -286,7 +286,7 @@ export const BranchUserLists: React.FC = () => {
 
   return (
     <div>
-      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Users List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add User
@@ -304,7 +304,6 @@ export const BranchUserLists: React.FC = () => {
           <Form form={form} component={false}>
             <Table
               scroll={{ x: 1200 }}
-              className="mx-5"
               components={{
                 body: {
                   row: Row,

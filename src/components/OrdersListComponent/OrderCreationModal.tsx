@@ -6,7 +6,7 @@ import {
   DataType,
   FieldType,
   OrderCreationModalProps,
-} from "./types/OrderCreationTypes";
+} from "./Types/OrdersListTypes";
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
 import { IoMdCheckmark } from "react-icons/io";
 import { AppLogo } from "@/assets/Logo";

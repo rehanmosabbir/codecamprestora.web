@@ -95,7 +95,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           <AppFooter />
         </Footer>
       )}
-      <style jsx>{``}</style>
     </Layout>
   );
 };
