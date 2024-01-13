@@ -6,11 +6,12 @@ import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } 
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import Upload, { RcFile, UploadChangeParam } from 'antd/es/upload';
-import { PlusOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CheckCircleTwoTone, CheckOutlined, CloseCircleOutlined, CloseCircleTwoTone, CloseOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { IoMdSave } from 'react-icons/io';
 import { TbPencilCancel } from 'react-icons/tb';
 import { RiEdit2Fill } from 'react-icons/ri';
 import { MdDelete } from 'react-icons/md';
+import { ColumnsType } from 'antd/es/table';
 
 interface ImageObject {
     name: string;
@@ -26,7 +27,7 @@ interface DataType {
     ingredients: string;
     price: number;
     category: string[];
-    isAvailable: boolean;
+    available: boolean;
 }
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -47,7 +48,7 @@ interface Item {
     ingredients: string;
     price: number;
     category: string[];
-    isAvailable: boolean;
+    available: boolean;
 }
 
 interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {
@@ -68,7 +69,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
     children,
     ...restProps
 }) => {
-    const inputNode = inputType === 'number' ? <InputNumber placeholder={`${title}`} /> : <Input placeholder={`${title}`} />;
+    const inputNode = inputType === 'number' ? <InputNumber min={0} size="large" placeholder={`${title}`} /> : <Input size="large" placeholder={`${title}`} />;
 
     return (
         <td {...restProps}>
@@ -92,8 +93,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
     );
 };
 
-const Row = (props: RowProps) => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+const Row = ({ children, ...props }: RowProps) => {
+    const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
         id: props['data-row-key'],
     });
 
@@ -101,11 +102,27 @@ const Row = (props: RowProps) => {
         ...props.style,
         transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 }),
         transition,
-        cursor: 'move',
         ...(isDragging ? { position: 'relative' } : {}),
     };
 
-    return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
+    return (
+        <tr {...props} ref={setNodeRef} style={style} {...attributes}>
+            {React.Children.map(children, (child) => {
+                if ((child as React.ReactElement).key === 'sort') {
+                    return React.cloneElement(child as React.ReactElement, {
+                        children: (
+                            <MenuOutlined
+                                ref={setActivatorNodeRef}
+                                style={{ touchAction: 'none', cursor: 'move' }}
+                                {...listeners}
+                            />
+                        ),
+                    });
+                }
+                return child;
+            })}
+        </tr>
+    );
 };
 
 const getBase64 = (img: RcFile, callback: (base64Url: string) => void) => {
@@ -166,9 +183,8 @@ export function FoodItemsComponent() {
             ingredients: '',
             price: 0,
             category: ['Starters', 'Main Course', 'Side Dishes', 'Desert'],
-            isAvailable: false
+            available: false
         };
-        // edit(newData);
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
     };
@@ -176,7 +192,7 @@ export function FoodItemsComponent() {
     const handleCheckboxChange = (key: React.Key) => {
         setDataSource((prevDataSource) => {
             const newData = prevDataSource.map((item) =>
-                item.key === key ? { ...item, isAvailable: !item.isAvailable } : item
+                item.key === key ? { ...item, available: !item.available } : item
             );
             return newData;
         });
@@ -219,6 +235,7 @@ export function FoodItemsComponent() {
                     { value: 'desert', label: 'Desert' }
                 ]}
                 onChange={handleSelectChange}
+                size="large"
             />
         );
     };
@@ -234,11 +251,10 @@ export function FoodItemsComponent() {
         const handleImageChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
             if (info.file.status === 'done') {
                 getBase64(info.file.originFileObj as RcFile, (base64Url) => {
-                    // Update only the image URL for the specific record
                     const { name, type, size } = info.file.originFileObj as RcFile;
                     setDataSource((prevDataSource) => {
                         const newData = prevDataSource.map((item) =>
-                            item.key === record.key ? { ...item, image: {...item.image, name, type, size, base64Url} } : item
+                            item.key === record.key ? { ...item, image: { ...item.image, name, type, size, base64Url } } : item
                         );
                         return newData;
                     });
@@ -262,7 +278,11 @@ export function FoodItemsComponent() {
         );
     };
 
-    const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+    const defaultColumns: any = [
+        {
+            key: 'sort',
+            align: "center" as const,
+        },
         {
             title: 'Serial',
             dataIndex: 'key',
@@ -272,10 +292,8 @@ export function FoodItemsComponent() {
             title: 'Image',
             dataIndex: 'image',
             editable: false,
-            render: (value, record, rowIndex) => {
+            render: (value: any, record: any, rowIndex: any) => {
                 const isDisabled = isEditing(record as Item);
-                // console.log("value: ", value);
-                // console.log("record: ", record);
                 return <UploadButtonInput isDisabled={isDisabled} value={value} record={record} />
             }
         },
@@ -303,28 +321,33 @@ export function FoodItemsComponent() {
             title: 'Category',
             dataIndex: 'category',
             editable: false,
-            render: (value, record, rowIndex) => {
+            render: (value: any, record: any, rowIndex: any) => {
                 const isDisabled = isEditing(record as Item);
                 return <SelectInput isDisabled={isDisabled} record={record as Item} />
             }
         },
         {
-            title: 'Is Available',
-            dataIndex: 'isAvailable',
+            title: 'Available',
+            dataIndex: 'available',
             editable: false,
-            render: (value, record, rowIndex) => {
+            render: (value: any, record: any, rowIndex: any) => {
                 const editable = isEditing(record as Item);
-                return editable ? <Checkbox checked={value} onChange={() => handleCheckboxChange(record.key)} /> : value ? 'Yes' : 'No';
+                return editable ?
+                    <Checkbox
+                        checked={value}
+                        onChange={() => handleCheckboxChange(record.key)}
+                    /> : value ?
+                        <CheckOutlined style={{ fontSize: "120%" }} /> : <CloseOutlined style={{ fontSize: "120%" }} />
             }
         },
         {
             title: 'Operation',
             dataIndex: 'operation',
-            width: '15%',
+            width: '175px',
             render: (_: any, record: any /*{ key: React.Key }*/) => {
                 const editable = isEditing(record);
                 return editable ? (
-                    <span>
+                    <div className="flex justify-center items-center ">
                         <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
                             <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
                                 <div className="flex items-center">
@@ -341,36 +364,32 @@ export function FoodItemsComponent() {
                                 </div>
                             </button>
                         </Popconfirm>
-                    </span>
+                    </div>
                 ) : (
-                    <div className="space-x-2">
-                        <span>
-                            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                                <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
-                                    <div className="flex items-center">
-                                        <RiEdit2Fill />
-                                        Edit
-                                    </div>
-                                </button>
-                            </Typography.Link>
-                        </span>
-                        <span>
-                            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                                <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
-                                    <div className="flex items-center">
-                                        <MdDelete />
-                                        Delete
-                                    </div>
-                                </button>
-                            </Popconfirm>
-                        </span>
+                    <div className="flex justify-center items-center gap-2">
+                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                            <button className="bg-sky-600 hover:bg-sky-700 active:bg-sky-600 px-2 py-1 rounded text-white transition">
+                                <div className="flex items-center">
+                                    <RiEdit2Fill />
+                                    Edit
+                                </div>
+                            </button>
+                        </Typography.Link>
+                        <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                            <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+                                <div className="flex items-center">
+                                    <MdDelete />
+                                    Delete
+                                </div>
+                            </button>
+                        </Popconfirm>
                     </div>
                 );
             }
         },
     ];
 
-    const columns = defaultColumns.map((col) => {
+    const columns = defaultColumns.map((col: any) => {
         if (!col.editable) {
             return col;
         }
@@ -386,7 +405,7 @@ export function FoodItemsComponent() {
         };
     });
 
-    const mergedColumns = columns.map((col) => {
+    const mergedColumns = columns.map((col: any) => {
         if (!col.editable) {
             return col;
         }
@@ -412,15 +431,6 @@ export function FoodItemsComponent() {
         }
     };
 
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
-                distance: 1,
-            },
-        }),
-    );
-
     const id = useId();
 
     return (
@@ -431,33 +441,33 @@ export function FoodItemsComponent() {
                     Add Item
                 </Button>
             </div>
-            <DndContext id={id} sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
-                <Form form={form} component={false}>
+            <Form form={form} component={false}>
+                <DndContext id={id} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
                     <SortableContext
-                        // rowKey array
                         items={dataSource.map((i) => i.key) as any}
                         strategy={verticalListSortingStrategy}
                     >
                         <Table
+                            bordered
+                            columns={mergedColumns as ColumnTypes}
                             components={{
                                 body: {
                                     cell: EditableCell,
                                     row: Row
                                 },
                             }}
-                            style={{ position: "relative", zIndex: "0" }}
-                            scroll={{ x: 1150 }}
-                            bordered
-                            rowClassName='editable-row'
                             dataSource={dataSource}
-                            columns={mergedColumns as ColumnTypes}
                             pagination={{
                                 onChange: cancel,
                             }}
+                            rowClassName='editable-row'
+                            rowKey="key"
+                            scroll={{ x: 1150 }}
+                            style={{ position: "relative", zIndex: "0" }}
                         />
                     </SortableContext>
-                </Form>
-            </DndContext>
+                </DndContext>
+            </Form>
         </div >
     );
 };
