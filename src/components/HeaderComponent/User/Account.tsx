@@ -5,7 +5,7 @@ export const Account = () => {
   return (
     <div>
       <Link
-        href={"/dashboard/account-settings/"}
+        href={"/account-settings/"}
         type="text"
         className="flex items-center w-56 py-3 mt-2 hover:bg-gray-100 active:bg-gray-200 transition rounded-lg text-gray-600 hover:text-purple-800"
       >

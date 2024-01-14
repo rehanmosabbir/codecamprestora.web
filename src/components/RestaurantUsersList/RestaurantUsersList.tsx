@@ -100,6 +100,7 @@ const RestaurantUsersList = () => {
       </div>
       <Table
         bordered
+        scroll={{ x: 800 }}
         columns={columns}
         dataSource={data}
         onChange={handleChange}

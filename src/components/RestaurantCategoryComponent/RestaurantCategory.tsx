@@ -1,9 +1,4 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { DndContext } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
@@ -127,7 +122,7 @@ export const RestaurantCategories: React.FC = () => {
       <Upload
         beforeUpload={beforeUpload}
         name="avatar"
-        className="avatar-uploader"
+        className="avatar-uploader overflow-hidden"
         listType="picture-card"
         showUploadList={false}
         onChange={handleImageChange}
@@ -135,6 +130,8 @@ export const RestaurantCategories: React.FC = () => {
       >
         {record?.image?.base64 ? (
           <img
+            height={200}
+            width={200}
             className="p-1 rounded-lg"
             src={record?.image?.base64}
             alt="Restaurant Image"
@@ -158,7 +155,6 @@ export const RestaurantCategories: React.FC = () => {
   const save = async (key: React.Key) => {
     try {
       const row = (await form.validateFields()) as DataType;
-
       const newData = [...dataSource];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
@@ -167,14 +163,17 @@ export const RestaurantCategories: React.FC = () => {
           ...item,
           ...row,
         });
+        const dataToLog = newData.map(({ key, ...rest }) => rest);
+        console.log(dataToLog);
         setDataSource(newData);
         setEditingKey("");
       } else {
         newData.push(row);
+        const dataToLog = newData.map(({ key, ...rest }) => rest);
+        console.log(dataToLog);
         setDataSource(newData);
         setEditingKey("");
       }
-      console.log(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -205,7 +204,7 @@ export const RestaurantCategories: React.FC = () => {
   const columns = [
     {
       key: "sort",
-      width: 80,
+      width: 50,
       align: "center" as const,
     },
     {
@@ -224,7 +223,7 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Operation",
       dataIndex: "operation",
-      width: 200,
+      width: 175,
       render: (_: DataType, record: DataType) => {
         const editable = isEditing(record);
         return editable ? (
@@ -302,7 +301,14 @@ export const RestaurantCategories: React.FC = () => {
       setDataSource((previous) => {
         const activeIndex = previous.findIndex((i) => i.key === active.id);
         const overIndex = previous.findIndex((i) => i.key === over?.id);
-        return arrayMove(previous, activeIndex, overIndex);
+        const updatedDataSource = arrayMove(previous, activeIndex, overIndex);
+        const updatedDisplayOrder = updatedDataSource.map((item, index) => {
+          return {
+            ...item,
+            displayOrder: index + 1,
+          };
+        });
+        return updatedDisplayOrder;
       });
     }
   };
@@ -310,7 +316,7 @@ export const RestaurantCategories: React.FC = () => {
   return (
     <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
-        Restaurant Categories
+        <span className="sm:inline-block hidden">Restaurant</span> Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
         </Button>
@@ -323,7 +329,7 @@ export const RestaurantCategories: React.FC = () => {
           <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
               style={{ position: "relative", zIndex: "0" }}
-              scroll={{ x: 800 }}
+              scroll={{ x: 600 }}
               components={{
                 body: {
                   row: Row,
