@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TbListDetails } from "react-icons/tb";
 import { MdOutlineRestaurantMenu, MdOutlineReviews } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
@@ -41,15 +41,34 @@ const rootItems: MenuItem[] = [
   getItem("Categories", "categories", <BiCategory size="1.1rem" />),
 ];
 
+const menuPaths = [
+  { path: "/branches", key: "branches" },
+  { path: "/categories", key: "categories" },
+  { path: "/branches/[branchid]/info", key: "info" },
+  { path: "/branches/[branchid]/users", key: "users" },
+  { path: "/branches/[branchid]/menu", key: "menu" },
+  { path: "/branches/[branchid]/orders", key: "orders" },
+  { path: "/branches/[branchid]/pictures", key: "pictures" },
+  { path: "/branches/[branchid]/reviews", key: "reviews" },
+];
+
 const rootSubmenuKeys = ["branches", "categories"];
 
 const LeftMenuBar: React.FC = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    menuPaths.forEach((el) => {
+      if (el.path === router.asPath) setOpenKeys([el.key]);
+    });
+    console.log(router.asPath);
+  }, [router.asPath]);
+
   const [openKeys, setOpenKeys] = useState(["branches"]);
 
-  const router = useRouter();
   const query = router.query.branchid;
 
-  const showMenu = router.pathname.includes("/branches/[branchid]");
+  const showMenu = router.pathname.startsWith("/branches/[branchid]");
 
   const onOpenChange: MenuProps["onOpenChange"] = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -77,6 +96,8 @@ const LeftMenuBar: React.FC = () => {
       openKeys={openKeys}
       onOpenChange={onOpenChange}
       onSelect={handleSelect}
+      selectedKeys={openKeys}
+      defaultSelectedKeys={["branches"]}
       style={{
         fontSize: 15,
         border: 0,
