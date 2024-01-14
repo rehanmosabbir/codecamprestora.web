@@ -125,9 +125,9 @@ export const BranchList = () => {
             title="Action"
             trigger="click"
           >
-            <a>
+            <Button type="primary" className="text-white">
               <GoGear />
-            </a>
+            </Button>
           </Popover>
         </Space>
       ),
@@ -137,13 +137,14 @@ export const BranchList = () => {
   return (
     <div>
       <div className="flex justify-between bg-white p-5 rounded-lg">
-        <h2 className="  font-[500] text-lg ">Restaurant Branch List</h2>
+        <h2 className="  font-[500] text-lg ">
+          <span className="sm:inline-block hidden">Restaurant</span> Branch List
+        </h2>
         <BranchCreation />
       </div>
-
       <Table
         bordered
-        className="mx-5"
+        scroll={{ x: 400 }}
         columns={columns}
         dataSource={data}
         style={{ borderRadius: 0 }}

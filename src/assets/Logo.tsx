@@ -13,13 +13,7 @@ export const AppLogo = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <title>Restora.tech</title>
-        <g
-          id="Page-1"
-          stroke="none"
-          stroke-width="1"
-          fill="none"
-          fill-rule="evenodd"
-        >
+        <g id="Page-1" stroke="none" fill="none" fill-rule="evenodd">
           <g
             id="login"
             transform="translate(-132.000000, -70.000000)"

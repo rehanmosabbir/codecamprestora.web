@@ -7,7 +7,7 @@ import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
 import { TbPencilCancel } from "react-icons/tb";
-import { Row } from "./BranchRow";
+import Row from "./BranchRow";
 import {
   Button,
   Form,
@@ -139,9 +139,9 @@ export const BranchUserLists: React.FC = () => {
   //: ColumnsType<DataType>
   const columns = [
     {
-      title: "Serial",
-      dataIndex: "key",
-      editable: false,
+      key: "sort",
+      width: 50,
+      align: "center" as const,
     },
     {
       title: "User Name",
@@ -196,6 +196,7 @@ export const BranchUserLists: React.FC = () => {
     {
       title: "Operation",
       dataIndex: "operation",
+      width: 175,
       render: (_: any, record: DataType) => {
         const editable = isEditing(record);
         return editable ? (
@@ -286,7 +287,7 @@ export const BranchUserLists: React.FC = () => {
 
   return (
     <div>
-      <div className="bg-white mx-5 font-[500] text-lg p-5 rounded-lg">
+      <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Users List
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add User
@@ -303,8 +304,7 @@ export const BranchUserLists: React.FC = () => {
         >
           <Form form={form} component={false}>
             <Table
-              scroll={{ x: 1200 }}
-              className="mx-5"
+              scroll={{ x: 900 }}
               components={{
                 body: {
                   row: Row,

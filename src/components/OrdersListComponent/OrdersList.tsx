@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Form, Select, Space, Table } from "antd";
+import { Button, Form, Modal, Select, Space, Table } from "antd";
 import { DataType } from "./Types/OrdersListTypes";
+import OrderCreationModal from "./OrderCreationModal";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -35,6 +36,7 @@ const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
 );
 
 export const OrdersList: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
@@ -93,6 +95,14 @@ export const OrdersList: React.FC = () => {
     },
   ]);
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const columns = [
     {
       title: "Food Items",
@@ -116,26 +126,32 @@ export const OrdersList: React.FC = () => {
     {
       title: "Phone Number",
       dataIndex: "phone",
+      width: 130,
     },
     {
-      title: "Number of Seats",
+      title: "Seats",
       dataIndex: "seats",
+      width: 64,
     },
     {
       title: "Date",
       dataIndex: "date",
+      width: 110,
     },
     {
       title: "Time",
       dataIndex: "time",
+      width: 90,
     },
     {
       title: "Comment",
       dataIndex: "comment",
+      width: 200,
     },
     {
       title: "Total Price",
       dataIndex: "price",
+      width: 180,
       render: (_: DataType, record: DataType) => (
         <div>
           <p>
@@ -156,6 +172,7 @@ export const OrdersList: React.FC = () => {
     {
       title: "Order Status",
       dataIndex: "status",
+      width: 160,
     },
   ];
 
@@ -184,10 +201,21 @@ export const OrdersList: React.FC = () => {
     <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
         Orders List
+        <Button onClick={showModal} type="primary" style={{ float: "right" }}>
+          Create Order
+        </Button>
+        <Modal
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+          destroyOnClose
+        >
+          {isModalOpen && <OrderCreationModal onCancel={handleCancel} />}{" "}
+        </Modal>
       </div>
       <Form form={form} component={false}>
         <Table
-          scroll={{ x: 1200 }}
+          scroll={{ x: 1300 }}
           style={{ position: "relative", zIndex: 0 }}
           bordered
           rowKey="key"

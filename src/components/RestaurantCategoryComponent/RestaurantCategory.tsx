@@ -1,9 +1,4 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { DndContext } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
@@ -11,7 +6,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import React, { useState } from "react";
-import { Button, Form, Popconfirm, Table, Typography } from "antd";
+import { Button, Form, Popconfirm, Table, Typography, message } from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
@@ -36,11 +31,23 @@ const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   reader.readAsDataURL(img);
 };
 
+const beforeUpload = (file: RcFile) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+  const isLT5M = file.size / 1024 / 1024 < 5;
+  if (!isLT5M) {
+    message.error("Image must less than 5MB!");
+  }
+  return isJpgOrPng && isLT5M;
+};
+
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataSourceItem>([
     {
       key: "1",
-      name: "James",
+      name: "Fast food",
       image: {
         name: "",
         type: "",
@@ -50,7 +57,7 @@ export const RestaurantCategories: React.FC = () => {
     },
     {
       key: "2",
-      name: "John",
+      name: "Vegetable",
       image: {
         name: "",
         type: "",
@@ -60,7 +67,7 @@ export const RestaurantCategories: React.FC = () => {
     },
     {
       key: "3",
-      name: "Clark",
+      name: "Drinks",
       image: {
         name: "",
         type: "",
@@ -71,6 +78,7 @@ export const RestaurantCategories: React.FC = () => {
   ]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
 
   const isEditing = (record: DataType) => record.key === editingKey;
@@ -112,8 +120,9 @@ export const RestaurantCategories: React.FC = () => {
     };
     return (
       <Upload
+        beforeUpload={beforeUpload}
         name="avatar"
-        className="avatar-uploader"
+        className="avatar-uploader overflow-hidden"
         listType="picture-card"
         showUploadList={false}
         onChange={handleImageChange}
@@ -121,6 +130,8 @@ export const RestaurantCategories: React.FC = () => {
       >
         {record?.image?.base64 ? (
           <img
+            height={200}
+            width={200}
             className="p-1 rounded-lg"
             src={record?.image?.base64}
             alt="Restaurant Image"
@@ -144,7 +155,6 @@ export const RestaurantCategories: React.FC = () => {
   const save = async (key: React.Key) => {
     try {
       const row = (await form.validateFields()) as DataType;
-
       const newData = [...dataSource];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
@@ -153,14 +163,17 @@ export const RestaurantCategories: React.FC = () => {
           ...item,
           ...row,
         });
+        const dataToLog = newData.map(({ key, ...rest }) => rest);
+        console.log(dataToLog);
         setDataSource(newData);
         setEditingKey("");
       } else {
         newData.push(row);
+        const dataToLog = newData.map(({ key, ...rest }) => rest);
+        console.log(dataToLog);
         setDataSource(newData);
         setEditingKey("");
       }
-      console.log(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -191,6 +204,8 @@ export const RestaurantCategories: React.FC = () => {
   const columns = [
     {
       key: "sort",
+      width: 50,
+      align: "center" as const,
     },
     {
       title: "Category Name",
@@ -208,6 +223,7 @@ export const RestaurantCategories: React.FC = () => {
     {
       title: "Operation",
       dataIndex: "operation",
+      width: 175,
       render: (_: DataType, record: DataType) => {
         const editable = isEditing(record);
         return editable ? (
@@ -285,7 +301,14 @@ export const RestaurantCategories: React.FC = () => {
       setDataSource((previous) => {
         const activeIndex = previous.findIndex((i) => i.key === active.id);
         const overIndex = previous.findIndex((i) => i.key === over?.id);
-        return arrayMove(previous, activeIndex, overIndex);
+        const updatedDataSource = arrayMove(previous, activeIndex, overIndex);
+        const updatedDisplayOrder = updatedDataSource.map((item, index) => {
+          return {
+            ...item,
+            displayOrder: index + 1,
+          };
+        });
+        return updatedDisplayOrder;
       });
     }
   };
@@ -293,7 +316,7 @@ export const RestaurantCategories: React.FC = () => {
   return (
     <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
-        Restaurant Categories
+        <span className="sm:inline-block hidden">Restaurant</span> Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
           Add Item
         </Button>
@@ -306,7 +329,7 @@ export const RestaurantCategories: React.FC = () => {
           <Form form={form} component={false} onFinish={handleOnFinish}>
             <Table
               style={{ position: "relative", zIndex: "0" }}
-              scroll={{ x: 800 }}
+              scroll={{ x: 600 }}
               components={{
                 body: {
                   row: Row,

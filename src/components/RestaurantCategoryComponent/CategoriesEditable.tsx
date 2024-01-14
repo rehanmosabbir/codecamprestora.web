@@ -13,9 +13,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
 }) => {
   const inputNode =
     inputType === "number" ? (
-      <InputNumber />
+      <InputNumber size="large" />
     ) : (
-      <Input placeholder={`${title}`} />
+      <Input size="large" placeholder={`${title}`} />
     );
   return (
     <td {...restProps}>
