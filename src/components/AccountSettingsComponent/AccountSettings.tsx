@@ -26,7 +26,7 @@ const beforeUpload = (file: RcFile) => {
     return isJpgOrPng && isLt5M;
 };
 
-export function RestaurantSettings() {
+export function AccountSettings() {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export function RestaurantSettings() {
             getBase64(info.file.originFileObj as RcFile, (url) => {
                 setLoading(false);
                 setImageUrl(url);
-                form.setFieldValue('restaurantImage',
+                form.setFieldValue('ownerImage',
                     {
                         name: info.file.name,
                         size: info.file.size,
@@ -62,7 +62,7 @@ export function RestaurantSettings() {
     return (
         <div className="bg-white px-10 sm:px-20 py-10 rounded-md">
             <h3 className="font-bold py-2 text-[23px] text-purple-700 pb-8">
-                Restaurant Settings
+                Account Settings
             </h3>
             <Form
                 {...formItemLayout}
@@ -76,13 +76,13 @@ export function RestaurantSettings() {
                 }}
             >
                 <Form.Item
-                    name="restaurantImage"
+                    name="ownerImage"
                 >
                     <Upload
                         beforeUpload={beforeUpload}
                         fileList={undefined}
                         listType="picture-card"
-                        name="restaurantImageUpload"
+                        name="ownerImageUpload"
                         onChange={handleImageChange}
                         showUploadList={false}
                     >
@@ -101,6 +101,19 @@ export function RestaurantSettings() {
                         }
                     </Upload>
                 </Form.Item>
+                <div className='block gap-5 md:flex'>
+                <Form.Item
+                    label="Owner Name"
+                    name="ownerName"
+                    rules={[
+                        { required: true, message: 'Please Enter Owner Name' }
+                    ]}
+                >
+                    <Input
+                        size="large"
+                        placeholder="Update Owner Name"
+                    />
+                </Form.Item>
 
                 <Form.Item
                     label="Restaurant Name"
@@ -114,6 +127,7 @@ export function RestaurantSettings() {
                         placeholder="Update Restaurant Name"
                     />
                 </Form.Item>
+                </div>
 
                 <Form.Item
                     label="Restaurant Address"
@@ -129,6 +143,33 @@ export function RestaurantSettings() {
 
                     />
                 </Form.Item>
+                <div className='block gap-5 md:flex'>
+                <Form.Item
+                    label="Email Address / Username"
+                    name="username"
+                    rules={[
+                        { required: true, message: 'Please Enter Email Address / Username' }
+                    ]}
+                >
+                    <Input
+                        size={"large"}
+                        placeholder="Update Owner Email"
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Owner Password"
+                    name="password"
+                    rules={[
+                        { required: true, message: 'Please Enter Owner Password' }
+                    ]}
+                >
+                    <Input.Password
+                        size="large"
+                        placeholder="Update Owner Password"
+                    />
+                </Form.Item>
+                </div>
 
                 <Form.Item>
                     <Button
@@ -139,7 +180,7 @@ export function RestaurantSettings() {
                             height: "3rem",
                         }}
                     >
-                        Update Restaurant
+                        Update Account
                     </Button>
                 </Form.Item>
             </Form>

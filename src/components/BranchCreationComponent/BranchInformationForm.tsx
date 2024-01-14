@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Divider,
+  theme,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
@@ -23,11 +24,20 @@ import {
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
 
-export const BranchInformationForm = (
-  {formClose}
-: {
+// const [form] = Form.useForm();
+
+export const BranchInformationForm = ({
+  formClose,
+}: {
   formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { token } = theme.useToken();
+  const formStyle: React.CSSProperties = {
+    maxWidth: "none",
+    background: token.colorFillAlter,
+    borderRadius: token.borderRadiusLG,
+    // padding: 24,
+  };
   // const editInfoOff = formClose;
   // console.log({editInfoOff});
   const {
@@ -104,10 +114,9 @@ export const BranchInformationForm = (
 
   return (
     <div>
-      {" "}
       <Form
         name="basic"
-        style={{ width: 850 }}
+        style={{ width: "100%" }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
@@ -231,7 +240,7 @@ export const BranchInformationForm = (
                 size="large"
                 placeholder="Select a Division"
                 onChange={handleDivisionChange}
-                options={divisionData.map((division: string) => ({
+                options={divisionData?.map((division: string) => ({
                   label: division,
                   value: division,
                 }))}
@@ -253,7 +262,7 @@ export const BranchInformationForm = (
               <Select
                 placeholder="Select a District"
                 onChange={handleDistrictChange}
-                options={district.map((data: any) => ({
+                options={district?.map((data: any) => ({
                   label: data,
                   value: data,
                 }))}
