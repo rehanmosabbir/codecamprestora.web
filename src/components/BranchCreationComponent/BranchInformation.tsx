@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BranchInfoEdit } from "./BranchInfoEdit";
-import { Button, Card, Divider, Table } from "antd";
+import { Button, Card, Col, Divider, Row, Table } from "antd";
 import Meta from "antd/es/card/Meta";
 import { ColumnsType } from "antd/es/table";
 import { DataType } from "./types/BranchTypes";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useBranchDetails } from "./Zustand/Zustand";
+import Title from "antd/es/typography/Title";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -27,73 +28,125 @@ const columns: ColumnsType<DataType> = [
     title: "Is Open",
     dataIndex: "IsOpen",
     align: "center",
-    render: (value ,record:DataType) => (record?.IsOpen==='true')? <CheckOutlined />:<CloseOutlined/>,
+    render: (value, record: DataType) =>
+      record?.IsOpen === "true" ? <CheckOutlined /> : <CloseOutlined />,
   },
 ];
 
+const getLabel = (priceRange: number) => {
+  if (priceRange == 1) return "Low";
+  if (priceRange == 2) return "Medium";
+
+  return "High";
+};
+
 export const BranchInformation = () => {
-  const [editInfo, setEditInfo] = useState(true);
+  const [editInfo, setEditInfo] = useState(false);
   const {
     branchName,
-    contactNumber,
-    branchAddress,
-    // openingHoursDetails,
-    mainArrayOfOpeningDetails
+    isAvailable,
+    priceRangeValue,
+    cuisineTypes,
+    areaDetails,
+    divisionName,
+    districtName,
+    thanaName,
+    mainArrayOfOpeningDetails,
   } = useBranchDetails();
+  console.log("BranchInformation page -->>");
 
-  // const data = mainArrayOfOpeningDetails;
-
-  console.log('BranchInformation page -->>');
-  // console.log({mainArrayOfOpeningDetails});
-  
-  return editInfo ? (
-    <div className=" bg-slate-100 rounded-lg flex justify-center min-h-[calc(100vh-130px)]">
-      <div className="flex justify-center items-center">
-        <div className="w-full m-10">
-          <Card
-            title="Branch Information"
-            extra={
-              <div>
-                <Button
-                  onClick={() => setEditInfo(false)}
-                  className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
-                  type="primary"
-                >
-                  Edit
-                </Button>
-              </div>
-            }
-            style={{ width: 900 }}
+  return !editInfo ? (
+    <div className="w-full">
+      <Card
+        title={<Title level={4}>Branch Information</Title>}
+        extra={
+          <Button
+            onClick={() => setEditInfo(true)}
+            className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
+            type="primary"
           >
-            <div className="grid gap-3 col-span-4">
-              <label>Branch Name: {branchName}</label>
-              {/* <p></p> */}
-              <label>Contact Number: {contactNumber}</label>
-              <label>Branch Address: {branchAddress}</label>
-              <div>
-                <Meta title="Opening Hours" />
-                <Divider />
-                <Table
-                  columns={columns}
-                  dataSource={mainArrayOfOpeningDetails}
-                  // rowClassName={record => record?.IsOpen}
-                  pagination={{ hideOnSinglePage: true }}
-                />
-              </div>
+            Edit
+          </Button>
+        }
+      >
+        <div>
+          <div>
+            <Row className='mb-2'>
+              <Col span={6}>
+                <Meta title="Branch Name" />
+              </Col>
+              <Col span={2}>:</Col>
+              <Col span={16}>
+                <p className="text-base">{branchName}</p>
+              </Col>
+            </Row>
+            <Row className='mb-2'>
+              <Col span={6}>
+                <Meta title="Is Available:" />
+              </Col>
+              <Col span={2}>:</Col>
+              <Col span={16}>{isAvailable === 1 ? <p>YES</p> : <p>NO</p>}</Col>
+            </Row>
+            <Row className='mb-2'>
+              <Col span={6}>
+                <Meta title="Price Range" />
+              </Col>
+              <Col span={2}>:</Col>
+              <Col span={16}>{getLabel(priceRangeValue)}</Col>
+            </Row>
+            <Row className='mb-2'>
+              <Col span={6}>
+                <Meta title="Cuisine Types:" />
+              </Col>
+              <Col span={2}>:</Col>
+              <Col span={16}>
+                <p className="text-base">
+                  Chicken grill
+                  {cuisineTypes.map((value: string) => ", " + value)}{" "}
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={6}>
+                <Meta title="Branch Address:" />
+              </Col>
+              <Col span={2}>:</Col>
+              <Col span={16}>
+                <p className="text-base">
+                  {areaDetails}{" "}
+                  {thanaName !== "" ? (
+                    ", " + thanaName + ", " + districtName + ", " + divisionName
+                  ) : (
+                    <></>
+                  )}
+                </p>
+              </Col>
+            </Row>
+          </div>
+
+          {/* <Row></Row>
+          <Row></Row>
+          <Row></Row>
+          <Row></Row> */}
+          <div className='mt-10'>
+            <Meta title="Opening Hours:" />
+            <Divider />
+            <div>
+              <Table
+                scroll={{ x: 400 }}
+                columns={columns}
+                dataSource={mainArrayOfOpeningDetails}
+                pagination={{ hideOnSinglePage: true }}
+              />
             </div>
-          </Card>
+          </div>
         </div>
-      </div>
+      </Card>
     </div>
   ) : (
-    <div className="bg-slate-100 rounded-lg flex justify-center items-center">
-      <div>
-        <div className="w-full m-11">
-          <BranchInfoEdit editInfoOff={setEditInfo} />
-        </div>
-      </div>
+    <div className="w-full">
+      <BranchInfoEdit formClose={setEditInfo} />
     </div>
   );
 };
 export default BranchInformation;
-

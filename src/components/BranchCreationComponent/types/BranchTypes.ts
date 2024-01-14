@@ -1,4 +1,3 @@
-import { AntdIconProps } from "@ant-design/icons/lib/components/AntdIcon";
 import React from "react";
 
 export interface DataType {
@@ -7,7 +6,7 @@ export interface DataType {
   OpeningHours: string;
   ClosingHours: string;
   IsOpen: any;
-  enabled:boolean
+  enabled: boolean;
 }
 
 // export interface Item {
