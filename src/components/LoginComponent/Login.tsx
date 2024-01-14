@@ -27,7 +27,7 @@ const LoginPage = () => {
       if (result?.error) {
         setError(true);
       } else {
-        await router.push("/dashboard");
+        await router.push("/branches");
       }
     } catch (error) {
       console.error("Error occurred during authentication:", error);
