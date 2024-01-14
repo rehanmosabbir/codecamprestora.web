@@ -1,6 +1,6 @@
 export const divisionData: string[] = [
   "Barishal",
-  "Chittagong",
+  "Chattogram",
   "Dhaka",
   "Khulna",
   "Mymensingh",
@@ -34,11 +34,11 @@ export const districtData: Record<string, string[]> = {
     "Tangail",
     "Manikgoanj",
   ],
-  Chittagong: [
+  Chattogram: [
     "Bandarban",
     "Brahmanbaria",
     "Chandpur",
-    "Chittagong",
+    "Chattogram",
     "Cox's Bazar",
     "Cumilla",
     "Feni",
