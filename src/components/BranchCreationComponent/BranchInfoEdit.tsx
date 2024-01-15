@@ -10,7 +10,7 @@ export const BranchInfoEdit = ({
   console.log({ formClose });
   return (
     <div className="w-full">
-      <Card title={<Title level={4}>Branch Information</Title>}>
+      <Card title={<Title className="pt-5 pb-2" level={4}>Branch Information</Title>}>
         <BranchInformationForm formClose={formClose}></BranchInformationForm>
       </Card>
     </div>

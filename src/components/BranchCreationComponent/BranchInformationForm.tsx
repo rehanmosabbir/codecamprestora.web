@@ -24,7 +24,6 @@ import {
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
 
-// const [form] = Form.useForm();
 
 export const BranchInformationForm = ({
   formClose,
@@ -32,14 +31,6 @@ export const BranchInformationForm = ({
   formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { token } = theme.useToken();
-  const formStyle: React.CSSProperties = {
-    maxWidth: "none",
-    background: token.colorFillAlter,
-    borderRadius: token.borderRadiusLG,
-    // padding: 24,
-  };
-  // const editInfoOff = formClose;
-  // console.log({editInfoOff});
   const {
     branchName,
     isAvailable,
@@ -86,7 +77,7 @@ export const BranchInformationForm = ({
     console.log(`selected ${value}`);
   };
 
-  console.log("Branch Information Edit page--");
+  // console.log("Branch Information Edit page--");
 
   const onFinish = (values: any) => {
     console.log("Success:------", values);
@@ -266,12 +257,12 @@ export const BranchInformationForm = ({
                   label: data,
                   value: data,
                 }))}
-                // onChange={onGenderChange}
+               
                 defaultValue={districtName}
                 size="large"
                 allowClear
               >
-                {/* <p >No Options</p> */}
+               
               </Select>
             </Form.Item>
           </Col>
