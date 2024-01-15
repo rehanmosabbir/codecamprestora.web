@@ -1,7 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Form, Input, InputNumber, Select } from "antd";
-import Image from "next/image";
-import logo from "@/assets/logo.png";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  DatePickerProps,
+  DatePicker,
+  Space,
+  TimePicker,
+  Select,
+} from "antd";
+import dayjs from "dayjs";
+import "dayjs/locale/en";
+import "dayjs/locale/de";
+import "dayjs/plugin/timezone";
 import {
   DataType,
   FieldType,
@@ -30,7 +42,9 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   };
 
   const onFinish = (values: DataType) => {
-    const { customerName, phone, seats } = values;
+    const { customerName, phone, seats, date, time, comment } = values;
+    const formattedDate = dayjs(date).format("DD MMM YYYY");
+    const formattedTime = dayjs(time).format("hh:mm A");
     const numericSeats = Number(seats);
     const totalPricePerFood = calculateTotalPrice();
     const quantities = selectedFoodsWithQuantity.reduce(
@@ -40,10 +54,12 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
       },
       {} as { [food: string]: number }
     );
+
     const overallTotalPrice = Object.values(totalPricePerFood).reduce(
-      (total: number, price: number) => total + price,
+      (total, price) => total + price,
       0
     );
+
     console.log("Success:", {
       totalPricePerFood,
       quantities,
@@ -51,7 +67,11 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
       phone,
       seats: numericSeats,
       overallTotalPrice,
+      date: formattedDate,
+      time: formattedTime,
+      comment,
     });
+
     form.resetFields();
     onCancel();
   };
@@ -98,6 +118,8 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const onFinishFailed = (errorInfo: ValidateErrorEntity<FieldType>) => {
     console.log("Failed:", errorInfo);
   };
+
+  const format = "HH:mm";
 
   useEffect(() => {
     const fetchedOptions = [
@@ -178,7 +200,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         >
           <Input style={{ padding: "10px" }} placeholder="Customer's Name" />
         </Form.Item>
-        <div className="flex gap-5">
+        <div className="grid grid-cols-2 gap-5">
           <Form.Item<FieldType>
             label="Phone Number"
             labelCol={{ span: 24 }}
@@ -218,10 +240,59 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           </Form.Item>
         </div>
 
+        <div className="grid grid-cols-2 gap-5">
+          <Form.Item<FieldType>
+            label="Date"
+            labelCol={{ span: 24 }}
+            name="date"
+            rules={[
+              {
+                required: true,
+                message: "Enter Date!",
+              },
+            ]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              format={"DD MMM YYYY"}
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            label="Time"
+            labelCol={{ span: 24 }}
+            name="time"
+            rules={[
+              {
+                required: true,
+                message: "Enter Time!",
+              },
+            ]}
+          >
+            <TimePicker
+              style={{ width: "100%" }}
+              format="hh:mm A"
+              size="large"
+            />
+          </Form.Item>
+        </div>
+
+        <Form.Item<FieldType>
+          label="Comment"
+          labelCol={{ span: 24 }}
+          name="comment"
+        >
+          <Input
+            style={{ padding: "10px", width: "100%" }}
+            placeholder="Comment"
+          />
+        </Form.Item>
+
         <Form.Item<FieldType>
           label="Select Food"
           labelCol={{ span: 24 }}
-          rules={[{ required: true, message: "Please select Food!" }]}
+          name="food"
         >
           <div className="flex gap-3">
             <Select
