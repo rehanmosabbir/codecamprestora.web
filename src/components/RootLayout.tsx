@@ -10,14 +10,20 @@ import useMediaQuery from "@/useHooks/useMediaQueryHook";
 const { Header, Content, Sider, Footer } = Layout;
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
-  const isDesktop = useMediaQuery("(min-width: 900px)");
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
   const router = useRouter();
   const { collapsed } = useHeaderStore();
-  const isShow =
-    router.asPath !== "/login" && router.asPath !== "/registration";
+  const isDesktop = useMediaQuery("(min-width: 900px)");
+
+  const isShow = !router.asPath.startsWith("/login")
+    && !router.asPath.startsWith("/registration");
+
+  const { token:
+    {
+      colorBgContainer,
+      borderRadiusLG
+    }
+  } = theme.useToken();
+
 
   return (
     <Layout>

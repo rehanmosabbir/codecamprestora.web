@@ -16,6 +16,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "antd": "^5.12.4",
+    "axios": "^1.6.5",
     "next": "14.0.4",
     "next-auth": "^4.24.5",
     "react": "^18",

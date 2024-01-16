@@ -10,12 +10,12 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <ConfigProvider theme={theme}>
-      <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <ConfigProvider theme={theme}>
         <RootLayout>
           <Component {...pageProps} />
         </RootLayout>
-      </SessionProvider>
-    </ConfigProvider>
+      </ConfigProvider>
+    </SessionProvider>
   );
 }
