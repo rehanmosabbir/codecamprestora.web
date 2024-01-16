@@ -6,6 +6,7 @@ import { MdDelete } from "react-icons/md";
 import { AiTwotoneCheckCircle } from "react-icons/ai";
 import { AiTwotoneCloseCircle } from "react-icons/ai";
 import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
+import Link from "next/link";
 
 interface DataType {
   key: string;
@@ -107,7 +108,7 @@ export const BranchList = () => {
       title: "Branch Name",
       dataIndex: "branchName",
       key: "name",
-      render: (name) => <a>{name}</a>,
+      render: (name) => <Link href="/branches/123/info">{name}</Link>,
     },
     {
       title: "Restaurant Status",

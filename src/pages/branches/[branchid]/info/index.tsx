@@ -2,7 +2,7 @@ import { BranchInformation } from "@/components/BranchCreationComponent/BranchIn
 import React from "react";
 
 const BranchInformationRoute = () => {
-  console.log("route page of branch-->>");
+  // console.log("route page of branch-->>");
   return (
     <div>
       <BranchInformation />
