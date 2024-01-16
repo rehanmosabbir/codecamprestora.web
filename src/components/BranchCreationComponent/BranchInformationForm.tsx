@@ -23,14 +23,15 @@ import {
   divisionData,
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
-
+import { useMutation } from "react-query";
+import axios from "axios";
 
 export const BranchInformationForm = ({
   formClose,
 }: {
   formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { token } = theme.useToken();
+  // const { token } = theme.useToken();
   const {
     branchName,
     isAvailable,
@@ -77,6 +78,28 @@ export const BranchInformationForm = ({
     console.log(`selected ${value}`);
   };
 
+  const mutation = useMutation({
+    mutationFn: async (branchCreationInformation: any) => {
+      console.log({ branchCreationInformation });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branches/54a45ca9-3ccc-4ae8-851d-949e1a609837`,
+        branchCreationInformation
+      );
+      return response;
+    },
+    onSuccess(data, variables, context) {
+      console.log("onSuccess=== ", data);
+    },
+    onError(error, variables, context) {
+      console.log("onError=== ", error);
+    },
+  });
+
+  // const {mutate} = useMutation({
+  //  mutationFn: (obj:any) => return null,
+
+  // })
+
   // console.log("Branch Information Edit page--");
 
   const onFinish = (values: any) => {
@@ -96,6 +119,36 @@ export const BranchInformationForm = ({
     if (values.thanaName !== undefined) updateThanaName(values.thanaName);
     formClose(false);
     setMainArrayOfOpeningDetails(openingHoursDetails);
+    console.log({ openingHoursDetails });
+
+    mutation.mutate({
+      name: "string",
+      isAvailable: true,
+      priceRange: 0,
+      openingClosingTimes: [
+        {
+          dayOfWeek: 0,
+          opening: "string",
+          closing: "string",
+          isClosed: true,
+        },
+      ],
+      cuisineTypes: [
+        {
+          cuisineTag: "string",
+        },
+      ],
+      address: {
+        latitude: 0,
+        longitude: 0,
+        division: "string",
+        district: "string",
+        thana: "string",
+        areaDetails: "string",
+      },
+      restaurantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    });
+    console.log({ mutation });
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -257,13 +310,10 @@ export const BranchInformationForm = ({
                   label: data,
                   value: data,
                 }))}
-               
                 defaultValue={districtName}
                 size="large"
                 allowClear
-              >
-               
-              </Select>
+              ></Select>
             </Form.Item>
           </Col>
 
