@@ -47,28 +47,33 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     const formattedTime = dayjs(time).format("hh:mm A");
     const numericSeats = Number(seats);
     const totalPricePerFood = calculateTotalPrice();
-    const quantities = selectedFoodsWithQuantity.reduce(
-      (quantities, { food, quantity }) => {
-        quantities[food] = quantity;
-        return quantities;
-      },
-      {} as { [food: string]: number }
+    const itemDetails = selectedFoodsWithQuantity.map(
+      ({ food, quantity, price }) => {
+        const selectedOption = options.find((option) => option.value === food);
+        const unitPrice = selectedOption ? Number(selectedOption.price) : 0;
+
+        return {
+          itemName: food,
+          quantity,
+          unitPrice,
+          totalItemPrice: unitPrice * quantity,
+        };
+      }
     );
 
-    const overallTotalPrice = Object.values(totalPricePerFood).reduce(
-      (total, price) => total + price,
+    const subTotal = itemDetails.reduce(
+      (total, item) => total + item.totalItemPrice,
       0
     );
 
     console.log("Success:", {
-      totalPricePerFood,
-      quantities,
+      orderItems: itemDetails,
       customerName,
       phone,
       seats: numericSeats,
-      overallTotalPrice,
       date: formattedDate,
       time: formattedTime,
+      subTotal,
       comment,
     });
 
@@ -292,7 +297,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         <Form.Item<FieldType>
           label="Select Food"
           labelCol={{ span: 24 }}
-          name="food"
+          name="orderItems"
         >
           <div className="flex gap-3">
             <Select
