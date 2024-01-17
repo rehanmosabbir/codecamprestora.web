@@ -43,7 +43,7 @@ const authOption: NextAuthOptions = {
       if(isExpired)
       {
         const refreshedTokenResult = await refreshToken(token);
-        console.log(refreshedTokenResult);
+        // console.log(refreshedTokenResult);
         if(refreshedTokenResult.isSuccess) {
           const refreshToken: JWT = {
             accessToken: refreshedTokenResult.accessToken,
@@ -54,7 +54,7 @@ const authOption: NextAuthOptions = {
             userId: refreshedTokenResult.userId
           };
 
-          console.log(refreshToken);
+        //   console.log(refreshToken);
           return refreshToken;
         }
       }
@@ -63,7 +63,8 @@ const authOption: NextAuthOptions = {
     },
     async session({session, token}: {session: Session, token: JWT})
     {
-      return { user: token } as Session;
+        strategy: "jwt";
+        return { user: token } as Session;
     },
     async redirect({ url, baseUrl }) {
       const callbackUrlKey = 'callbackUrl';

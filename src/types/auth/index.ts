@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 export interface LoginCredential {
     username: string;
     password: string;
@@ -13,4 +15,9 @@ export interface AuthResult {
     statusCode: number;
     error: string[];
     isSuccess: true;
+}
+
+export interface AuthGuradResult {
+  isRedirected: boolean;
+  response?: NextResponse;
 }
