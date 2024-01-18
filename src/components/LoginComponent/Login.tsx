@@ -40,7 +40,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLargeScreen(window.innerWidth >= 600);
+      setIsLargeScreen(window.innerWidth >= 768);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
