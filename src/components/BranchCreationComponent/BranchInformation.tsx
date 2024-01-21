@@ -8,6 +8,7 @@ import { useBranchDetails } from "./Zustand/Zustand";
 import Title from "antd/es/typography/Title";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -54,6 +55,11 @@ export const BranchInformation = () => {
     thanaName,
     mainArrayOfOpeningDetails,
   } = useBranchDetails();
+
+  const router = useRouter()
+  console.log({router});
+  const {id} = router.query
+ const branchID = "id";
 
   const {  isError, data, error } = useQuery({
     queryKey: ['BranchInfo'],
@@ -116,7 +122,7 @@ export const BranchInformation = () => {
             <Col span={16}>
               <p className="text-base">
                 Chicken grill
-                {cuisineTypes.map((value: string) => ", " + value)}{" "}
+                {cuisineTypes.map((value) => ", " + value.cuisineTag)}{" "}
               </p>
             </Col>
           </Row>
@@ -153,7 +159,7 @@ export const BranchInformation = () => {
     </div>
   ) : (
     <div className="w-full">
-      <BranchInfoEdit formClose={setEditInfo} />
+      <BranchInfoEdit formClose={setEditInfo} branchID = {branchID}/>
     </div>
   );
 };
