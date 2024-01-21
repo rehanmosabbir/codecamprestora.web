@@ -1,8 +1,7 @@
-import { Popconfirm, Popover } from "antd";
+import {  Popover } from "antd";
 import { HiDotsVertical } from "react-icons/hi";
 import user from "@/assets/user.jpg";
 import Image from "next/image";
-import { GoDotFill } from "react-icons/go";
 import { useState } from "react";
 
 export const UserCommentHeader = () => {

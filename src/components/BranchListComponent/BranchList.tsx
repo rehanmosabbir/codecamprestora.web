@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Space, Table, Popover, Button } from "antd";
+import { Space, Table, Popover, Button, Popconfirm } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GoGear } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
@@ -76,16 +76,17 @@ export const BranchList = () => {
             </button>
           )}
         </button>
-        {/* <Button onClick={() => handleDelete(record.key)} >Delete</Button> */}
-        <button
-          onClick={() => handleDelete(record.key)}
-          className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition"
+        <Popconfirm
+          title={"Sure to Delete?"}
+          onConfirm={() => handleDelete(record.key)}
         >
-          <div className="flex items-center">
-            <MdDelete />
-            Delete
-          </div>
-        </button>
+          <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+            <div className="flex items-center">
+              <MdDelete />
+              Delete
+            </div>
+          </button>
+        </Popconfirm>
       </div>
     </div>
   );
