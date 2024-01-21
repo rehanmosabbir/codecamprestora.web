@@ -130,8 +130,8 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     {
       key: "2",
       Days: "Sunday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
       IsOpen: "true",
       // enabled: true,
     },
