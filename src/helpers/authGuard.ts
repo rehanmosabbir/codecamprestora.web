@@ -1,4 +1,6 @@
+import { roles } from "./roles";
 import { JWT } from "next-auth/jwt";
+import { allEndpoints } from "./endpoints";
 import { AuthGuradResult } from "@/types/auth";
 import { NextResponse, URLPattern } from "next/server";
 
@@ -6,23 +8,13 @@ const isInRole = (desiredRole: string, userRoles: string[]): boolean => {
   return userRoles.some((role) => role.toLowerCase() === desiredRole);
 };
 
-const allEndpoints = (): { adminPaths: string[]; managerPaths: string[] } => {
-  const adminPaths: string[] = ["/branches", "/categories"];
-  const managerPaths: string[] = ["/branches", "/branches/*", "/categories"];
-
-  return {
-    adminPaths,
-    managerPaths,
-  };
-};
-
-const wantsToVisitAdminPage = (path: string, basePath: string): boolean => {
+const wantsToVisitOwnerPage = (path: string, basePath: string): boolean => {
   const endpoints = allEndpoints();
 
-  const adminPathPatterns = endpoints.adminPaths.map(
+  const ownerPathPatterns = endpoints.ownerPaths.map(
     (path) => new URLPattern(path, basePath)
   );
-  var isMatched = adminPathPatterns.some((pattern) => pattern.test(basePath));
+  var isMatched = ownerPathPatterns.some((pattern) => pattern.test(basePath));
 
   return isMatched ? true : false;
 };
@@ -43,8 +35,8 @@ const handleRoles = (
   currentPath: string,
   baseURL: string
 ): AuthGuradResult => {
-    if (wantsToVisitAdminPage(currentPath, baseURL)) {
-    const isAdmin = isInRole("admin", token.roles);
+    if (wantsToVisitOwnerPage(currentPath, baseURL)) {
+    const isAdmin = isInRole(roles.Owner, token.roles);
     if (isAdmin) return { isRedirected: false };
 
     return {
@@ -54,7 +46,7 @@ const handleRoles = (
   }
 
   if (wantsToVisitManagerPage(currentPath, baseURL)) {
-    const isManager = isInRole("manager", token.roles);
+    const isManager = isInRole(roles.Manager, token.roles);
     if(isManager) return { isRedirected: false };
 
     return {

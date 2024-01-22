@@ -3,7 +3,6 @@ import { NextFetchEvent } from "next/server";
 import { redirectIfGuarderRoute } from "./helpers/authGuard";
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 
-
 export default async function middleware(req: NextRequestWithAuth, event: NextFetchEvent) {
   const token = await getToken({ req });
   const isAuthenticated = !!token;
