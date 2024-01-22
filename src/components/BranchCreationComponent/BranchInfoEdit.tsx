@@ -4,7 +4,7 @@ import { BranchInformationForm } from "./BranchInformationForm";
 
 export const BranchInfoEdit = (props: {
   formClose: React.Dispatch<React.SetStateAction<boolean>>,
-  branchID:string | undefined;
+  branchID:string;
 }) => {
  const { formClose,branchID} = props;
   

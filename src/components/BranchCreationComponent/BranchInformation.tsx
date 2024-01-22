@@ -12,26 +12,26 @@ import { useRouter } from "next/router";
 
 const columns: ColumnsType<DataType> = [
   {
-    title: "Days",
-    dataIndex: "Days",
+    title: "Day",
+    dataIndex: "day",
     align: "center",
   },
   {
     title: "Opening Hours",
-    dataIndex: "OpeningHours",
+    dataIndex: "openingHours",
     align: "center",
   },
   {
     title: "Closing Hours",
-    dataIndex: "ClosingHours",
+    dataIndex: "closingHours",
     align: "center",
   },
   {
-    title: "Is Open",
-    dataIndex: "IsOpen",
+    title: "Open",
+    dataIndex: "isClosed",
     align: "center",
     render: (value, record: DataType) =>
-      record?.IsOpen === "true" ? <CheckOutlined /> : <CloseOutlined />,
+      record?.isClosed === "true" ? <CheckOutlined /> : <CloseOutlined />,
   },
 ];
 
@@ -56,24 +56,26 @@ export const BranchInformation = () => {
     mainArrayOfOpeningDetails,
   } = useBranchDetails();
 
-  const router = useRouter()
-  console.log({router});
-  const {id} = router.query
- const branchID = "id";
+  const router = useRouter();
+  console.log({ router });
+  const { id } = router.query;
+  const branchID = "id";
 
-  const {  isError, data, error } = useQuery({
-    queryKey: ['BranchInfo'],
+  const { isError, data, error } = useQuery({
+    queryKey: ["BranchInfo"],
     queryFn: async () => {
       // const response = await axios.post(
       //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
       //   branchCreationInformation
       // );
-      const response=  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/34162bfa-104e-46ec-acc4-a9baaf67a44d`)
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/34162bfa-104e-46ec-acc4-a9baaf67a44d`
+      );
       // console.log({response});
       return response;
     },
-  })
-  console.log('hellllo ',{data});
+  });
+  console.log("hellllo ", { data });
   // console.log("BranchInformation page -->>");
 
   return !editInfo ? (
@@ -159,7 +161,7 @@ export const BranchInformation = () => {
     </div>
   ) : (
     <div className="w-full">
-      <BranchInfoEdit formClose={setEditInfo} branchID = {branchID}/>
+      <BranchInfoEdit formClose={setEditInfo} branchID={branchID} />
     </div>
   );
 };

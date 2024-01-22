@@ -6,7 +6,7 @@ export const BranchCreateModal = ({
 }: {
   formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const branchID=null;
+  const branchID='';
   return (
     <div>
       <Title className="text-center" level={3}>

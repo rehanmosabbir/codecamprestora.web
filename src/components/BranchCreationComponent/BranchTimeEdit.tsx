@@ -17,7 +17,7 @@ const BranchTimeEdit = () => {
   // console.log("Branch Time Edit Page--");
 
   const rowSelection: any = {
-    columnTitle: "Is Open",
+    columnTitle: "Open",
     selectedRowKeys: rowSelectedArray,
     onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
       updateRowSelectedArray(selectedRowKeys);
@@ -26,8 +26,8 @@ const BranchTimeEdit = () => {
           (element) => element === i.toString()
         );
         if (isAble.length === 1)
-          updateOpeningHoursDetails(i.toString(), "true", "IsOpen");
-        else updateOpeningHoursDetails(i.toString(), "false", "IsOpen");
+          updateOpeningHoursDetails(i.toString(), true, "isClosed");
+        else updateOpeningHoursDetails(i.toString(), false, "isClosed");
       }
     },
   };
@@ -42,46 +42,46 @@ const BranchTimeEdit = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Days",
-      dataIndex: "Days",
+      title: "Day",
+      dataIndex: "day",
       align: "center",
       width: "25%",
     },
     {
       title: "Opening Hours",
-      dataIndex: "OpeningHours",
+      dataIndex: "openingHours",
       align: "center",
       width: "25%",
 
       render: (record: ColumnType, index: any) => (
         <TimePicker
           defaultValue={dayjs(
-            openingHoursDetails[index?.key - ("1" as any)]?.OpeningHours,
+            openingHoursDetails[index?.key - ("1" as any)]?.openingHours,
             "h:mm A"
           )}
           use12Hours
           format="h:mm A"
           onChange={(value: any, dateString: string) =>
-            updateOpeningHoursDetails(index?.key, dateString, "OpeningHours")
+            updateOpeningHoursDetails(index?.key, dateString, "openingHours")
           }
         />
       ),
     },
     {
       title: "Closing Hours",
-      dataIndex: "ClosingHours",
+      dataIndex: "closingHours",
       align: "center",
       width: "25%",
       render: (record: ColumnType, index: any) => (
         <TimePicker
           defaultValue={dayjs(
-            openingHoursDetails[index?.key - ("1" as any)]?.ClosingHours,
+            openingHoursDetails[index?.key - ("1" as any)]?.closingHours,
             "h:mm A"
           )}
           use12Hours
           format="h:mm A"
           onChange={(value: any, dateString: string) =>
-            updateOpeningHoursDetails(index?.key, dateString, "ClosingHours")
+            updateOpeningHoursDetails(index?.key, dateString, "closingHours")
           }
         />
       ),

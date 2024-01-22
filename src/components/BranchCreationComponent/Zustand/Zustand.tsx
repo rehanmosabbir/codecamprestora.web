@@ -25,20 +25,22 @@ type BranchDetailsType = {
   updateAreaDetails: (areaDetails: string) => void;
   updateOpeningHoursDetails: (
     key: string,
-    data: string,
+    data: string| boolean,
     keyField: string
   ) => void;
   setMainArrayOfOpeningDetails: (openingHoursDetails: any[]) => void;
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
-  branchName: "Shymoli",
-  isAvailable: 1,
-  priceRangeValue: 2,
+  branchName: "",
+  isAvailable: 0,
+  priceRangeValue: 0,
   cuisineTypes: [{
-    "cuisineTag": "biriyani"
-  }],
-  areaDetails: "Shymoli",
+    cuisineTag: "biriyani"
+},{
+  cuisineTag: "biriyani"
+}],
+  areaDetails: "",
   divisionName: "",
   districtName: "",
   thanaName: "",
@@ -64,117 +66,117 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
   mainArrayOfOpeningDetails: [
     {
       key: "1",
-      Days: "Saturday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Saturday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: false,
     },
     {
       key: "2",
-      Days: "Sunday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Sunday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
       key: "3",
-      Days: "Monday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Monday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
       key: "4",
-      Days: "Tuesday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Tuesday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
       key: "5",
-      Days: "Wednesday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Wednesday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
       key: "6",
-      Days: "Thursday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Thursday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
       key: "7",
-      Days: "Friday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      day: "Friday",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
-  ] as DataType[],
+  ]  as DataType[],
 
   openingHoursDetails: [
     {
-      key: "1",
-      Days: "Saturday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "1",
+      day: 0,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: false,
     },
     {
-      key: "2",
-      Days: "Sunday",
+      // key: "2",
+      day: 1,
       openingHours: "10:00 AM",
       closingHours: "10:00 PM",
-      IsOpen: "true",
+      isClosed: true,
       // enabled: true,
     },
     {
-      key: "3",
-      Days: "Monday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "3",
+      day: 2,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
-      key: "4",
-      Days: "Tuesday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "4",
+      day: 3,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
-      key: "5",
-      Days: "Wednesday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "5",
+      day: 4,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
-      key: "6",
-      Days: "Thursday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "6",
+      day: 5,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
     {
-      key: "7",
-      Days: "Friday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
-      IsOpen: "true",
+      // key: "7",
+      day: 6,
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
+      isClosed: true,
       // enabled: true,
     },
   ] as DataType[],
@@ -194,9 +196,9 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       openingHoursDetails: state.openingHoursDetails.map((item, index) => {
         // console.log("item", item);
         if (item?.key == key) {
-          if (keyField == "OpeningHours") item.OpeningHours = data;
-          else if (keyField == "ClosingHours") item.ClosingHours = data;
-          else if (keyField == "IsOpen") item.IsOpen = data;
+          if (keyField == "openingHours") item.OpeningHours = data;
+          else if (keyField == "closingHours") item.ClosingHours = data;
+          else if (keyField == "isClosed") item.IsOpen = data;
 
           return item;
         } else return item;

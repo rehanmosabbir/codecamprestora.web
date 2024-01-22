@@ -24,12 +24,9 @@ import {
 import { useMutation } from "react-query";
 import axios from "axios";
 
-export const BranchInformationForm = (
-  props
-: {
-  formClose: React.Dispatch<React.SetStateAction<boolean>>,
-  branchID: string| null |undefined
-
+export const BranchInformationForm = (props: {
+  formClose: React.Dispatch<React.SetStateAction<boolean>>;
+  branchID: string;
 }) => {
   const {
     branchName,
@@ -51,22 +48,37 @@ export const BranchInformationForm = (
     updateAreaDetails,
     setMainArrayOfOpeningDetails,
   } = useBranchDetails();
-  console.log({props});
-  const {formClose, branchID} = props;
-// useEffect(())[]
-//   if(branchID==null)
-//   {
-//     updateBranchName("");
-//     updateIsAvailable(0);
-//     updateDivisionName("");
-//     updateDistrictName("");
-//     updateThanaName("");
-//     updatePriceRangeValue(0),
-//     updateCuisineTypes([]);
-//     updateAreaDetails("");
-//     // setMainArrayOfOpeningDetails(),
-//   }
+  console.log({ props });
+  const { formClose, branchID } = props;
+  console.log({ branchID });
+  // let flag =branchID;
+  // // useEffect(() => {
 
+  //   if (branchID ==='' && flag ==='') {
+  //     // updateBranchName("");
+  //     // updateIsAvailable(0);
+  //     // updateDivisionName("");
+  //     // updateDistrictName("");
+  //     // updateThanaName("");
+  //     // updatePriceRangeValue(0);
+  //     // updateCuisineTypes([]);
+  //     // updateAreaDetails("");
+  //     console.log("useEffect");
+  //     flag = 'hello';
+
+  //     // setMainArrayOfOpeningDetails(),
+  //   }
+  // // }, []);
+
+  console.log({ branchName });
+  console.log({ isAvailable });
+  console.log({ priceRangeValue });
+  // console.log({openingHoursDetails});
+  console.log({ cuisineTypes });
+  console.log({ areaDetails });
+  console.log({ divisionName });
+  console.log({ districtName });
+  console.log({ thanaName });
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
@@ -96,12 +108,14 @@ export const BranchInformationForm = (
   const mutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
       console.log({ branchCreationInformation });
-      // const response = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-      //   branchCreationInformation
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
+        branchCreationInformation
+      );
+      // const response = axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`
       // );
-      const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
-      // console.log({response});
+      console.log("created data --", response);
       return response;
     },
     onSuccess(data, variables, context) {
@@ -122,52 +136,50 @@ export const BranchInformationForm = (
   const onFinish = (values: any) => {
     console.log("Success:------", values);
 
-    if (values.branchName !== undefined) updateBranchName(values.branchName);
-    if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
-    if (values.priceRangeValue !== undefined)
-      updatePriceRangeValue(values.priceRangeValue);
-    if (values.cuisineTypes !== undefined)
-      updateCuisineTypes(values.cuisineTypes);
-    if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
-    if (values.divisionName !== undefined)
-      updateDivisionName(values.divisionName);
-    if (values.districtName !== undefined)
-      updateDistrictName(values.districtName);
-    if (values.thanaName !== undefined) updateThanaName(values.thanaName);
-    formClose(false);
-    setMainArrayOfOpeningDetails(openingHoursDetails);
-    console.log({ openingHoursDetails });
-
-    mutation.mutate(
-      {
-        "name": "string",
-        "isAvailable": true,
-        "priceRange": 0,
-        "openingClosingTimes": [
-          {
-            "day": 0,
-            "openingHours": "string",
-            "closingHours": "string",
-            "isClosed": true
-          }
-        ],
-        "cuisineTypes": [
-          {
-            "cuisineTag": "string"
-          }
-        ],
-        "address": {
-          "latitude": 0,
-          "longitude": 0,
-          "division": "string",
-          "district": "string",
-          "thana": "string",
-          "areaDetails": "string"
-        },
-        "restaurantId": "54a45ca9-3ccc-4ae8-851d-949e1a609837"
-      }
-    );
+    // if (values.branchName !== undefined) updateBranchName(values.branchName);
+    // if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
+    // if (values.priceRangeValue !== undefined)
+    //   updatePriceRangeValue(values.priceRangeValue);
+    // if (values.cuisineTypes !== undefined)
+    //   updateCuisineTypes(values.cuisineTypes);
+    // if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
+    // if (values.divisionName !== undefined)
+    //   updateDivisionName(values.divisionName);
+    // if (values.districtName !== undefined)
+    //   updateDistrictName(values.districtName);
+    // if (values.thanaName !== undefined) updateThanaName(values.thanaName);
+    // setMainArrayOfOpeningDetails(openingHoursDetails);
+    // console.log({ openingHoursDetails });
+    const cuisineTypesObjForm = values.cuisineTypes.map((value:string) =>  ( {
+      cuisineTag: value,
+    }))
+    console.log(cuisineTypesObjForm)
+    mutation.mutate({
+      name: values.branchName,
+      isAvailable: (values.isAvailable===1) ? true: false ,
+      priceRange: values.priceRangeValue,
+      openingClosingTimes: openingHoursDetails,
+      //  [
+      //   {
+      //     day: 0,
+      //     openingHours: "10:30 AM",
+      //     closingHours: "10:30 PM",
+      //     isClosed: true,
+      //   },
+      // ],
+      cuisineTypes: cuisineTypesObjForm,
+      address: {
+        latitude: 123.2,
+        longitude: 2.3,
+        division: values.divisionName,
+        district: values.districtName,
+        thana: values.thanaName,
+        areaDetails: values.areaDetails
+      },
+      restaurantId: "eabf4311-0451-4ff7-a2f7-f7718b6e0caf",
+    });
     console.log({ mutation });
+    formClose(false);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -191,9 +203,16 @@ export const BranchInformationForm = (
               label={<Title level={5}>Branch Name:</Title>}
               name="branchName"
               labelCol={{ span: 24 }}
-              // rules={[
-              //   { required: true, message: "Please input your Branch Name!" },
-              // ]}
+              rules={
+                branchName === undefined
+                  ? [
+                      {
+                        required: true,
+                        message: "Please input your Branch Name!",
+                      },
+                    ]
+                  : undefined
+              }
             >
               <Input
                 className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
@@ -206,12 +225,14 @@ export const BranchInformationForm = (
 
           <Col span={12}>
             <Form.Item<FieldType>
-              label={<Title level={5}>Is Available:</Title>}
+              label={<Title level={5}>Available:</Title>}
               labelCol={{ span: 24 }}
               name="isAvailable"
-              // rules={[
-              //   { required: true, message: "Please input Contact Number!" },
-              // ]}
+              rules={
+                isAvailable === undefined
+                  ? [{ required: true, message: "Please confirm availability" }]
+                  : undefined
+              }
             >
               <Radio.Group
                 onChange={handelResturentisAvailable}
@@ -230,9 +251,11 @@ export const BranchInformationForm = (
               label={<Title level={5}>Price Range:</Title>}
               name="priceRangeValue"
               labelCol={{ span: 24 }}
-              // rules={[
-              //   { required: true, message: "Please input your Branch Name!" },
-              // ]}
+              rules={
+                priceRangeValue === undefined
+                  ? [{ required: true, message: "Please select price range" }]
+                  : undefined
+              }
             >
               <Radio.Group
                 onChange={handelPriceRange}
@@ -250,20 +273,26 @@ export const BranchInformationForm = (
               label={<Title level={5}>Cuisine Types:</Title>}
               labelCol={{ span: 24 }}
               name="cuisineTypes"
-              // rules={[
-              //   { required: true, message: "Please input Contact Number!" },
-              // ]}
+              rules={
+                cuisineTypes === undefined
+                  ? [{ required: true, message: "Please input cuisine types" }]
+                  : undefined
+              }
             >
               <Select
                 size="large"
                 placeholder="Enter cuisine types"
                 mode="tags"
                 style={{ width: "100%" }}
-                onChange={(e: string[]) => {
+                onChange={(
+                  e: {
+                    cuisineTag: string;
+                  }[]
+                ) => {
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
-                // defaultValue={cuisineTypes}
+                defaultValue={cuisineTypes}
               />
             </Form.Item>
           </Col>
@@ -277,9 +306,11 @@ export const BranchInformationForm = (
               label="Area Details:"
               labelCol={{ span: 24 }}
               name="areaDetails"
-              // rules={[
-              //   { required: true, message: "Please input Contact Number!" },
-              // ]}
+              rules={
+                areaDetails === undefined
+                  ? [{ required: true, message: "Please input area details" }]
+                  : undefined
+              }
             >
               <Input
                 className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
@@ -295,9 +326,11 @@ export const BranchInformationForm = (
               label="Division"
               name="divisionName"
               labelCol={{ span: 24 }}
-              // rules={[
-              //   { required: true, message: "Please input your Branch Name!" },
-              // ]}
+              rules={
+                divisionName === undefined
+                  ? [{ required: true, message: "Please input division name" }]
+                  : undefined
+              }
             >
               <Select
                 size="large"
@@ -318,9 +351,11 @@ export const BranchInformationForm = (
               label="District"
               labelCol={{ span: 24 }}
               name="districtName"
-              // rules={[
-              //   { required: true, message: "Please input Contact Number!" },
-              // ]}
+              rules={
+                districtName === undefined
+                  ? [{ required: true, message: "Please input district name" }]
+                  : undefined
+              }
             >
               <Select
                 placeholder="Select a District"
@@ -341,9 +376,11 @@ export const BranchInformationForm = (
               label="Thana"
               name="thanaName"
               labelCol={{ span: 24 }}
-              // rules={[
-              //   { required: true, message: "Please input your Branch Name!" },
-              // ]}
+              rules={
+                thanaName === undefined
+                  ? [{ required: true, message: "Please input thana name" }]
+                  : undefined
+              }
             >
               <Select
                 placeholder="Select a Thana"

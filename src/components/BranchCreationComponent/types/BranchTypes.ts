@@ -2,10 +2,10 @@ import React from "react";
 
 export interface DataType {
   key: string;
-  Days: string;
-  OpeningHours: string;
-  ClosingHours: string;
-  IsOpen: any;
+  day: number| string;
+  openingHours: string;
+  closingHours: string;
+  isClosed: any;
   enabled: boolean;
 }
 
