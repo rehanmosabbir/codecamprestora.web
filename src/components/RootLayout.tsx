@@ -10,25 +10,21 @@ import useMediaQuery from "@/useHooks/useMediaQueryHook";
 const { Header, Content, Sider, Footer } = Layout;
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
   const router = useRouter();
   const { collapsed } = useHeaderStore();
-  const isDesktop = useMediaQuery("(min-width: 900px)");
-
+  const { setCollapsed } = useHeaderStore();
   const isShow = !router.asPath.startsWith("/login")
     && !router.asPath.startsWith("/registration");
-
-  const { token:
-    {
-      colorBgContainer,
-      borderRadiusLG
-    }
-  } = theme.useToken();
-
 
   return (
     <Layout>
       {isShow && (
         <Header
+          className="shadow-lg"
           style={{
             position: "sticky",
             top: 0,
@@ -41,6 +37,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           }}
         >
           <AppHeader />
+          <div className="h-10 w-[10px] md:w-5 bg-white top-0 float-right z-20"></div>
         </Header>
       )}
       <Layout
@@ -56,7 +53,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             collapsed={collapsed}
             width={"260px"}
             style={{
-              zIndex: 5,
+              zIndex: 10,
               position: `${isDesktop ? "sticky" : "fixed"}`,
               height: "100%",
               top: 88,
@@ -78,22 +75,40 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         )}
         <Layout>
           <Content
-            className="bg-[#EEF2F6]"
+            className={`bg-[#EEF2F6] ${
+              !isDesktop && !collapsed ? "black-overlay" : ""
+            }`}
             style={{
               padding: `${isShow ? "20px" : ""}`,
               paddingLeft: `${isShow ? `${isDesktop ? "20px" : "30px"}` : ""}`,
               borderRadius: borderRadiusLG,
               minHeight: `calc(100vh - 130px)`,
+              position: "relative",
             }}
           >
             {children}
+            {!isDesktop && !collapsed && (
+              <div
+                className="black-overlay transition"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 9,
+                }}
+                onClick={setCollapsed}
+              />
+            )}
           </Content>
         </Layout>
       </Layout>
       {isShow && (
         <Footer
           style={{
-            zIndex: 1,
+            zIndex: 10,
             width: "100%",
             padding: 0,
           }}

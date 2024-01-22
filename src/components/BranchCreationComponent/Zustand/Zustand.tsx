@@ -10,7 +10,7 @@ type BranchDetailsType = {
   divisionName: string;
   districtName: string;
   thanaName: string;
-  cuisineTypes: string[];
+  cuisineTypes: { cuisineTag: string}[];
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
@@ -21,7 +21,7 @@ type BranchDetailsType = {
   updateThanaName: (ThanaName: string) => void;
   updateIsAvailable: (isAvailable: number) => void;
   updatePriceRangeValue: (priceRangeValue: number) => void;
-  updateCuisineTypes: (cuisineTypes: string[]) => void;
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) => void;
   updateAreaDetails: (areaDetails: string) => void;
   updateOpeningHoursDetails: (
     key: string,
@@ -35,7 +35,9 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
   branchName: "Shymoli",
   isAvailable: 1,
   priceRangeValue: 2,
-  cuisineTypes: ["Biriyani", "Shorma"],
+  cuisineTypes: [{
+    "cuisineTag": "biriyani"
+  }],
   areaDetails: "Shymoli",
   divisionName: "",
   districtName: "",
@@ -49,7 +51,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     set(() => ({ priceRangeValue: priceRangeValue })),
   updateAreaDetails: (areaDetails: string) =>
     set(() => ({ areaDetails: areaDetails })),
-  updateCuisineTypes: (cuisineTypes: string[]) =>
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) =>
     set(() => ({ cuisineTypes: cuisineTypes })),
   updateDivisionName: (divisionName: string) =>
     set(() => ({ divisionName: divisionName })),
@@ -130,8 +132,8 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     {
       key: "2",
       Days: "Sunday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
       IsOpen: "true",
       // enabled: true,
     },

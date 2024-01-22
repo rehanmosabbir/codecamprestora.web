@@ -52,19 +52,27 @@ const menuPaths = [
   { path: "/branches/[branchid]/reviews", key: "reviews" },
 ];
 
-const rootSubmenuKeys = ["branches", "categories"];
+const rootSubmenuKeys = [
+  "branches",
+  "categories",
+  "info",
+  "users",
+  "menu",
+  "orders",
+  "pictures",
+  "reviews",
+];
 
 const LeftMenuBar: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
     menuPaths.forEach((el) => {
-      if (el.path === router.asPath) setOpenKeys([el.key]);
+      if (el.path === router.pathname) setOpenKeys([el.key]);
     });
-    console.log(router.asPath);
-  }, [router.asPath]);
+  }, [router]);
 
-  const [openKeys, setOpenKeys] = useState(["branches"]);
+  const [openKeys, setOpenKeys] = useState([""]);
 
   const query = router.query.branchid;
 
@@ -97,7 +105,6 @@ const LeftMenuBar: React.FC = () => {
       onOpenChange={onOpenChange}
       onSelect={handleSelect}
       selectedKeys={openKeys}
-      defaultSelectedKeys={["branches"]}
       style={{
         fontSize: 15,
         border: 0,

@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldType } from "@/types/BreanchCreationTypes";
 import {
   Button,
-  Card,
   Col,
   Form,
   Input,
@@ -11,7 +10,6 @@ import {
   Row,
   Select,
   Divider,
-  theme,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
@@ -23,23 +21,16 @@ import {
   divisionData,
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
+import { useMutation } from "react-query";
+import axios from "axios";
 
-// const [form] = Form.useForm();
+export const BranchInformationForm = (
+  props
+: {
+  formClose: React.Dispatch<React.SetStateAction<boolean>>,
+  branchID: string| null |undefined
 
-export const BranchInformationForm = ({
-  formClose,
-}: {
-  formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { token } = theme.useToken();
-  const formStyle: React.CSSProperties = {
-    maxWidth: "none",
-    background: token.colorFillAlter,
-    borderRadius: token.borderRadiusLG,
-    // padding: 24,
-  };
-  // const editInfoOff = formClose;
-  // console.log({editInfoOff});
   const {
     branchName,
     isAvailable,
@@ -60,6 +51,22 @@ export const BranchInformationForm = ({
     updateAreaDetails,
     setMainArrayOfOpeningDetails,
   } = useBranchDetails();
+  console.log({props});
+  const {formClose, branchID} = props;
+// useEffect(())[]
+//   if(branchID==null)
+//   {
+//     updateBranchName("");
+//     updateIsAvailable(0);
+//     updateDivisionName("");
+//     updateDistrictName("");
+//     updateThanaName("");
+//     updatePriceRangeValue(0),
+//     updateCuisineTypes([]);
+//     updateAreaDetails("");
+//     // setMainArrayOfOpeningDetails(),
+//   }
+
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
@@ -86,7 +93,31 @@ export const BranchInformationForm = ({
     console.log(`selected ${value}`);
   };
 
-  console.log("Branch Information Edit page--");
+  const mutation = useMutation({
+    mutationFn: async (branchCreationInformation: any) => {
+      console.log({ branchCreationInformation });
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
+      //   branchCreationInformation
+      // );
+      const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
+      // console.log({response});
+      return response;
+    },
+    onSuccess(data, variables, context) {
+      console.log("onSuccess=== ", data);
+    },
+    onError(error, variables, context) {
+      console.log("onError=== ", error);
+    },
+  });
+
+  // const {mutate} = useMutation({
+  //  mutationFn: (obj:any) => return null,
+
+  // })
+
+  // console.log("Branch Information Edit page--");
 
   const onFinish = (values: any) => {
     console.log("Success:------", values);
@@ -105,6 +136,38 @@ export const BranchInformationForm = ({
     if (values.thanaName !== undefined) updateThanaName(values.thanaName);
     formClose(false);
     setMainArrayOfOpeningDetails(openingHoursDetails);
+    console.log({ openingHoursDetails });
+
+    mutation.mutate(
+      {
+        "name": "string",
+        "isAvailable": true,
+        "priceRange": 0,
+        "openingClosingTimes": [
+          {
+            "day": 0,
+            "openingHours": "string",
+            "closingHours": "string",
+            "isClosed": true
+          }
+        ],
+        "cuisineTypes": [
+          {
+            "cuisineTag": "string"
+          }
+        ],
+        "address": {
+          "latitude": 0,
+          "longitude": 0,
+          "division": "string",
+          "district": "string",
+          "thana": "string",
+          "areaDetails": "string"
+        },
+        "restaurantId": "54a45ca9-3ccc-4ae8-851d-949e1a609837"
+      }
+    );
+    console.log({ mutation });
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -200,7 +263,7 @@ export const BranchInformationForm = ({
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
-                defaultValue={cuisineTypes}
+                // defaultValue={cuisineTypes}
               />
             </Form.Item>
           </Col>
@@ -266,13 +329,10 @@ export const BranchInformationForm = ({
                   label: data,
                   value: data,
                 }))}
-                // onChange={onGenderChange}
                 defaultValue={districtName}
                 size="large"
                 allowClear
-              >
-                {/* <p >No Options</p> */}
-              </Select>
+              ></Select>
             </Form.Item>
           </Col>
 

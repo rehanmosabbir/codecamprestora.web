@@ -6,7 +6,6 @@ import { ColumnsType } from "antd/es/table";
 
 const BranchTimeEdit = () => {
   const selectionType = "checkbox";
-  // const [form] = Form.useForm();
   const {
     mainArrayOfOpeningDetails,
     openingHoursDetails,
@@ -15,15 +14,12 @@ const BranchTimeEdit = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
-  console.log("Branch Time Edit Page--");
-
-  // const openingHoursDetailsData = mainArrayOfOpeningDetails;
+  // console.log("Branch Time Edit Page--");
 
   const rowSelection: any = {
     columnTitle: "Is Open",
     selectedRowKeys: rowSelectedArray,
     onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
-      // console.log(selectedRowKeys, "selectedRows: ", selectedRows);
       updateRowSelectedArray(selectedRowKeys);
       for (let i = 1; i <= 7; i++) {
         const isAble = selectedRowKeys.filter(
@@ -33,7 +29,6 @@ const BranchTimeEdit = () => {
           updateOpeningHoursDetails(i.toString(), "true", "IsOpen");
         else updateOpeningHoursDetails(i.toString(), "false", "IsOpen");
       }
-      // console.log("rowSelectedArray==>>", openingHoursDetails);
     },
   };
 
@@ -77,7 +72,6 @@ const BranchTimeEdit = () => {
       dataIndex: "ClosingHours",
       align: "center",
       width: "25%",
-      // editable: true,
       render: (record: ColumnType, index: any) => (
         <TimePicker
           defaultValue={dayjs(
