@@ -17,8 +17,8 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { collapsed } = useHeaderStore();
   const { setCollapsed } = useHeaderStore();
-  const isShow =
-    router.asPath !== "/login" && router.asPath !== "/registration";
+  const isShow = !router.asPath.startsWith("/login")
+    && !router.asPath.startsWith("/registration");
 
   return (
     <Layout>

@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldType } from "@/types/BreanchCreationTypes";
 import {
   Button,
-  Card,
   Col,
   Form,
   Input,
@@ -11,7 +10,6 @@ import {
   Row,
   Select,
   Divider,
-  theme,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
@@ -26,12 +24,13 @@ import {
 import { useMutation } from "react-query";
 import axios from "axios";
 
-export const BranchInformationForm = ({
-  formClose,
-}: {
-  formClose: React.Dispatch<React.SetStateAction<boolean>>;
+export const BranchInformationForm = (
+  props
+: {
+  formClose: React.Dispatch<React.SetStateAction<boolean>>,
+  branchID: string| null |undefined
+
 }) => {
-  // const { token } = theme.useToken();
   const {
     branchName,
     isAvailable,
@@ -52,6 +51,22 @@ export const BranchInformationForm = ({
     updateAreaDetails,
     setMainArrayOfOpeningDetails,
   } = useBranchDetails();
+  console.log({props});
+  const {formClose, branchID} = props;
+// useEffect(())[]
+//   if(branchID==null)
+//   {
+//     updateBranchName("");
+//     updateIsAvailable(0);
+//     updateDivisionName("");
+//     updateDistrictName("");
+//     updateThanaName("");
+//     updatePriceRangeValue(0),
+//     updateCuisineTypes([]);
+//     updateAreaDetails("");
+//     // setMainArrayOfOpeningDetails(),
+//   }
+
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
@@ -81,10 +96,12 @@ export const BranchInformationForm = ({
   const mutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
       console.log({ branchCreationInformation });
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branches/54a45ca9-3ccc-4ae8-851d-949e1a609837`,
-        branchCreationInformation
-      );
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
+      //   branchCreationInformation
+      // );
+      const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
+      // console.log({response});
       return response;
     },
     onSuccess(data, variables, context) {
@@ -121,33 +138,35 @@ export const BranchInformationForm = ({
     setMainArrayOfOpeningDetails(openingHoursDetails);
     console.log({ openingHoursDetails });
 
-    mutation.mutate({
-      name: "string",
-      isAvailable: true,
-      priceRange: 0,
-      openingClosingTimes: [
-        {
-          dayOfWeek: 0,
-          opening: "string",
-          closing: "string",
-          isClosed: true,
+    mutation.mutate(
+      {
+        "name": "string",
+        "isAvailable": true,
+        "priceRange": 0,
+        "openingClosingTimes": [
+          {
+            "day": 0,
+            "openingHours": "string",
+            "closingHours": "string",
+            "isClosed": true
+          }
+        ],
+        "cuisineTypes": [
+          {
+            "cuisineTag": "string"
+          }
+        ],
+        "address": {
+          "latitude": 0,
+          "longitude": 0,
+          "division": "string",
+          "district": "string",
+          "thana": "string",
+          "areaDetails": "string"
         },
-      ],
-      cuisineTypes: [
-        {
-          cuisineTag: "string",
-        },
-      ],
-      address: {
-        latitude: 0,
-        longitude: 0,
-        division: "string",
-        district: "string",
-        thana: "string",
-        areaDetails: "string",
-      },
-      restaurantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    });
+        "restaurantId": "54a45ca9-3ccc-4ae8-851d-949e1a609837"
+      }
+    );
     console.log({ mutation });
   };
 
@@ -244,7 +263,7 @@ export const BranchInformationForm = ({
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
-                defaultValue={cuisineTypes}
+                // defaultValue={cuisineTypes}
               />
             </Form.Item>
           </Col>

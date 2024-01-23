@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { BranchInfoEdit } from "./BranchInfoEdit";
-import { Button, Card, Col, Divider, Row, Table } from "antd";
+import { Button, Col, Divider, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { DataType } from "./types/BranchTypes";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useBranchDetails } from "./Zustand/Zustand";
 import Title from "antd/es/typography/Title";
+import { useQuery } from "react-query";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -52,6 +55,25 @@ export const BranchInformation = () => {
     thanaName,
     mainArrayOfOpeningDetails,
   } = useBranchDetails();
+
+  const router = useRouter()
+  console.log({router});
+  const {id} = router.query
+ const branchID = "id";
+
+  const {  isError, data, error } = useQuery({
+    queryKey: ['BranchInfo'],
+    queryFn: async () => {
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
+      //   branchCreationInformation
+      // );
+      const response=  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/34162bfa-104e-46ec-acc4-a9baaf67a44d`)
+      // console.log({response});
+      return response;
+    },
+  })
+  console.log('hellllo ',{data});
   // console.log("BranchInformation page -->>");
 
   return !editInfo ? (
@@ -100,7 +122,7 @@ export const BranchInformation = () => {
             <Col span={16}>
               <p className="text-base">
                 Chicken grill
-                {cuisineTypes.map((value: string) => ", " + value)}{" "}
+                {cuisineTypes.map((value) => ", " + value.cuisineTag)}{" "}
               </p>
             </Col>
           </Row>
@@ -137,7 +159,7 @@ export const BranchInformation = () => {
     </div>
   ) : (
     <div className="w-full">
-      <BranchInfoEdit formClose={setEditInfo} />
+      <BranchInfoEdit formClose={setEditInfo} branchID = {branchID}/>
     </div>
   );
 };
