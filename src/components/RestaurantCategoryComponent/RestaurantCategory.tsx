@@ -5,7 +5,7 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Popconfirm, Table, Typography, message } from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
@@ -22,6 +22,8 @@ import Upload, {
 } from "antd/es/upload";
 import { DataType } from "./Types/CategoryTypes";
 import { PlusOutlined } from "@ant-design/icons";
+import axios from "axios";
+import { getAllByPaginated, path } from "@/services/menuCategoryService";
 
 type DataSourceItem = DataType[];
 
@@ -47,38 +49,7 @@ const defaultImageSrc =
   "https://cdn-icons-png.flaticon.com/512/1996/1996055.png?ga=GA1.1.1713970303.1705205371&";
 
 export const RestaurantCategories: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataSourceItem>([
-    {
-      key: "1",
-      name: "Fast food",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-    {
-      key: "2",
-      name: "Vegetable",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-    {
-      key: "3",
-      name: "Drinks",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-  ]);
+  const [dataSource, setDataSource] = useState<DataSourceItem>([]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -86,26 +57,57 @@ export const RestaurantCategories: React.FC = () => {
 
   const isEditing = (record: DataType) => record.key === editingKey;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiResponse = await getAllByPaginated(1, 10);
+        if (
+          apiResponse &&
+          apiResponse.data &&
+          Array.isArray(apiResponse.data)
+        ) {
+          const apiData = apiResponse.data;
+          setDataSource((prevDataSource) => [...prevDataSource, ...apiData]);
+          console.log("data", apiData);
+        } else {
+          console.error("API response does not contain an array:", apiResponse);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const handleOnFinish = (values: DataType) => {
     console.log("Received values:", values);
   };
 
+  const uploadButton = (
+    <div className="text-gray-400 text-center">
+      <PlusOutlined />
+      <p>Upload</p>
+    </div>
+  );
+
   const UploadButtonInput: React.FC<{
     isDisabled: boolean;
     record: DataType;
-  }> = ({ isDisabled, record }) => {
+    editing: boolean;
+  }> = ({ isDisabled, record, editing }) => {
     const handleImageChange: UploadProps["onChange"] = (
       info: UploadChangeParam<UploadFile>
     ) => {
       if (info.file.status === "done") {
         getBase64(info.file.originFileObj as RcFile, (base64) => {
-          const { name, type, size } = info.file.originFileObj as RcFile;
+          const { name, type } = info.file.originFileObj as RcFile;
           setDataSource((prevDataSource) => {
             const newData = prevDataSource.map((item: DataType) =>
               item.key === record.key
                 ? {
                     ...item,
-                    image: { ...item.image, name, type, size, base64 },
+                    image: { ...item.image, name, type, base64 },
                   }
                 : item
             );
@@ -122,24 +124,26 @@ export const RestaurantCategories: React.FC = () => {
         onChange={handleImageChange}
         disabled={!isDisabled}
       >
-        {record?.image?.base64 ? (
+        {editing ? (
+          record?.image?.base64 ? (
+            <img
+              height={200}
+              width={200}
+              className="p-1 rounded-lg"
+              src={record?.image?.base64}
+              alt="Restaurant Image"
+            />
+          ) : (
+            uploadButton
+          )
+        ) : (
           <img
             height={200}
             width={200}
             className="p-1 rounded-lg"
-            src={record?.image?.base64}
+            src={record?.image?.base64 || defaultImageSrc}
             alt="Restaurant Image"
           />
-        ) : (
-          <div
-            style={{
-              height: 50,
-              width: 50,
-              backgroundImage: `url(${defaultImageSrc})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
         )}
       </Upload>
     );
@@ -182,25 +186,39 @@ export const RestaurantCategories: React.FC = () => {
   };
 
   const handleAdd = () => {
+    const maxDisplayOrder = Math.max(
+      ...dataSource.map((item) => item.displayOrder)
+    );
+    const newDisplayOrder = dataSource.length > 0 ? maxDisplayOrder + 1 : 1;
+
     const maxKey = Math.max(...dataSource.map((item) => parseInt(item.key)));
     const newKey = (maxKey === -Infinity ? 0 : maxKey) + 1;
+
     const newData: DataType = {
       key: newKey.toString(),
       name: "",
       image: {
         name: "",
         type: "",
-        size: 0,
         base64: "",
       },
+      displayOrder: newDisplayOrder,
+      restaurantId: "eabf4311-0451-4ff7-a2f7-f7718b6e0caf",
     };
+
     edit(newData);
     setDataSource([...dataSource, newData]);
   };
 
-  const handleDelete = (key: string) => {
+  const handleDelete = async (key: string) => {
+    await axios.delete(
+      `${
+        process.env.NEXT_PUBLIC_BASE_URL
+      }${path}/${"8e3eedc2-0782-469d-b7df-42b2319391e0"}`
+    );
     const newData = dataSource.filter((item) => item.key !== key);
     setDataSource(newData);
+    message.success("Item deleted successfully!");
   };
 
   const columns = [
@@ -208,6 +226,11 @@ export const RestaurantCategories: React.FC = () => {
       key: "sort",
       width: 50,
       align: "center" as const,
+    },
+    {
+      title: "Serial",
+      dataIndex: "displayOrder",
+      width: 70,
     },
     {
       title: "Category Name",
@@ -219,7 +242,13 @@ export const RestaurantCategories: React.FC = () => {
       dataIndex: "image",
       render: (value: string, record: DataType, rowIndex: number) => {
         const isDisabled = isEditing(record);
-        return <UploadButtonInput isDisabled={isDisabled} record={record} />;
+        return (
+          <UploadButtonInput
+            isDisabled={isDisabled}
+            record={record}
+            editing={isEditing(record)}
+          />
+        );
       },
     },
     {
@@ -325,7 +354,7 @@ export const RestaurantCategories: React.FC = () => {
       </div>
       <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
         <SortableContext
-          items={dataSource.map((i) => i.key)}
+          items={Array.isArray(dataSource) ? dataSource.map((i) => i.key) : []}
           strategy={verticalListSortingStrategy}
         >
           <Form form={form} component={false} onFinish={handleOnFinish}>
@@ -345,6 +374,7 @@ export const RestaurantCategories: React.FC = () => {
               rowClassName={"editable-row"}
               pagination={{
                 onChange: cancel,
+                pageSize: 10,
               }}
             />
           </Form>
