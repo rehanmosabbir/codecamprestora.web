@@ -40,82 +40,58 @@ export const OrdersList: React.FC = () => {
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
-      customerName: "John",
-      phone: "01773967545",
+      food: {
+        foodName: "Hamburger",
+        quantity: 5,
+      },
+      customerName: "James",
+      phone: "01762946384",
       seats: 5,
-      date: "15 Feb 2024",
-      time: "02:00 PM",
-      comment: "Nice",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
-    },
-    {
-      customerName: "james",
-      phone: "01556284956",
-      seats: 10,
-      date: "25 Mar 2024",
-      time: "04:00 PM",
+      date: "5 Jan 2024",
+      time: "3:00 PM",
       comment: "Tasty",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
+      price: {
+        foodPrice: 50,
+        discount: 5,
+        totalPrice: 45,
+      },
+      status: "",
     },
     {
-      customerName: "clark",
-      phone: "01963810735",
-      seats: 15,
+      food: {
+        foodName: "Pizza",
+        quantity: 2,
+      },
+      customerName: "John",
+      phone: "01698543895",
+      seats: 8,
       date: "10 Jan 2024",
-      time: "10:30 AM",
-      comment: "Good",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
+      time: "4:00 PM",
+      comment: "Better",
+      price: {
+        foodPrice: 80,
+        discount: 10,
+        totalPrice: 70,
+      },
+      status: "",
+    },
+    {
+      food: {
+        foodName: "Sandwich",
+        quantity: 3,
+      },
+      customerName: "Clark",
+      phone: "01558479854",
+      seats: 4,
+      date: "15 Jan 2024",
+      time: "5:00 PM",
+      comment: "Nice",
+      price: {
+        foodPrice: 50,
+        discount: 10,
+        totalPrice: 40,
+      },
+      status: "",
     },
   ]);
 
@@ -133,17 +109,13 @@ export const OrdersList: React.FC = () => {
       dataIndex: "food",
       render: (_: DataType, record: DataType) => (
         <div>
-          {record.orderItems.map((item, index) => (
-            <div key={index}>
-              <p>
-                <span className="font-semibold">Name :</span> {item.itemName}
-              </p>
-              <p>
-                <span className="font-semibold">Price :</span> {item.unitPrice}{" "}
-                x {item.quantity} = {item.totalItemPrice} Tk
-              </p>
-            </div>
-          ))}
+          <p>
+            <span className="font-semibold">Name :</span> {record.food.foodName}
+          </p>
+          <p>
+            <span className="font-semibold">Quantity :</span>{" "}
+            {record.food.quantity}
+          </p>
         </div>
       ),
     },
@@ -164,12 +136,12 @@ export const OrdersList: React.FC = () => {
     {
       title: "Date",
       dataIndex: "date",
-      width: 120,
+      width: 110,
     },
     {
       title: "Time",
       dataIndex: "time",
-      width: 100,
+      width: 90,
     },
     {
       title: "Comment",
@@ -183,20 +155,16 @@ export const OrdersList: React.FC = () => {
       render: (_: DataType, record: DataType) => (
         <div>
           <p>
-            <span className="font-semibold">Sub Total :</span> {record.subTotal}{" "}
-            Tk
+            <span className="font-semibold">Price :</span>{" "}
+            {record.price.foodPrice} Tk
           </p>
           <p>
-            <span className="font-semibold">Discount :</span> {record.discount}{" "}
-            Tk
+            <span className="font-semibold">Discount :</span>{" "}
+            {record.price.discount} Tk
           </p>
           <p>
-            <span className="font-semibold">Delivery :</span> {record.delivery}{" "}
-            Tk
-          </p>
-          <p>
-            <span className="font-bold">Total Price :</span> {record.totalPrice}{" "}
-            Tk
+            <span className="font-bold">Total Price :</span>{" "}
+            {record.price.totalPrice} Tk
           </p>
         </div>
       ),

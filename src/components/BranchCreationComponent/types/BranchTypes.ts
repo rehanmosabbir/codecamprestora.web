@@ -5,17 +5,18 @@ export interface DataType {
   Days: string;
   OpeningHours: string;
   ClosingHours: string;
-  IsOpen: any;
-  enabled: boolean;
+  IsOpen: string;
+  // enabled: boolean;
 }
 
-// export interface Item {
-//   key: string;
-//   Days: string;
-//   OpeningHours: string;
-//   ClosingHours: string;
-//   enabled:boolean
-// }
+export interface openingClosingType {
+ 
+  day: number;
+  openingHours: string;
+  closingHours: string;
+  isClosed: any;
+ 
+}
 
 export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
