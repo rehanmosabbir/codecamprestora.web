@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { BranchInfoEdit } from "./BranchInfoEdit";
+<<<<<<< HEAD
 import { Button, Col, Divider, Row, Spin, Table } from "antd";
+=======
+import { Button, Col, Divider, Row, Table } from "antd";
+>>>>>>> 629370281cc4d7d659533772bc0d729b417344d3
 import { ColumnsType } from "antd/es/table";
 import { DataType, openingClosingType } from "./types/BranchTypes";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useBranchDetails } from "./Zustand/Zustand";
 import Title from "antd/es/typography/Title";
+<<<<<<< HEAD
 import axios from "axios";
 import { useQuery } from "react-query";
+=======
+import { useQuery } from "react-query";
+import axios from "axios";
+import { useRouter } from "next/router";
+>>>>>>> 629370281cc4d7d659533772bc0d729b417344d3
 
 const columns: ColumnsType<DataType> = [
   {
@@ -65,6 +75,7 @@ export const BranchInformation = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
+<<<<<<< HEAD
   const { data } = useQuery({
     queryKey: ["BranchInfo"],
     queryFn: async () => {
@@ -198,6 +209,26 @@ export const BranchInformation = () => {
       IsOpen: findIsOpen(6) ? "false" : "true",
     },
   ];
+=======
+  const router = useRouter()
+  console.log({router});
+  const {id} = router.query
+ const branchID = "id";
+
+  const {  isError, data, error } = useQuery({
+    queryKey: ['BranchInfo'],
+    queryFn: async () => {
+      // const response = await axios.post(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
+      //   branchCreationInformation
+      // );
+      const response=  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/34162bfa-104e-46ec-acc4-a9baaf67a44d`)
+      // console.log({response});
+      return response;
+    },
+  })
+  console.log('hellllo ',{data});
+>>>>>>> 629370281cc4d7d659533772bc0d729b417344d3
   // console.log("BranchInformation page -->>");
 
   const handelEditButton = () => {
@@ -281,9 +312,13 @@ export const BranchInformation = () => {
             <Col span={16}>
               <p className="text-base">
                 Chicken grill
+<<<<<<< HEAD
                 {BranchDetailsData?.cuisineTypes?.map(
                   (value: { cuisineTag: string }) => ", " + value.cuisineTag
                 )}
+=======
+                {cuisineTypes.map((value) => ", " + value.cuisineTag)}{" "}
+>>>>>>> 629370281cc4d7d659533772bc0d729b417344d3
               </p>
             </Col>
           </Row>
@@ -325,7 +360,7 @@ export const BranchInformation = () => {
     </div>
   ) : (
     <div className="w-full">
-      <BranchInfoEdit formClose={setEditInfo} />
+      <BranchInfoEdit formClose={setEditInfo} branchID = {branchID}/>
     </div>
   );
 };

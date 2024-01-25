@@ -1,35 +1,36 @@
+export interface OrderItemType {
+    itemName: string;
+    quantity: number;
+    unitPrice: number;
+    totalItemPrice: number;
+}
+
 export interface DataType {
-    food: {
-        foodName: string;
-        quantity: number;
-    };
     customerName: string;
     phone: string;
     seats: number;
     date: string;
     time: string;
     comment: string;
-    price: {
-        foodPrice: number;
-        discount: number;
-        totalPrice: number;
-    };
-    status: string;
+    orderItems: OrderItemType[];
+    subTotal: number;
+    discount: number;
+    delivery: number;
+    totalPrice: number;
 }
 
 export interface FieldType {
-    food: {
-        foodName: string;
-        quantity: number;
-    };
     customerName: string;
     phone: string;
     seats: number;
-    price: {
-        foodPrice: number;
-        discount: number;
-        totalPrice: number;
-    };
+    date: string;
+    time: string;
+    comment: string;
+    orderItems: OrderItemType[];
+    subTotal: number;
+    discount: number;
+    delivery: number;
+    totalPrice: number;
 }
 
 export interface OrderCreationModalProps {

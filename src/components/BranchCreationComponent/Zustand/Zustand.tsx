@@ -11,7 +11,7 @@ type BranchDetailsType = {
   divisionName: string;
   districtName: string;
   thanaName: string;
-  cuisineTypes: string[];
+  cuisineTypes: { cuisineTag: string}[];
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
@@ -23,7 +23,7 @@ type BranchDetailsType = {
   updateThanaName: (ThanaName: string) => void;
   updateIsAvailable: (isAvailable: number) => void;
   updatePriceRangeValue: (priceRangeValue: number) => void;
-  updateCuisineTypes: (cuisineTypes: string[]) => void;
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) => void;
   updateAreaDetails: (areaDetails: string) => void;
   updateOpeningHoursDetails: (
     key: string,
@@ -35,12 +35,22 @@ type BranchDetailsType = {
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
+<<<<<<< HEAD
   isInfoUpdate: false,
   branchName: "",
   isAvailable: 0,
   priceRangeValue: 0,
   cuisineTypes: [],
   areaDetails: "",
+=======
+  branchName: "Shymoli",
+  isAvailable: 1,
+  priceRangeValue: 2,
+  cuisineTypes: [{
+    "cuisineTag": "biriyani"
+  }],
+  areaDetails: "Shymoli",
+>>>>>>> 629370281cc4d7d659533772bc0d729b417344d3
   divisionName: "",
   districtName: "",
   thanaName: "",
@@ -56,7 +66,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     set(() => ({ priceRangeValue: priceRangeValue })),
   updateAreaDetails: (areaDetails: string) =>
     set(() => ({ areaDetails: areaDetails })),
-  updateCuisineTypes: (cuisineTypes: string[]) =>
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) =>
     set(() => ({ cuisineTypes: cuisineTypes })),
   updateDivisionName: (divisionName: string) =>
     set(() => ({ divisionName: divisionName })),
@@ -129,8 +139,8 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     {
       key: "2",
       Days: "Sunday",
-      OpeningHours: "10:00 AM",
-      ClosingHours: "10:00 PM",
+      openingHours: "10:00 AM",
+      closingHours: "10:00 PM",
       IsOpen: "true",
     },
     {
