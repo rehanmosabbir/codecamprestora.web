@@ -70,20 +70,11 @@ export const BranchInformationForm = ({
 
   const createMutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
-      console.log({ branchCreationInformation });
-      // const response = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-      //   branchCreationInformation
+      // console.log({ branchCreationInformation });
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
         branchCreationInformation
       );
-      // const response = axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`
-      // );
-      // const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
-      // console.log({response});
-      // console.log("created data --", response);
       return response;
     },
     onSuccess(data, variables, context) {
@@ -96,20 +87,12 @@ export const BranchInformationForm = ({
 
   const updateMutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
-      console.log({ branchCreationInformation });
-      // const response = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-      //   branchCreationInformation
-      const response = await axios.post(
+      // console.log({ branchCreationInformation });
+      const response = await axios.put(
         `http://54.203.205.46:5219/api/v1/branch`,
         branchCreationInformation
       );
-      // const response = axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`
-      // );
-      // const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
-      // console.log({response});
-      console.log("created data --", response);
+      // console.log("created data --", response);
       return response;
     },
     onSuccess(data, variables, context) {
@@ -124,20 +107,6 @@ export const BranchInformationForm = ({
 
   const onFinish = (values: any) => {
     console.log("123Success:------", values);
-
-    // if (values.branchName !== undefined) updateBranchName(values.branchName);
-    // if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
-    // if (values.priceRangeValue !== undefined)
-    //   updatePriceRangeValue(values.priceRangeValue);
-    // if (values.cuisineTypes !== undefined)
-    //   updateCuisineTypes(values.cuisineTypes);
-    // if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
-    // if (values.divisionName !== undefined)
-    //   updateDivisionName(values.divisionName);
-    // if (values.districtName !== undefined)
-    //   updateDistrictName(values.districtName);
-    // if (values.thanaName !== undefined) updateThanaName(values.thanaName);
-    // console.log("values.branchName ", values.branchName);
     const cuisineTypesObjForm = values?.cuisineTypes?.map((value: string) => ({
       cuisineTag: value,
     }));
