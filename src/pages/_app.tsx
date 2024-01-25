@@ -10,16 +10,16 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-    <ConfigProvider theme={theme}>
-      <SessionProvider session={session}>
-        <RootLayout>
-          <Component {...pageProps} />
-        </RootLayout>
-      </SessionProvider>
-    </ConfigProvider>
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider theme={theme}>
+          <RootLayout>
+            <Component {...pageProps} />
+          </RootLayout>
+        </ConfigProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }

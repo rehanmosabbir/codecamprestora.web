@@ -18,7 +18,7 @@ export default async function middleware(req: NextRequestWithAuth, event: NextFe
 
   const authMiddleware = withAuth({
     pages: {
-      signIn: `/login`,
+      signIn: '/login',
     },
   });
 
