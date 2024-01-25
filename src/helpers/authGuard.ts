@@ -8,26 +8,57 @@ const isInRole = (desiredRole: string, userRoles: string[]): boolean => {
   return userRoles.some((role) => role.toLowerCase() === desiredRole);
 };
 
-const wantsToVisitOwnerPage = (path: string, basePath: string): boolean => {
+const wantsToVisitOwnerPage = (pathTo: string, pathFrom: string): boolean => {
   const endpoints = allEndpoints();
 
-  const ownerPathPatterns = endpoints.ownerPaths.map(
-    (path) => new URLPattern(path, basePath)
-  );
-  var isMatched = ownerPathPatterns.some((pattern) => pattern.test(basePath));
+  const patterns = endpoints.ownerPaths.map(path => {
+    const isDynamicPath = path.includes('*') || path.endsWith('*');
+    const isStaticPath = !path.endsWith('/') && !path.endsWith('*') && !isDynamicPath;
 
-  return isMatched ? true : false;
+    if(isStaticPath) {
+      const pattern = `^${path}$`;
+      return new RegExp(pattern);
+    }
+
+    if(isDynamicPath) {
+      const pattern = path.replaceAll('*', '.*');
+      return new RegExp(pattern);
+    }
+  });
+
+
+  const matched = patterns.some(pattern => {
+    if(pattern === undefined) return false;
+    return pattern.test(pathTo);
+  });
+
+  return matched ? true : false;
 };
 
-const wantsToVisitManagerPage = (path: string, basePath: string): boolean => {
+const wantsToVisitManagerPage = (pathTo: string, pathFrom: string): boolean => {
   const endpoints = allEndpoints();
 
-  const managerPathPatterns = endpoints.managerPaths.map(
-    (path) => new URLPattern(path, basePath)
-  );
-  var isMatched = managerPathPatterns.some((pattern) => pattern.test(basePath));
+  const patterns = endpoints.managerPaths.map(path => {
+    const isDynamicPath = path.includes('*') || path.endsWith('*');
+    const isStaticPath = !path.endsWith('/') && !path.endsWith('*') && !isDynamicPath;
 
-  return isMatched ? true : false;
+    if(isStaticPath) {
+      const pattern = `^${path}$`;
+      return new RegExp(pattern);
+    }
+
+    if(isDynamicPath) {
+      const pattern = path.replaceAll('*', '.*');
+      return new RegExp(pattern);
+    }
+  });
+
+  const matched = patterns.some(pattern => {
+    if(pattern === undefined) return false;
+    return pattern.test(pathTo);
+  });
+
+  return matched ? true : false;
 };
 
 const handleRoles = (
@@ -35,23 +66,24 @@ const handleRoles = (
   currentPath: string,
   baseURL: string
 ): AuthGuradResult => {
-    if (wantsToVisitOwnerPage(currentPath, baseURL)) {
+  console.log("here...");
+  if (wantsToVisitOwnerPage(currentPath, baseURL)) {
     const isAdmin = isInRole(roles.Owner, token.roles);
     if (isAdmin) return { isRedirected: false };
 
     return {
-        isRedirected: true,
-        response: NextResponse.redirect(new URL("/", baseURL)),
+      isRedirected: true,
+      response: NextResponse.redirect(new URL("/", baseURL)),
     };
   }
 
   if (wantsToVisitManagerPage(currentPath, baseURL)) {
     const isManager = isInRole(roles.Manager, token.roles);
-    if(isManager) return { isRedirected: false };
+    if (isManager) return { isRedirected: false };
 
     return {
-        isRedirected: true,
-        response: NextResponse.redirect(new URL("/", baseURL)),
+      isRedirected: true,
+      response: NextResponse.redirect(new URL("/", baseURL)),
     };
   }
 
