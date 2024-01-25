@@ -1,26 +1,18 @@
-import { getToken } from "next-auth/jwt";
-import { NextFetchEvent } from "next/server";
-import { redirectIfGuarderRoute } from "./helpers/authGuard";
+import { NextResponse } from "next/server";
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 
-export default async function middleware(req: NextRequestWithAuth, event: NextFetchEvent) {
-  const token = await getToken({ req });
-  const isAuthenticated = !!token;
+export default withAuth(
+  function middleware(req: NextRequestWithAuth) {
+    var currentPath = req.nextUrl.pathname;
+    console.log('req', currentPath);
 
-  if(isAuthenticated)
+    if(currentPath.startsWith('/login')) return NextResponse.redirect('/');
+  },
   {
-    const pathTo = req.nextUrl.pathname;
-    const pathFrom = req.url;
-
-    var result = redirectIfGuarderRoute(token, pathTo, pathFrom);
-    if(result.isRedirected) return result.response;
-  }
-
-  const authMiddleware = withAuth({
     pages: {
-      signIn: `/login`,
-    },
-  });
+      signIn: "/login",
+    }
+  }
+);
 
-  return authMiddleware(req, event);
-}
+// export const config = { matcher: ["/login"] }

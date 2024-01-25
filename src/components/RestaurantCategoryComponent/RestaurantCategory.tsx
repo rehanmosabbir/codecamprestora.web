@@ -43,9 +43,6 @@ const beforeUpload = (file: RcFile) => {
   return isJpgOrPng && isLT5M;
 };
 
-const defaultImageSrc =
-  "https://cdn-icons-png.flaticon.com/512/1996/1996055.png?ga=GA1.1.1713970303.1705205371&";
-
 export const RestaurantCategories: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataSourceItem>([
     {
@@ -90,6 +87,13 @@ export const RestaurantCategories: React.FC = () => {
     console.log("Received values:", values);
   };
 
+  const uploadButton = (
+    <div className="text-gray-400 text-center">
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
   const UploadButtonInput: React.FC<{
     isDisabled: boolean;
     record: DataType;
@@ -117,6 +121,8 @@ export const RestaurantCategories: React.FC = () => {
     return (
       <Upload
         beforeUpload={beforeUpload}
+        name="avatar"
+        className="avatar-uploader overflow-hidden"
         listType="picture-card"
         showUploadList={false}
         onChange={handleImageChange}
@@ -131,15 +137,7 @@ export const RestaurantCategories: React.FC = () => {
             alt="Restaurant Image"
           />
         ) : (
-          <div
-            style={{
-              height: 50,
-              width: 50,
-              backgroundImage: `url(${defaultImageSrc})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
+          uploadButton
         )}
       </Upload>
     );

@@ -1,10 +1,9 @@
-import Link from "next/link";
-import { AppLogo } from "@/assets/Logo";
-import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { LoginCredential } from "@/types/auth";
 import { Button, Checkbox, Divider, Form, Input } from "antd";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { AppLogo } from "@/assets/Logo";
+import Link from "next/link";
 
 interface FieldType {
   username?: string;
@@ -16,26 +15,20 @@ const LoginPage = () => {
   const router = useRouter();
   const [logError, setError] = useState<boolean>(false);
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
-
-  const onFinish = async (values: LoginCredential) => {
+  const onFinish = async (values: any) => {
     const { username, password } = values;
-
-    // console.log('p', values);
-
     try {
       const result = await signIn("credentials", {
-        redirect: true,
+        redirect: false,
         username,
-        password
+        password,
       });
 
-      // console.log('ok', result);
-
-      // if (result?.error) {
-      //   setError(true);
-      // } else {
-      //   await router.push("/branches");
-      // }
+      if (result?.error) {
+        setError(true);
+      } else {
+        await router.push("/branches");
+      }
     } catch (error) {
       console.error("Error occurred during authentication:", error);
     }
@@ -47,7 +40,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLargeScreen(window.innerWidth >= 768);
+      setIsLargeScreen(window.innerWidth >= 600);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -55,11 +48,9 @@ const LoginPage = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
   const formStyles = {
     padding: isLargeScreen ? "30px" : "15px",
   };
-
   return (
     <div className="min-h-screen flex items-center bg-[#EEF2F6]">
       <div className="w-full py-20 px-7 flex justify-center">

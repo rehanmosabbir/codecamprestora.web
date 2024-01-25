@@ -1,19 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  DatePickerProps,
-  DatePicker,
-  Space,
-  TimePicker,
-  Select,
-} from "antd";
-import dayjs from "dayjs";
-import "dayjs/locale/en";
-import "dayjs/locale/de";
-import "dayjs/plugin/timezone";
+import { Button, Form, Input, InputNumber, Select } from "antd";
+import Image from "next/image";
+import logo from "@/assets/logo.png";
 import {
   DataType,
   FieldType,
@@ -42,41 +30,28 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   };
 
   const onFinish = (values: DataType) => {
-    const { customerName, phone, seats, date, time, comment } = values;
-    const formattedDate = dayjs(date).format("DD MMM YYYY");
-    const formattedTime = dayjs(time).format("hh:mm A");
+    const { customerName, phone, seats } = values;
     const numericSeats = Number(seats);
     const totalPricePerFood = calculateTotalPrice();
-    const itemDetails = selectedFoodsWithQuantity.map(
-      ({ food, quantity, price }) => {
-        const selectedOption = options.find((option) => option.value === food);
-        const unitPrice = selectedOption ? Number(selectedOption.price) : 0;
-
-        return {
-          itemName: food,
-          quantity,
-          unitPrice,
-          totalItemPrice: unitPrice * quantity,
-        };
-      }
+    const quantities = selectedFoodsWithQuantity.reduce(
+      (quantities, { food, quantity }) => {
+        quantities[food] = quantity;
+        return quantities;
+      },
+      {} as { [food: string]: number }
     );
-
-    const subTotal = itemDetails.reduce(
-      (total, item) => total + item.totalItemPrice,
+    const overallTotalPrice = Object.values(totalPricePerFood).reduce(
+      (total: number, price: number) => total + price,
       0
     );
-
     console.log("Success:", {
-      orderItems: itemDetails,
+      totalPricePerFood,
+      quantities,
       customerName,
       phone,
       seats: numericSeats,
-      date: formattedDate,
-      time: formattedTime,
-      subTotal,
-      comment,
+      overallTotalPrice,
     });
-
     form.resetFields();
     onCancel();
   };
@@ -123,8 +98,6 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   const onFinishFailed = (errorInfo: ValidateErrorEntity<FieldType>) => {
     console.log("Failed:", errorInfo);
   };
-
-  const format = "HH:mm";
 
   useEffect(() => {
     const fetchedOptions = [
@@ -205,7 +178,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         >
           <Input style={{ padding: "10px" }} placeholder="Customer's Name" />
         </Form.Item>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="flex gap-5">
           <Form.Item<FieldType>
             label="Phone Number"
             labelCol={{ span: 24 }}
@@ -245,59 +218,10 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
           </Form.Item>
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
-          <Form.Item<FieldType>
-            label="Date"
-            labelCol={{ span: 24 }}
-            name="date"
-            rules={[
-              {
-                required: true,
-                message: "Enter Date!",
-              },
-            ]}
-          >
-            <DatePicker
-              style={{ width: "100%" }}
-              format={"DD MMM YYYY"}
-              size="large"
-            />
-          </Form.Item>
-
-          <Form.Item<FieldType>
-            label="Time"
-            labelCol={{ span: 24 }}
-            name="time"
-            rules={[
-              {
-                required: true,
-                message: "Enter Time!",
-              },
-            ]}
-          >
-            <TimePicker
-              style={{ width: "100%" }}
-              format="hh:mm A"
-              size="large"
-            />
-          </Form.Item>
-        </div>
-
-        <Form.Item<FieldType>
-          label="Comment"
-          labelCol={{ span: 24 }}
-          name="comment"
-        >
-          <Input
-            style={{ padding: "10px", width: "100%" }}
-            placeholder="Comment"
-          />
-        </Form.Item>
-
         <Form.Item<FieldType>
           label="Select Food"
           labelCol={{ span: 24 }}
-          name="orderItems"
+          rules={[{ required: true, message: "Please select Food!" }]}
         >
           <div className="flex gap-3">
             <Select

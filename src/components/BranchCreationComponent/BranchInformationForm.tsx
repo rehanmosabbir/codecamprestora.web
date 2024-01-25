@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FieldType } from "@/types/BreanchCreationTypes";
 import {
   Button,
+  Card,
   Col,
   Form,
   Input,
@@ -10,6 +11,7 @@ import {
   Row,
   Select,
   Divider,
+  theme,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
@@ -24,12 +26,10 @@ import {
 import axios from "axios";
 import { useMutation } from "react-query";
 
-export const BranchInformationForm = (
-  props
-: {
-  formClose: React.Dispatch<React.SetStateAction<boolean>>,
-  branchID: string| null |undefined
-
+export const BranchInformationForm = ({
+  formClose,
+}: {
+  formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { token } = theme.useToken();
   const {
@@ -44,22 +44,6 @@ export const BranchInformationForm = (
     districtName,
     thanaName,
   } = useBranchDetails();
-  console.log({props});
-  const {formClose, branchID} = props;
-// useEffect(())[]
-//   if(branchID==null)
-//   {
-//     updateBranchName("");
-//     updateIsAvailable(0);
-//     updateDivisionName("");
-//     updateDistrictName("");
-//     updateThanaName("");
-//     updatePriceRangeValue(0),
-//     updateCuisineTypes([]);
-//     updateAreaDetails("");
-//     // setMainArrayOfOpeningDetails(),
-//   }
-
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
