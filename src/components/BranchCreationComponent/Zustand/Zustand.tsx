@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { DataType } from "../types/BranchTypes";
 
 type BranchDetailsType = {
+  isInfoUpdate: boolean;
   branchName: string;
   isAvailable: number;
   priceRangeValue: number;
@@ -14,6 +15,7 @@ type BranchDetailsType = {
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
+  updateIsInfoUpdate: (isInfoUpdate: boolean) => void;
   updateBranchName: (branchName: string) => void;
   updateRowSelectedArray: (rowSelectedArray: string[]) => void;
   updateDivisionName: (divisionName: string) => void;
@@ -28,19 +30,24 @@ type BranchDetailsType = {
     data: string,
     keyField: string
   ) => void;
-  setMainArrayOfOpeningDetails: (openingHoursDetails: any[]) => void;
+  setOpeningHoursDetails: (openingHoursDetails: any[]) => void;
+  setMainArrayOfOpeningDetails: (mainArrayOfOpeningDetails: any[]) => void;
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
-  branchName: "Shymoli",
-  isAvailable: 1,
-  priceRangeValue: 2,
-  cuisineTypes: ["Biriyani", "Shorma"],
-  areaDetails: "Shymoli",
+  isInfoUpdate: false,
+  branchName: "",
+  isAvailable: 0,
+  priceRangeValue: 0,
+  cuisineTypes: [],
+  areaDetails: "",
   divisionName: "",
   districtName: "",
   thanaName: "",
   rowSelectedArray: ["1", "2", "3", "4", "5", "6", "7"],
+
+  updateIsInfoUpdate: (isInfoUpdate: boolean) =>
+    set((state) => ({ isInfoUpdate: isInfoUpdate })),
 
   updateBranchName: (branchName: string) =>
     set((state) => ({ branchName: branchName })),
@@ -177,10 +184,20 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     },
   ] as DataType[],
 
-  setMainArrayOfOpeningDetails: (mainArrayOfOpeningDetails) =>
+ setMainArrayOfOpeningDetails: ( mainArrayOfOpeningDetails) =>
+  set((state) => {
+    var data = {
+      mainArrayOfOpeningDetails:  mainArrayOfOpeningDetails.map((x) => ({
+        ...x,
+      })),
+    };
+    return data;
+  }),
+
+  setOpeningHoursDetails: (openingHoursDetails) =>
     set((state) => {
       var data = {
-        mainArrayOfOpeningDetails: mainArrayOfOpeningDetails.map((x) => ({
+        openingHoursDetails: openingHoursDetails.map((x) => ({
           ...x,
         })),
       };
