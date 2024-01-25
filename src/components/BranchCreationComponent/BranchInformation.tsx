@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BranchInfoEdit } from "./BranchInfoEdit";
-import { Button, Card, Col, Divider, Flex, Row, Spin, Table } from "antd";
+import { Button, Col, Divider, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { DataType, openingClosingType } from "./types/BranchTypes";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -52,15 +52,6 @@ const getLabel = (priceRange: number) => {
 export const BranchInformation = () => {
   const [editInfo, setEditInfo] = useState(false);
   const {
-    branchName,
-    isAvailable,
-    priceRangeValue,
-    cuisineTypes,
-    areaDetails,
-    divisionName,
-    districtName,
-    thanaName,
-    mainArrayOfOpeningDetails,
     updateIsInfoUpdate,
     updateBranchName,
     updateIsAvailable,
@@ -74,28 +65,18 @@ export const BranchInformation = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
-  const { isError, data, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ["BranchInfo"],
     queryFn: async () => {
-      // const response = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-      //   branchCreationInformation
-      // );
       const response = await axios.get(
-        `http://54.203.205.46:5219/api/v1/branch/c1922c17-0015-4c0e-be03-f611fb9e20a5`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/c1922c17-0015-4c0e-be03-f611fb9e20a5`
       );
-      // const response = await axios.get(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/34162bfa-104e-46ec-acc4-a9baaf67a44d`
-      // );
-      // console.log({response});
       return response;
     },
   });
 
   const BranchDetailsData = data?.data?.data;
-  console.log("hellllo", { BranchDetailsData });
-  // BranchDetailsData?.openingClosingTimes?.filter((day:number) => console.log({day}) )
-  //  const index = BranchDetailsData.openingClosingTimes.day
+
   const findOpeningHours = (index: number) => {
     const data: openingClosingType =
       BranchDetailsData?.openingClosingTimes?.find(
@@ -103,10 +84,8 @@ export const BranchInformation = () => {
       );
 
     let time = parseInt(data?.openingHours, 10);
-    // console.log({time});
     if (time > 12) {
       time = time % 12;
-      // console.log("time check--");
       if (time < 10) {
         let timeString =
           "0" +
@@ -115,7 +94,6 @@ export const BranchInformation = () => {
           data?.openingHours[3] +
           data?.openingHours[4] +
           " PM";
-        // console.log({ timeString });
         return timeString;
       } else {
         let timeString =
@@ -125,7 +103,6 @@ export const BranchInformation = () => {
           data?.openingHours[3] +
           data?.openingHours[4] +
           " PM";
-        // console.log({ timeString });
         return timeString;
       }
     } else return data?.openingHours + " AM";
@@ -136,11 +113,11 @@ export const BranchInformation = () => {
       BranchDetailsData?.openingClosingTimes?.find(
         (value: openingClosingType) => value.day === index
       );
+
     let time = parseInt(data?.closingHours, 10);
-    // console.log({ time });
+
     if (time > 12) {
       time = time % 12;
-      // console.log("time check--");
       if (time < 10) {
         let timeString =
           "0" +
@@ -149,7 +126,6 @@ export const BranchInformation = () => {
           data?.closingHours[3] +
           data?.closingHours[4] +
           " PM";
-        // console.log({ timeString });
         return timeString;
       } else {
         let timeString =
@@ -159,20 +135,15 @@ export const BranchInformation = () => {
           data?.closingHours[3] +
           data?.closingHours[4] +
           " PM";
-        // console.log({ timeString });
         return timeString;
       }
     } else return data?.closingHours + " AM";
-
-    // console.log(data[0]?.openingHours );
   };
   const findIsOpen = (index: number) => {
     const data: openingClosingType =
       BranchDetailsData?.openingClosingTimes?.find(
         (value: openingClosingType) => value.day === index
       );
-
-    // console.log("fdf- ", data?.isClosed);
     return data?.isClosed;
   };
 
@@ -183,7 +154,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(0),
       ClosingHours: findClosingHours(0),
       IsOpen: findIsOpen(0) ? "false" : "true",
-      // enabled: false,
     },
     {
       key: "2",
@@ -191,7 +161,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(1),
       ClosingHours: findClosingHours(1),
       IsOpen: findIsOpen(1) ? "false" : "true",
-      // enabled: true,
     },
     {
       key: "3",
@@ -199,7 +168,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(2),
       ClosingHours: findClosingHours(2),
       IsOpen: findIsOpen(2) ? "false" : "true",
-      // enabled: true,
     },
     {
       key: "4",
@@ -207,7 +175,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(3),
       ClosingHours: findClosingHours(3),
       IsOpen: findIsOpen(3) ? "false" : "true",
-      // enabled: true,
     },
     {
       key: "5",
@@ -215,7 +182,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(4),
       ClosingHours: findClosingHours(4),
       IsOpen: findIsOpen(4) ? "false" : "true",
-      // enabled: true,
     },
     {
       key: "6",
@@ -223,7 +189,6 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(5),
       ClosingHours: findClosingHours(5),
       IsOpen: findIsOpen(5) ? "false" : "true",
-      // enabled: true,
     },
     {
       key: "7",
@@ -231,37 +196,25 @@ export const BranchInformation = () => {
       OpeningHours: findOpeningHours(6),
       ClosingHours: findClosingHours(6),
       IsOpen: findIsOpen(6) ? "false" : "true",
-      // enabled: true,
     },
   ];
-  console.log({ arrayOfOpeningDetails });
-  console.log("BranchInformation page -->>");
+  // console.log("BranchInformation page -->>");
 
   const handelEditButton = () => {
     setEditInfo(true);
     updateIsInfoUpdate(true);
-
-    // if (values.branchName !== undefined)
     updateBranchName(BranchDetailsData?.name);
-    // if (values.isAvailable !== undefined)
     updateIsAvailable(BranchDetailsData?.isAvailable);
-    // if (values.priceRangeValue !== undefined)
     updatePriceRangeValue(BranchDetailsData?.priceRange);
-
-    // if (values.cuisineTypes !== undefined)
+    
     const convertedCuisineTypes = BranchDetailsData?.cuisineTypes?.map(
       (value: { cuisineTag: string }) => value?.cuisineTag
     );
-    console.log({ convertedCuisineTypes });
     updateCuisineTypes(convertedCuisineTypes);
-    // if (values.areaDetails !== undefined)
 
     updateAreaDetails(BranchDetailsData?.address?.areaDetails);
-    // if (values.divisionName !== undefined)
     updateDivisionName(BranchDetailsData?.address?.division);
-    // if (values.districtName !== undefined)
     updateDistrictName(BranchDetailsData?.address?.district);
-    // if (values.thanaName !== undefined)
     updateThanaName(BranchDetailsData?.address?.thana);
     setOpeningHoursDetails(arrayOfOpeningDetails);
 
@@ -269,10 +222,7 @@ export const BranchInformation = () => {
     arrayOfOpeningDetails.forEach((values) => {
       if (values.IsOpen === "true") rowSelected.push(values.key);
     });
-
     updateRowSelectedArray(rowSelected);
-    console.log("edir--", rowSelected);
-    // setMainArrayOfOpeningDetails(arrayOfOpeningDetails)
   };
 
   if (!BranchDetailsData)

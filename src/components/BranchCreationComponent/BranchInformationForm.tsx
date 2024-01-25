@@ -43,28 +43,16 @@ export const BranchInformationForm = ({
     divisionName,
     districtName,
     thanaName,
-    updateIsInfoUpdate,
-    updateBranchName,
-    updateIsAvailable,
-    updateDivisionName,
-    updateDistrictName,
-    updateThanaName,
-    updatePriceRangeValue,
-    updateCuisineTypes,
-    updateAreaDetails,
-    setOpeningHoursDetails,
   } = useBranchDetails();
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
 
   const handleDivisionChange = (value: string) => {
-    // console.log("thanaaaaaa----------", value);
     setDistrict(districtData[value]);
   };
 
   const handleDistrictChange = (value: string) => {
-    console.log("thanaaaaaa----------", value);
     setThana(thanaData[value]);
   };
 
@@ -95,7 +83,7 @@ export const BranchInformationForm = ({
       // );
       // const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
       // console.log({response});
-      console.log("created data --", response);
+      // console.log("created data --", response);
       return response;
     },
     onSuccess(data, variables, context) {
@@ -149,7 +137,7 @@ export const BranchInformationForm = ({
     // if (values.districtName !== undefined)
     //   updateDistrictName(values.districtName);
     // if (values.thanaName !== undefined) updateThanaName(values.thanaName);
-    console.log("values.branchName ", values.branchName);
+    // console.log("values.branchName ", values.branchName);
     const cuisineTypesObjForm = values?.cuisineTypes?.map((value: string) => ({
       cuisineTag: value,
     }));

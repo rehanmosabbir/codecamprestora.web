@@ -11,7 +11,7 @@ export const BranchCreateModal = ({
       <Title className="text-center" level={3}>
         Branch Information
       </Title>
-      <div className="mt-10 ml-7">
+      <div className="mt-10 ">
         <BranchInformationForm formClose={formClose}></BranchInformationForm>
       </div>
     </div>
