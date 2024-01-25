@@ -1,5 +1,5 @@
 export interface DataType {
-    key: string;
+    id: string;
     name: string;
     image: ImageObject;
     displayOrder: number;
