@@ -14,10 +14,10 @@ const BranchTimeEdit = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
-  console.log("Branch Time Edit Page--",openingHoursDetails);
+  // console.log("Branch Time Edit Page--");
 
   const rowSelection: any = {
-    columnTitle: "Open",
+    columnTitle: "Is Open",
     selectedRowKeys: rowSelectedArray,
     onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
       updateRowSelectedArray(selectedRowKeys);

@@ -6,13 +6,14 @@ export const BranchCreateModal = ({
 }: {
   formClose: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const branchID=null;
   return (
     <div>
       <Title className="text-center" level={3}>
         Branch Information
       </Title>
-      <div className="mt-10 ">
-        <BranchInformationForm formClose={formClose}></BranchInformationForm>
+      <div className="mt-10 ml-7">
+        <BranchInformationForm formClose={formClose}  branchID={branchID}></BranchInformationForm>
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldType } from "@/types/BreanchCreationTypes";
 import {
   Button,
-  Card,
   Col,
   Form,
   Input,
@@ -11,7 +10,6 @@ import {
   Row,
   Select,
   Divider,
-  theme,
 } from "antd";
 import Meta from "antd/es/card/Meta";
 import BranchTimeEdit from "./BranchTimeEdit";
@@ -23,17 +21,17 @@ import {
   divisionData,
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
-import axios from "axios";
 import { useMutation } from "react-query";
+import axios from "axios";
 
-export const BranchInformationForm = ({
-  formClose,
-}: {
-  formClose: React.Dispatch<React.SetStateAction<boolean>>;
+export const BranchInformationForm = (
+  props
+: {
+  formClose: React.Dispatch<React.SetStateAction<boolean>>,
+  branchID: string| null |undefined
+
 }) => {
-  const { token } = theme.useToken();
   const {
-    isInfoUpdate,
     branchName,
     isAvailable,
     priceRangeValue,
@@ -43,16 +41,43 @@ export const BranchInformationForm = ({
     divisionName,
     districtName,
     thanaName,
+    updateBranchName,
+    updateIsAvailable,
+    updateDivisionName,
+    updateDistrictName,
+    updateThanaName,
+    updatePriceRangeValue,
+    updateCuisineTypes,
+    updateAreaDetails,
+    setMainArrayOfOpeningDetails,
   } = useBranchDetails();
+  console.log({props});
+  const {formClose, branchID} = props;
+// useEffect(())[]
+//   if(branchID==null)
+//   {
+//     updateBranchName("");
+//     updateIsAvailable(0);
+//     updateDivisionName("");
+//     updateDistrictName("");
+//     updateThanaName("");
+//     updatePriceRangeValue(0),
+//     updateCuisineTypes([]);
+//     updateAreaDetails("");
+//     // setMainArrayOfOpeningDetails(),
+//   }
+
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
 
   const handleDivisionChange = (value: string) => {
+    // console.log("thanaaaaaa----------", value);
     setDistrict(districtData[value]);
   };
 
   const handleDistrictChange = (value: string) => {
+    console.log("thanaaaaaa----------", value);
     setThana(thanaData[value]);
   };
 
@@ -68,22 +93,15 @@ export const BranchInformationForm = ({
     console.log(`selected ${value}`);
   };
 
-  const createMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
       console.log({ branchCreationInformation });
       // const response = await axios.post(
       //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
       //   branchCreationInformation
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-        branchCreationInformation
-      );
-      // const response = axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`
       // );
-      // const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
+      const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
       // console.log({response});
-      // console.log("created data --", response);
       return response;
     },
     onSuccess(data, variables, context) {
@@ -94,198 +112,67 @@ export const BranchInformationForm = ({
     },
   });
 
-  const updateMutation = useMutation({
-    mutationFn: async (branchCreationInformation: any) => {
-      console.log({ branchCreationInformation });
-      // const response = await axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
-      //   branchCreationInformation
-      const response = await axios.post(
-        `http://54.203.205.46:5219/api/v1/branch`,
-        branchCreationInformation
-      );
-      // const response = axios.post(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`
-      // );
-      // const response= axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/resturant/54a45ca9-3ccc-4ae8-851d-949e1a609837`)
-      // console.log({response});
-      console.log("created data --", response);
-      return response;
-    },
-    onSuccess(data, variables, context) {
-      console.log("onSuccess=== ", data);
-    },
-    onError(error, variables, context) {
-      console.log("onError=== ", error);
-    },
-  });
+  // const {mutate} = useMutation({
+  //  mutationFn: (obj:any) => return null,
+
+  // })
 
   // console.log("Branch Information Edit page--");
 
   const onFinish = (values: any) => {
-    console.log("123Success:------", values);
+    console.log("Success:------", values);
 
-    // if (values.branchName !== undefined) updateBranchName(values.branchName);
-    // if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
-    // if (values.priceRangeValue !== undefined)
-    //   updatePriceRangeValue(values.priceRangeValue);
-    // if (values.cuisineTypes !== undefined)
-    //   updateCuisineTypes(values.cuisineTypes);
-    // if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
-    // if (values.divisionName !== undefined)
-    //   updateDivisionName(values.divisionName);
-    // if (values.districtName !== undefined)
-    //   updateDistrictName(values.districtName);
-    // if (values.thanaName !== undefined) updateThanaName(values.thanaName);
-    // console.log("values.branchName ", values.branchName);
-    const cuisineTypesObjForm = values?.cuisineTypes?.map((value: string) => ({
-      cuisineTag: value,
-    }));
-
-    if (isInfoUpdate === true) {
-      updateMutation.mutate({
-        id: "c1922c17-0015-4c0e-be03-f611fb9e20a5",
-        name: values.branchName === undefined ? branchName : values.branchName,
-        isAvailable:
-          values.isAvailable === undefined
-            ? (isAvailable === 1)
-            : (values.isAvailable === 1),
-        priceRange:
-          values.priceRangeValue === undefined
-            ? priceRangeValue
-            : values.priceRangeValue,
-        openingClosingTimes: [
-          {
-            day: 0,
-            openingHours: openingHoursDetails[0].OpeningHours,
-            closingHours: openingHoursDetails[0].ClosingHours,
-            isClosed: openingHoursDetails[0].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 1,
-            openingHours: openingHoursDetails[1].OpeningHours,
-            closingHours: openingHoursDetails[1].ClosingHours,
-            isClosed: openingHoursDetails[1].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 2,
-            openingHours: openingHoursDetails[2].OpeningHours,
-            closingHours: openingHoursDetails[2].ClosingHours,
-            isClosed: openingHoursDetails[2].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 3,
-            openingHours: openingHoursDetails[3].OpeningHours,
-            closingHours: openingHoursDetails[3].ClosingHours,
-            isClosed: openingHoursDetails[3].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 4,
-            openingHours: openingHoursDetails[4].OpeningHours,
-            closingHours: openingHoursDetails[4].ClosingHours,
-            isClosed: openingHoursDetails[4].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 5,
-            openingHours: openingHoursDetails[5].OpeningHours,
-            closingHours: openingHoursDetails[5].ClosingHours,
-            isClosed: openingHoursDetails[5].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 6,
-            openingHours: openingHoursDetails[6].OpeningHours,
-            closingHours: openingHoursDetails[6].ClosingHours,
-            isClosed: openingHoursDetails[6].IsOpen === "true" ? false : true,
-          },
-        ],
-        cuisineTypes: cuisineTypesObjForm,
-        address: {
-          latitude: 123.2,
-          longitude: 2.3,
-          division:
-            values.divisionName === undefined
-              ? divisionName
-              : values.divisionName,
-          district:
-            values.districtName === undefined
-              ? districtName
-              : values.districtName,
-          thana: values.thanaName === undefined ? thanaName : values.thanaName,
-          areaDetails:
-            values.areaDetails === undefined ? areaDetails : values.areaDetails,
-        },
-        // restaurantId: "eabf4311-0451-4ff7-a2f7-f7718b6e0caf",
-      });
-    } else {
-      createMutation.mutate({
-        name: values.branchName,
-        isAvailable: values.isAvailable === 1,
-        priceRange: values.priceRangeValue,
-        openingClosingTimes: [
-          {
-            day: 0,
-            openingHours: openingHoursDetails[0].OpeningHours,
-            closingHours: openingHoursDetails[0].ClosingHours,
-            isClosed: openingHoursDetails[0].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 1,
-            openingHours: openingHoursDetails[1].OpeningHours,
-            closingHours: openingHoursDetails[1].ClosingHours,
-            isClosed: openingHoursDetails[1].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 2,
-            openingHours: openingHoursDetails[2].OpeningHours,
-            closingHours: openingHoursDetails[2].ClosingHours,
-            isClosed: openingHoursDetails[2].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 3,
-            openingHours: openingHoursDetails[3].OpeningHours,
-            closingHours: openingHoursDetails[3].ClosingHours,
-            isClosed: openingHoursDetails[3].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 4,
-            openingHours: openingHoursDetails[4].OpeningHours,
-            closingHours: openingHoursDetails[4].ClosingHours,
-            isClosed: openingHoursDetails[4].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 5,
-            openingHours: openingHoursDetails[5].OpeningHours,
-            closingHours: openingHoursDetails[5].ClosingHours,
-            isClosed: openingHoursDetails[5].IsOpen === "true" ? false : true,
-          },
-          {
-            day: 6,
-            openingHours: openingHoursDetails[6].OpeningHours,
-            closingHours: openingHoursDetails[6].ClosingHours,
-            isClosed: openingHoursDetails[6].IsOpen === "true" ? false : true,
-          },
-        ],
-        cuisineTypes: cuisineTypesObjForm,
-        address: {
-          latitude: 123.2,
-          longitude: 2.3,
-          division: values.divisionName,
-          district: values.districtName,
-          thana: values.thanaName,
-          areaDetails: values.areaDetails,
-        },
-        restaurantId: "eabf4311-0451-4ff7-a2f7-f7718b6e0caf",
-      });
-    }
-
-    // console.log({ mutation });
+    if (values.branchName !== undefined) updateBranchName(values.branchName);
+    if (values.isAvailable !== undefined) updateIsAvailable(values.isAvailable);
+    if (values.priceRangeValue !== undefined)
+      updatePriceRangeValue(values.priceRangeValue);
+    if (values.cuisineTypes !== undefined)
+      updateCuisineTypes(values.cuisineTypes);
+    if (values.areaDetails !== undefined) updateAreaDetails(values.areaDetails);
+    if (values.divisionName !== undefined)
+      updateDivisionName(values.divisionName);
+    if (values.districtName !== undefined)
+      updateDistrictName(values.districtName);
+    if (values.thanaName !== undefined) updateThanaName(values.thanaName);
     formClose(false);
-    // setMainArrayOfOpeningDetails(openingHoursDetails);
+    setMainArrayOfOpeningDetails(openingHoursDetails);
+    console.log({ openingHoursDetails });
+
+    mutation.mutate(
+      {
+        "name": "string",
+        "isAvailable": true,
+        "priceRange": 0,
+        "openingClosingTimes": [
+          {
+            "day": 0,
+            "openingHours": "string",
+            "closingHours": "string",
+            "isClosed": true
+          }
+        ],
+        "cuisineTypes": [
+          {
+            "cuisineTag": "string"
+          }
+        ],
+        "address": {
+          "latitude": 0,
+          "longitude": 0,
+          "division": "string",
+          "district": "string",
+          "thana": "string",
+          "areaDetails": "string"
+        },
+        "restaurantId": "54a45ca9-3ccc-4ae8-851d-949e1a609837"
+      }
+    );
+    console.log({ mutation });
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
-    // formClose(false);
+    formClose(false);
   };
 
   return (
@@ -304,18 +191,15 @@ export const BranchInformationForm = ({
               label={<Title level={5}>Branch Name:</Title>}
               name="branchName"
               labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: branchName === "" ? true : false,
-                  message: "Please enter your branch name",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input your Branch Name!" },
+              // ]}
             >
               <Input
                 className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                 placeholder="Enter Branch Name"
                 size="large"
-                defaultValue={isInfoUpdate ? branchName : ""}
+                defaultValue={branchName}
               />
             </Form.Item>
           </Col>
@@ -325,16 +209,13 @@ export const BranchInformationForm = ({
               label={<Title level={5}>Is Available:</Title>}
               labelCol={{ span: 24 }}
               name="isAvailable"
-              rules={[
-                {
-                  required: isAvailable === 0 ? true : false,
-                  message: "Please input Contact Number!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input Contact Number!" },
+              // ]}
             >
               <Radio.Group
                 onChange={handelResturentisAvailable}
-                defaultValue={isInfoUpdate ? (isAvailable ? 1 : 2) : undefined}
+                defaultValue={isAvailable}
               >
                 <Radio value={1}>YES</Radio>
                 <Radio value={2}>NO</Radio>
@@ -349,16 +230,13 @@ export const BranchInformationForm = ({
               label={<Title level={5}>Price Range:</Title>}
               name="priceRangeValue"
               labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: priceRangeValue === 0 ? true : false,
-                  message: "Please input your Branch Name!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input your Branch Name!" },
+              // ]}
             >
               <Radio.Group
                 onChange={handelPriceRange}
-                defaultValue={isInfoUpdate ? priceRangeValue : undefined}
+                defaultValue={priceRangeValue}
               >
                 <Radio value={1}>Low</Radio>
                 <Radio value={2}>Medium</Radio>
@@ -372,12 +250,9 @@ export const BranchInformationForm = ({
               label={<Title level={5}>Cuisine Types:</Title>}
               labelCol={{ span: 24 }}
               name="cuisineTypes"
-              rules={[
-                {
-                  required: cuisineTypes.length === 0 ? true : false,
-                  message: "Please input Contact Number!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input Contact Number!" },
+              // ]}
             >
               <Select
                 size="large"
@@ -388,7 +263,7 @@ export const BranchInformationForm = ({
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
-                defaultValue={isInfoUpdate ? cuisineTypes : undefined}
+                // defaultValue={cuisineTypes}
               />
             </Form.Item>
           </Col>
@@ -402,19 +277,16 @@ export const BranchInformationForm = ({
               label="Area Details:"
               labelCol={{ span: 24 }}
               name="areaDetails"
-              rules={[
-                {
-                  required: areaDetails === "" ? true : false,
-                  message: "Please input Contact Number!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input Contact Number!" },
+              // ]}
             >
               <Input
                 className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
                 placeholder="Enter Street Number"
                 size="large"
                 type="tel"
-                defaultValue={isInfoUpdate ? areaDetails : undefined}
+                defaultValue={areaDetails}
               />
             </Form.Item>
           </Col>
@@ -423,12 +295,9 @@ export const BranchInformationForm = ({
               label="Division"
               name="divisionName"
               labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: divisionName === "" ? true : false,
-                  message: "Please input your Branch Name!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input your Branch Name!" },
+              // ]}
             >
               <Select
                 size="large"
@@ -438,7 +307,7 @@ export const BranchInformationForm = ({
                   label: division,
                   value: division,
                 }))}
-                defaultValue={isInfoUpdate ? divisionName : undefined}
+                defaultValue={divisionName}
                 allowClear
               ></Select>
             </Form.Item>
@@ -449,12 +318,9 @@ export const BranchInformationForm = ({
               label="District"
               labelCol={{ span: 24 }}
               name="districtName"
-              rules={[
-                {
-                  required: districtName === "" ? true : false,
-                  message: "Please input Contact Number!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input Contact Number!" },
+              // ]}
             >
               <Select
                 placeholder="Select a District"
@@ -463,7 +329,7 @@ export const BranchInformationForm = ({
                   label: data,
                   value: data,
                 }))}
-                defaultValue={isInfoUpdate ? districtName : undefined}
+                defaultValue={districtName}
                 size="large"
                 allowClear
               ></Select>
@@ -475,12 +341,9 @@ export const BranchInformationForm = ({
               label="Thana"
               name="thanaName"
               labelCol={{ span: 24 }}
-              rules={[
-                {
-                  required: thanaName === "" ? true : false,
-                  message: "Please input your Branch Name!",
-                },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please input your Branch Name!" },
+              // ]}
             >
               <Select
                 placeholder="Select a Thana"
@@ -489,7 +352,7 @@ export const BranchInformationForm = ({
                   label: data,
                   value: data,
                 }))}
-                defaultValue={isInfoUpdate ? thanaName : undefined}
+                defaultValue={thanaName}
                 allowClear
               ></Select>
             </Form.Item>
