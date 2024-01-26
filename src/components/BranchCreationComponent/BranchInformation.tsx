@@ -69,7 +69,7 @@ export const BranchInformation = () => {
     queryKey: ["BranchInfo"],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/c1922c17-0015-4c0e-be03-f611fb9e20a5`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/5be5ac8c-8200-46b7-95a2-0c2cc0a1f671`
       );
       return response;
     },

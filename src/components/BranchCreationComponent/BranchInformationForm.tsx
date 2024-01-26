@@ -113,12 +113,12 @@ export const BranchInformationForm = ({
 
     if (isInfoUpdate === true) {
       updateMutation.mutate({
-        id: "c1922c17-0015-4c0e-be03-f611fb9e20a5",
+        id: "5be5ac8c-8200-46b7-95a2-0c2cc0a1f671",
         name: values.branchName === undefined ? branchName : values.branchName,
         isAvailable:
           values.isAvailable === undefined
-            ? (isAvailable === 1)
-            : (values.isAvailable === 1),
+            ? isAvailable === 1
+            : values.isAvailable === 1,
         priceRange:
           values.priceRangeValue === undefined
             ? priceRangeValue
@@ -243,7 +243,7 @@ export const BranchInformationForm = ({
           thana: values.thanaName,
           areaDetails: values.areaDetails,
         },
-        restaurantId: "eabf4311-0451-4ff7-a2f7-f7718b6e0caf",
+        restaurantId: "0080de5a-9ee5-4d7f-9c2a-73f28862bb7c",
       });
     }
 
