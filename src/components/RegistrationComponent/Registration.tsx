@@ -1,11 +1,8 @@
-import { Button, Checkbox, Divider, Form, Input } from "antd";
+import { Button, Checkbox, Divider, Form, Input, message } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppLogo } from "@/assets/Logo";
-
-const onFinish = (values: any) => {
-  console.log("Success:", values);
-};
+import axios from "axios";
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
@@ -13,8 +10,7 @@ const onFinishFailed = (errorInfo: any) => {
 
 interface FieldType {
   restaurantName?: string;
-  ownerName?: string;
-  address?: string;
+  fullName?: string;
   email?: string;
   password?: string;
   remember?: string;
@@ -22,6 +18,9 @@ interface FieldType {
 
 const RegistrationPage = () => {
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [form] = Form.useForm();
+
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 600);
@@ -32,13 +31,44 @@ const RegistrationPage = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const showSuccessMessage = () => {
+    messageApi.open({
+      type: "success",
+      content: "Registration Successful!",
+    });
+  };
+
+  const showErrorMessage = (message: string) => {
+    messageApi.open({
+      type: "error",
+      content: message,
+    });
+  };
+
   const formStyles = {
     padding: isLargeScreen ? "30px" : "15px",
   };
+
+  const onFinish = async (values: any) => {
+    console.log("Success:", values);
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL as string}/api/v1/owners/register`,
+      values
+    );
+    if (data.isSuccess) {
+      form.resetFields();
+      showSuccessMessage();
+    } else showErrorMessage(data.errors[0].description);
+    console.log("data", data);
+  };
+
   return (
     <div className="min-h-screen flex items-center bg-[#EEF2F6]">
       <div className="w-full py-20 px-7 flex justify-center">
+        {contextHolder}
         <Form
+          form={form}
           layout="vertical"
           name="basic"
           initialValues={{ remember: true }}
@@ -66,7 +96,7 @@ const RegistrationPage = () => {
           </div>
           <Form.Item<FieldType>
             label="Owner Name"
-            name="ownerName"
+            name="fullName"
             rules={[{ required: true, message: "Owner Name is required" }]}
           >
             <Input placeholder="Owner Name" size="large" />
@@ -79,16 +109,7 @@ const RegistrationPage = () => {
             <Input placeholder="Restaurant Name" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
-            label="Restaurant Address"
-            name="address"
-            rules={[
-              { required: true, message: "Restaurant Address is required" },
-            ]}
-          >
-            <Input placeholder="Restaurant Address" size="large" />
-          </Form.Item>
-          <Form.Item<FieldType>
-            label="Email Address / Username"
+            label="Email Address"
             name="email"
             rules={[
               {
@@ -96,21 +117,29 @@ const RegistrationPage = () => {
                 message: "Email Address / Username is required",
               },
               {
-                pattern: /^[A-Za-z0-9_.@]+(?:-[A-Za-z0-9]+)*$/,
-                message: "Use A-Z, a-z, 0-9, @, _, and . characters",
+                pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: "Email is not valid",
               },
             ]}
           >
-            <Input placeholder="Email Address / Username" size="large" />
+            <Input placeholder="Email Address" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Password is required" }]}
+            rules={[
+              { required: true, message: "Password is required" },
+              {
+                pattern:
+                  /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@#$%^&(){}[\]:;<>,.?/~_+-=|\\])[0-9a-zA-Z*.!@#$%^&(){}[\]:;<>,.?/~_+-=|\\]{4,32}$/,
+                message:
+                  "Password must contains uppercase, lowsercase, number and special character",
+              },
+            ]}
           >
             <Input.Password placeholder="Password" size="large" />
           </Form.Item>
-          <Form.Item<FieldType> name="remember" valuePropName="checked">
+          <Form.Item<FieldType> valuePropName="checked">
             <Checkbox className="text-gray-500 font-semibold">
               Agree with <span className="underline">Terms & Condition.</span>
             </Checkbox>
