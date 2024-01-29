@@ -33,7 +33,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
 import {
   path,
-  restaurantId,
   pageSizes,
   updateDisplayOrder,
 } from "@/services/menuCategoryService";
@@ -67,6 +66,8 @@ const defaultImageSrc =
   "https://cdn-icons-png.flaticon.com/512/1996/1996055.png?ga=GA1.1.1713970303.1705205371&";
 
 export const RestaurantCategories: React.FC = () => {
+  const { data: session } = useSession();
+  const restaurantId = session?.user?.restaurantId;
   const [form] = Form.useForm();
   const [data, setData] = useState<DataType[]>([]);
   const [editingKey, setEditingKey] = useState<string>("");
