@@ -14,9 +14,9 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { Grid } from "@/components/Grid";
-import { SortablePhoto } from "@/components/SortablePhoto";
-import { Photo } from "@/components/Photo";
+import { Grid } from "@/components/BranchPictures/Grid";
+import { SortablePhoto } from "@/components/BranchPictures/SortablePhoto";
+import { Photo } from "@/components/BranchPictures/Photo";
 import photos from "../../../../data/photos.json";
 import { Flex, Upload, UploadProps, message } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -78,7 +78,7 @@ const BranchPicturesPage = () => {
         onDragCancel={handleDragCancel}
       >
         <SortableContext items={items} strategy={rectSortingStrategy}>
-          <Grid columns={4}>
+          <Grid>
             {items.map((url: any, index: any) => (
               <SortablePhoto key={url} url={url} index={index} />
             ))}

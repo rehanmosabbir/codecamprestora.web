@@ -6,7 +6,7 @@ export const login = async (
   loginCredential: LoginCredential
 ): Promise<AuthResult> => {
   var result = await axios.post(
-    "http://54.203.205.46:5219/api/v1/owners/login",
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/owners/login`,
     loginCredential
   );
   var data = result.data;
