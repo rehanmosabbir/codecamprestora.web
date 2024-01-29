@@ -1,9 +1,12 @@
 import { DataType } from "@/components/RestaurantCategoryComponent/Types/CategoryTypes";
 import axios from "axios";
 import { useQuery } from "react-query";
+import { useSession } from "next-auth/react";
 
+// const { data: session } = useSession();
 export const path = "/api/v1/MenuCategory";
-export const restaurantId = "eabf4311-0451-4ff7-a2f7-f7718b6e0caf";
+export const restaurantId = "34aaecb9-ecd1-4cc3-989f-50a6762844e0";
+console.log(restaurantId);
 export const pageSizes = 10;
 
 export const getById = async () => {

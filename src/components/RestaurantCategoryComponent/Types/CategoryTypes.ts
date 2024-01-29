@@ -3,7 +3,7 @@ export interface DataType {
     name: string;
     image: ImageObject;
     displayOrder: number;
-    restaurantId: string;
+    restaurantId?: string;
 }
 
 export interface ImageObject {

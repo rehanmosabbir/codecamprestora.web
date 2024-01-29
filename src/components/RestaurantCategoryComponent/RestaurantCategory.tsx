@@ -38,6 +38,7 @@ import {
   updateDisplayOrder,
 } from "@/services/menuCategoryService";
 import { useQuery, useMutation } from "react-query";
+import { useSession } from "next-auth/react";
 
 const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   const reader = new FileReader();
@@ -90,7 +91,6 @@ export const RestaurantCategories: React.FC = () => {
           `${process.env.NEXT_PUBLIC_BASE_URL}${path}/Paginated?RestaurantId=${restaurantId}&PageNumber=${pageNumber}&PageSize=${pageSizes}`
         );
 
-        console.log("API Response:", result.data);
         return result.data.data;
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -138,7 +138,7 @@ export const RestaurantCategories: React.FC = () => {
     const newKey = (maxKey === -Infinity ? 0 : maxKey) + 1;
     const newData: DataType = {
       id: newKey.toString(),
-      name: "Enter Data",
+      name: "Enter Food Category",
       image: {
         name: "",
         type: "",
@@ -147,8 +147,6 @@ export const RestaurantCategories: React.FC = () => {
       displayOrder: newDisplayOrder,
       restaurantId: restaurantId,
     };
-    edit(newData);
-    console.log(newData);
 
     try {
       await addCategoryMutation.mutateAsync(newData);
@@ -169,16 +167,16 @@ export const RestaurantCategories: React.FC = () => {
 
   const isEditing = (record: DataType) => record.id === editingKey;
 
-  const handleOnFinish = (values: DataType) => {
-    console.log("Received values:", values);
-  };
-
   const uploadButton = (
     <div className="text-gray-400 text-center">
       <PlusOutlined />
       <p>Upload</p>
     </div>
   );
+
+  const handleOnFinish = (values: DataType) => {
+    console.log("Received values:", values);
+  };
 
   const UploadButtonInput: React.FC<{
     isDisabled: boolean;
@@ -246,13 +244,12 @@ export const RestaurantCategories: React.FC = () => {
       const currentData = response.data.data;
 
       form.setFieldsValue({
-        name: record.name,
+        name: "",
         image: record.image,
-        ...currentData,
+        // ...currentData,
       });
       setEditingKey(record.id);
 
-      // Return currentData
       return currentData;
     } catch (error) {
       console.error("Error fetching data for editing:", error);
@@ -266,23 +263,20 @@ export const RestaurantCategories: React.FC = () => {
 
   const save = async (id: string) => {
     try {
+      const values = await form.validateFields();
       const currentData = await edit({ id });
 
       if (!currentData) {
         return;
       }
 
-      form.setFieldsValue({
-        name: currentData.name,
-      });
-      console.log("current name", currentData.name);
-
-      const row = await form.validateFields();
-      row.displayOrder = currentData.displayOrder;
-      row.id = currentData.id;
-      row.image = currentData.image || {};
-      row.restaurantId = restaurantId;
-
+      const row = {
+        displayOrder: currentData.displayOrder,
+        id: currentData.id,
+        image: values.image || {},
+        restaurantId: restaurantId,
+        name: values.name,
+      };
       console.log("Row data before PUT request:", row);
 
       await saveCategoryMutation.mutateAsync(row);
@@ -345,6 +339,7 @@ export const RestaurantCategories: React.FC = () => {
           <span>
             <Typography.Link
               onClick={() => {
+                const values = form.getFieldsValue();
                 save(record.id);
               }}
               style={{ marginRight: 8 }}
@@ -413,33 +408,32 @@ export const RestaurantCategories: React.FC = () => {
     };
   });
 
-  // const onDragEnd = async ({ active, over }: DragEndEvent) => {
-  //   const handleDragEnd = async () => {
-  //     if (active.id !== over?.id) {
-  //       const updatedData = arrayMove(
-  //         data,
-  //         data.findIndex((item) => item.id === active.id),
-  //         data.findIndex((item) => item.id === over?.id)
-  //       ).map((item, index) => ({
-  //         ...item,
-  //         displayOrder: index + 1,
-  //       }));
+  const onDragEnd = async ({ active, over }: DragEndEvent) => {
+    const handleDragEnd = async () => {
+      if (active.id !== over?.id) {
+        const updatedData = arrayMove(
+          data,
+          data.findIndex((item) => item.id === active.id),
+          data.findIndex((item) => item.id === over?.id)
+        ).map((item, index) => ({
+          ...item,
+          displayOrder: index + 1,
+        }));
 
-  //       console.log("Updated Data:", updatedData);
+        console.log("Updated Data:", updatedData);
 
-  //       // Call the API to update display order
-  //       await updateDisplayOrder(updatedData);
+        await updateDisplayOrder(updatedData);
 
-  //       setData(updatedData);
-  //     }
-  //   };
+        setData(updatedData);
+      }
+    };
 
-  //   handleDragEnd();
-  // };
+    handleDragEnd();
+  };
 
   const tablePagination = {
     total: apiResponse?.totalPages * 10,
-    onChange: async (page: any) => {
+    onChange: async (page: number) => {
       setPageParameter(page);
       await refetch();
     },
@@ -454,10 +448,7 @@ export const RestaurantCategories: React.FC = () => {
           Add Item
         </Button>
       </div>
-      <DndContext
-        modifiers={[restrictToVerticalAxis]}
-        // onDragEnd={onDragEnd}
-      >
+      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
         <SortableContext
           items={Array.isArray(data) ? data.map((i) => i.id) : []}
           strategy={verticalListSortingStrategy}
