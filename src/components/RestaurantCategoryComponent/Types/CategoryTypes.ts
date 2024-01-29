@@ -1,13 +1,14 @@
 export interface DataType {
-    key: string;
+    id: string;
     name: string;
     image: ImageObject;
+    displayOrder: number;
+    restaurantId?: string;
 }
 
 export interface ImageObject {
     name: string;
     type: string;
-    size: number;
     base64: string;
 }
 

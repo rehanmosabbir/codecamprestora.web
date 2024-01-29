@@ -6,7 +6,15 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import React, { useState } from "react";
-import { Button, Form, Popconfirm, Table, Typography, message } from "antd";
+import {
+  Button,
+  Form,
+  Popconfirm,
+  Space,
+  Table,
+  Typography,
+  message,
+} from "antd";
 import { RiEdit2Fill } from "react-icons/ri";
 import { MdDelete } from "react-icons/md";
 import { IoMdSave } from "react-icons/io";
@@ -22,12 +30,23 @@ import Upload, {
 } from "antd/es/upload";
 import { DataType } from "./Types/CategoryTypes";
 import { PlusOutlined } from "@ant-design/icons";
-
-type DataSourceItem = DataType[];
+import axios from "axios";
+import {
+  path,
+  pageSizes,
+  updateDisplayOrder,
+} from "@/services/menuCategoryService";
+import { useQuery, useMutation } from "react-query";
+import { useSession } from "next-auth/react";
 
 const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result as string));
+
+  reader.addEventListener("load", () => {
+    console.log("FileReader load event:", reader.result);
+    callback(reader.result as string);
+  });
+
   reader.readAsDataURL(img);
 };
 
@@ -47,44 +66,114 @@ const defaultImageSrc =
   "https://cdn-icons-png.flaticon.com/512/1996/1996055.png?ga=GA1.1.1713970303.1705205371&";
 
 export const RestaurantCategories: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataSourceItem>([
-    {
-      key: "1",
-      name: "Fast food",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-    {
-      key: "2",
-      name: "Vegetable",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-    {
-      key: "3",
-      name: "Drinks",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    },
-  ]);
+  const { data: session } = useSession();
+  const restaurantId = session?.user?.restaurantId;
   const [form] = Form.useForm();
+  const [data, setData] = useState<DataType[]>([]);
   const [editingKey, setEditingKey] = useState<string>("");
+  const [pageParameter, setPageParameter] = useState(1);
+  const [formKey, setFormKey] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
 
-  const isEditing = (record: DataType) => record.key === editingKey;
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["menu-category", { pageParameter }],
+    queryFn: async ({ queryKey }) => {
+      const pageNumber =
+        (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
+
+      try {
+        const result = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}${path}/Paginated?RestaurantId=${restaurantId}&PageNumber=${pageNumber}&PageSize=${pageSizes}`
+        );
+
+        return result.data.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    },
+  });
+
+  const dataSource = apiResponse?.data;
+
+  const addCategoryMutation = useMutation(
+    async (newData: DataType) => {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
+        newData
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    }
+  );
+
+  const saveCategoryMutation = useMutation(
+    async (newData: DataType) => {
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
+        newData
+      );
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    }
+  );
+
+  const handleAdd = async () => {
+    const newDisplayOrder = data.length + 1;
+
+    const maxKey = Math.max(...data.map((item) => parseInt(item.id)));
+    const newKey = (maxKey === -Infinity ? 0 : maxKey) + 1;
+    const newData: DataType = {
+      id: newKey.toString(),
+      name: "Enter Food Category",
+      image: {
+        name: "",
+        type: "",
+        base64: "",
+      },
+      displayOrder: newDisplayOrder,
+      restaurantId: restaurantId,
+    };
+
+    try {
+      await addCategoryMutation.mutateAsync(newData);
+
+      await refetch();
+    } catch (error) {
+      console.error("Error adding item:", error);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error...</div>;
+  }
+
+  const isEditing = (record: DataType) => record.id === editingKey;
+
+  const uploadButton = (
+    <div className="text-gray-400 text-center">
+      <PlusOutlined />
+      <p>Upload</p>
+    </div>
+  );
 
   const handleOnFinish = (values: DataType) => {
     console.log("Received values:", values);
@@ -93,19 +182,20 @@ export const RestaurantCategories: React.FC = () => {
   const UploadButtonInput: React.FC<{
     isDisabled: boolean;
     record: DataType;
-  }> = ({ isDisabled, record }) => {
+    editing: boolean;
+  }> = ({ isDisabled, record, editing }) => {
     const handleImageChange: UploadProps["onChange"] = (
       info: UploadChangeParam<UploadFile>
     ) => {
       if (info.file.status === "done") {
         getBase64(info.file.originFileObj as RcFile, (base64) => {
-          const { name, type, size } = info.file.originFileObj as RcFile;
-          setDataSource((prevDataSource) => {
-            const newData = prevDataSource.map((item: DataType) =>
-              item.key === record.key
+          const { name, type } = info.file.originFileObj as RcFile;
+          setData((prevData) => {
+            const newData = prevData.map((item: DataType) =>
+              item.id === record.id
                 ? {
                     ...item,
-                    image: { ...item.image, name, type, size, base64 },
+                    image: { ...item.image, name, type, base64 },
                   }
                 : item
             );
@@ -122,85 +212,92 @@ export const RestaurantCategories: React.FC = () => {
         onChange={handleImageChange}
         disabled={!isDisabled}
       >
-        {record?.image?.base64 ? (
+        {editing ? (
+          record?.image?.base64 ? (
+            <img
+              height={200}
+              width={200}
+              className="p-1 rounded-lg"
+              src={record?.image?.base64}
+              alt="Restaurant Image"
+            />
+          ) : (
+            uploadButton
+          )
+        ) : (
           <img
             height={200}
             width={200}
             className="p-1 rounded-lg"
-            src={record?.image?.base64}
+            src={record?.image?.base64 || defaultImageSrc}
             alt="Restaurant Image"
           />
-        ) : (
-          <div
-            style={{
-              height: 50,
-              width: 50,
-              backgroundImage: `url(${defaultImageSrc})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
         )}
       </Upload>
     );
   };
 
-  const edit = (record: Partial<DataType> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", image: {}, ...record });
-    setEditingKey(record.key);
+  const edit = async (record: Partial<DataType> & { id: string }) => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}/${record.id}`
+      );
+      const currentData = response.data.data;
+
+      form.setFieldsValue({
+        name: "",
+        image: record.image,
+        // ...currentData,
+      });
+      setEditingKey(record.id);
+
+      return currentData;
+    } catch (error) {
+      console.error("Error fetching data for editing:", error);
+      return null;
+    }
   };
 
   const cancel = () => {
     setEditingKey("");
   };
 
-  const save = async (key: React.Key) => {
+  const save = async (id: string) => {
     try {
-      const row = (await form.validateFields()) as DataType;
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        const dataToLog = newData.map(({ key, ...rest }) => rest);
-        console.log(dataToLog);
-        setDataSource(newData);
-        setEditingKey("");
-      } else {
-        newData.push(row);
-        const dataToLog = newData.map(({ key, ...rest }) => rest);
-        console.log(dataToLog);
-        setDataSource(newData);
-        setEditingKey("");
+      const values = await form.validateFields();
+      const currentData = await edit({ id });
+
+      if (!currentData) {
+        return;
       }
+
+      const row = {
+        displayOrder: currentData.displayOrder,
+        id: currentData.id,
+        image: values.image || {},
+        restaurantId: restaurantId,
+        name: values.name,
+      };
+      console.log("Row data before PUT request:", row);
+
+      await saveCategoryMutation.mutateAsync(row);
+      await refetch();
+      setEditingKey("");
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
   };
 
-  const handleAdd = () => {
-    const maxKey = Math.max(...dataSource.map((item) => parseInt(item.key)));
-    const newKey = (maxKey === -Infinity ? 0 : maxKey) + 1;
-    const newData: DataType = {
-      key: newKey.toString(),
-      name: "",
-      image: {
-        name: "",
-        type: "",
-        size: 0,
-        base64: "",
-      },
-    };
-    edit(newData);
-    setDataSource([...dataSource, newData]);
-  };
-
-  const handleDelete = (key: string) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
+  const handleDelete = async (idToDelete: string) => {
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}/${idToDelete}`
+      );
+      refetch();
+      message.success("Item has been deleted!");
+    } catch (error) {
+      console.error("Error deleting branch:", error);
+    }
   };
 
   const columns = [
@@ -209,6 +306,11 @@ export const RestaurantCategories: React.FC = () => {
       width: 50,
       align: "center" as const,
     },
+    // {
+    //   title: "Serial",
+    //   dataIndex: "displayOrder",
+    //   width: 70,
+    // },
     {
       title: "Category Name",
       dataIndex: "name",
@@ -219,7 +321,13 @@ export const RestaurantCategories: React.FC = () => {
       dataIndex: "image",
       render: (value: string, record: DataType, rowIndex: number) => {
         const isDisabled = isEditing(record);
-        return <UploadButtonInput isDisabled={isDisabled} record={record} />;
+        return (
+          <UploadButtonInput
+            isDisabled={isDisabled}
+            record={record}
+            editing={isEditing(record)}
+          />
+        );
       },
     },
     {
@@ -232,7 +340,8 @@ export const RestaurantCategories: React.FC = () => {
           <span>
             <Typography.Link
               onClick={() => {
-                save(record.key);
+                const values = form.getFieldsValue();
+                save(record.id);
               }}
               style={{ marginRight: 8 }}
             >
@@ -267,14 +376,16 @@ export const RestaurantCategories: React.FC = () => {
             </Typography.Link>
             <Popconfirm
               title={"Sure to Delete?"}
-              onConfirm={() => handleDelete(record.key)}
+              onConfirm={() => handleDelete(record.id)}
             >
-              <button className="bg-red-500 hover:bg-red-600 active:bg-red-500 px-2 py-1 rounded text-white transition">
-                <div className="flex items-center">
-                  <MdDelete />
-                  Delete
-                </div>
-              </button>
+              <Typography.Link disabled={editingKey !== ""}>
+                <button className="bg-red-500 hover:bg-red-600 active:bg-red-500 px-2 py-1 rounded text-white transition">
+                  <div className="flex items-center">
+                    <MdDelete />
+                    Delete
+                  </div>
+                </button>
+              </Typography.Link>
             </Popconfirm>
           </div>
         );
@@ -298,21 +409,32 @@ export const RestaurantCategories: React.FC = () => {
     };
   });
 
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    if (active.id !== over?.id) {
-      setDataSource((previous) => {
-        const activeIndex = previous.findIndex((i) => i.key === active.id);
-        const overIndex = previous.findIndex((i) => i.key === over?.id);
-        const updatedDataSource = arrayMove(previous, activeIndex, overIndex);
-        const updatedDisplayOrder = updatedDataSource.map((item, index) => {
-          return {
-            ...item,
-            displayOrder: index + 1,
-          };
-        });
-        return updatedDisplayOrder;
-      });
-    }
+  // const onDragEnd = async ({ active, over }: DragEndEvent) => {
+  //   const handleDragEnd = async () => {
+  //     if (active.id !== over?.id) {
+  //       const updatedData = arrayMove(
+  //         data,
+  //         data.findIndex((item) => item.id === active.id),
+  //         data.findIndex((item) => item.id === over?.id)
+  //       ).map((item, index) => ({
+  //         ...item,
+  //         displayOrder: index + 1,
+  //       }));
+  //       console.log("Updated Data:", updatedData);
+  //       await updateDisplayOrder(updatedData);
+  //       setData(updatedData);
+  //     }
+  //   };
+  //   handleDragEnd();
+  // };
+
+  const tablePagination = {
+    total: apiResponse?.totalPages * 10,
+    onChange: async (page: number) => {
+      setPageParameter(page);
+      await refetch();
+    },
+    pageSize: 10,
   };
 
   return (
@@ -323,12 +445,20 @@ export const RestaurantCategories: React.FC = () => {
           Add Item
         </Button>
       </div>
-      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+      <DndContext
+        modifiers={[restrictToVerticalAxis]}
+        // onDragEnd={onDragEnd}
+      >
         <SortableContext
-          items={dataSource.map((i) => i.key)}
+          items={Array.isArray(data) ? data.map((i) => i.id) : []}
           strategy={verticalListSortingStrategy}
         >
-          <Form form={form} component={false} onFinish={handleOnFinish}>
+          <Form
+            key={formKey}
+            form={form}
+            component={false}
+            onFinish={handleOnFinish}
+          >
             <Table
               style={{ position: "relative", zIndex: "0" }}
               scroll={{ x: 600 }}
@@ -339,13 +469,11 @@ export const RestaurantCategories: React.FC = () => {
                 },
               }}
               bordered
-              rowKey="key"
+              rowKey={(record) => record.id}
               columns={mergedColumns}
-              dataSource={dataSource}
               rowClassName={"editable-row"}
-              pagination={{
-                onChange: cancel,
-              }}
+              dataSource={dataSource}
+              pagination={tablePagination}
             />
           </Form>
         </SortableContext>
