@@ -409,28 +409,24 @@ export const RestaurantCategories: React.FC = () => {
     };
   });
 
-  const onDragEnd = async ({ active, over }: DragEndEvent) => {
-    const handleDragEnd = async () => {
-      if (active.id !== over?.id) {
-        const updatedData = arrayMove(
-          data,
-          data.findIndex((item) => item.id === active.id),
-          data.findIndex((item) => item.id === over?.id)
-        ).map((item, index) => ({
-          ...item,
-          displayOrder: index + 1,
-        }));
-
-        console.log("Updated Data:", updatedData);
-
-        await updateDisplayOrder(updatedData);
-
-        setData(updatedData);
-      }
-    };
-
-    handleDragEnd();
-  };
+  // const onDragEnd = async ({ active, over }: DragEndEvent) => {
+  //   const handleDragEnd = async () => {
+  //     if (active.id !== over?.id) {
+  //       const updatedData = arrayMove(
+  //         data,
+  //         data.findIndex((item) => item.id === active.id),
+  //         data.findIndex((item) => item.id === over?.id)
+  //       ).map((item, index) => ({
+  //         ...item,
+  //         displayOrder: index + 1,
+  //       }));
+  //       console.log("Updated Data:", updatedData);
+  //       await updateDisplayOrder(updatedData);
+  //       setData(updatedData);
+  //     }
+  //   };
+  //   handleDragEnd();
+  // };
 
   const tablePagination = {
     total: apiResponse?.totalPages * 10,
@@ -449,7 +445,10 @@ export const RestaurantCategories: React.FC = () => {
           Add Item
         </Button>
       </div>
-      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+      <DndContext
+        modifiers={[restrictToVerticalAxis]}
+        // onDragEnd={onDragEnd}
+      >
         <SortableContext
           items={Array.isArray(data) ? data.map((i) => i.id) : []}
           strategy={verticalListSortingStrategy}
