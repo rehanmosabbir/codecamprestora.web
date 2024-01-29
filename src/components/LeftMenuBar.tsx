@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { TbListDetails } from "react-icons/tb";
 import { MdOutlineRestaurantMenu, MdOutlineReviews } from "react-icons/md";
-import { FaUsers } from "react-icons/fa";
+import { FaUsers, FaUsersCog } from "react-icons/fa";
 import { SlPicture } from "react-icons/sl";
 import { LuClipboardList } from "react-icons/lu";
 import { BiCategory } from "react-icons/bi";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { useRouter } from "next/router";
+import useHeaderStore from "@/useHooks/useHeaderStore";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -29,7 +30,7 @@ function getItem(
 
 const menuItems: MenuItem[] = [
   getItem("Branch Details", "info", <TbListDetails size="1.1rem" />),
-  getItem("Branch Users", "users", <FaUsers size="1.1rem" />),
+  getItem("Branch Users", "users", <FaUsersCog size="1.1rem" />),
   getItem("Menu", "menu", <MdOutlineRestaurantMenu size="1.1rem" />),
   getItem("Orders List", "orders", <LuClipboardList size="1.1rem" />),
   getItem("Branch Pictures", "pictures", <SlPicture size="1.1rem" />),
@@ -38,11 +39,13 @@ const menuItems: MenuItem[] = [
 
 const rootItems: MenuItem[] = [
   getItem("Branch List", "branches", <TbListDetails size="1.1rem" />),
+  getItem("User List", "users", <FaUsers size="1.1rem" />),
   getItem("Categories", "categories", <BiCategory size="1.1rem" />),
 ];
 
 const menuPaths = [
   { path: "/branches", key: "branches" },
+  { path: "/users", key: "users" },
   { path: "/categories", key: "categories" },
   { path: "/branches/[branchid]/info", key: "info" },
   { path: "/branches/[branchid]/users", key: "users" },
@@ -65,12 +68,14 @@ const rootSubmenuKeys = [
 
 const LeftMenuBar: React.FC = () => {
   const router = useRouter();
+  const { collapsed } = useHeaderStore();
 
   useEffect(() => {
     menuPaths.forEach((el) => {
       if (el.path === router.pathname) setOpenKeys([el.key]);
     });
-  }, [router]);
+    console.log("useEffect->collapsed", collapsed);
+  }, [router, collapsed]);
 
   const [openKeys, setOpenKeys] = useState([""]);
 

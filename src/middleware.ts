@@ -16,11 +16,11 @@ export default async function middleware(req: NextRequestWithAuth, event: NextFe
   //   if(result.isRedirected) return result.response;
   // }
 
-  // const authMiddleware = withAuth({
-  //   pages: {
-  //     signIn: `/login`,
-  //   },
-  // });
+  const authMiddleware = withAuth({
+    pages: {
+      signIn: '/login',
+    },
+  });
 
   // return authMiddleware(req, event);
 }
