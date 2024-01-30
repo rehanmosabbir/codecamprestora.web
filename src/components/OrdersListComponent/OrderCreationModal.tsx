@@ -22,10 +22,18 @@ import {
 import { ValidateErrorEntity } from "rc-field-form/es/interface";
 import { IoMdCheckmark } from "react-icons/io";
 import { AppLogo } from "@/assets/Logo";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useQueryClient } from "react-query";
+import { branchId } from "@/services/ordersListService";
 
 const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onCancel,
 }) => {
+  const branchIds = branchId;
+  const { data: session } = useSession();
+  const userId = session?.user?.restaurantId;
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [selectedFoodsWithQuantity, setSelectedFoodsWithQuantity] = useState<
     { food: string; quantity: number; price: number }[]
@@ -41,7 +49,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     onCancel();
   };
 
-  const onFinish = (values: DataType) => {
+  const onFinish = async (values: DataType) => {
     const { customerName, phone, seats, date, time, comment } = values;
     const formattedDate = dayjs(date).format("DD MMM YYYY");
     const formattedTime = dayjs(time).format("hh:mm A");
@@ -66,17 +74,25 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
       0
     );
 
-    console.log("Success:", {
-      orderItems: itemDetails,
-      customerName,
-      phone,
-      seats: numericSeats,
-      date: formattedDate,
-      time: formattedTime,
-      subTotal,
-      comment,
-    });
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/Orders`,
+      {
+        branchId: branchIds,
+        userId: userId,
+        orderItems: itemDetails,
+        customerName,
+        phone,
+        seats: numericSeats,
+        date: formattedDate,
+        time: formattedTime,
+        subTotal,
+        comment,
+      }
+    );
 
+    queryClient.invalidateQueries("orders-list");
+
+    console.log("Success:", response.data);
     form.resetFields();
     onCancel();
   };
@@ -135,7 +151,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
         price: 50,
       },
       {
-        img: "https://blog.wisconsincheeseman.com/wp-content/uploads/sites/10/2022/10/sharp-cheddar-baby-swiss-1-edited-768x697.jpg.webp",
+        img: "https://media.istockphoto.com/id/1434778198/photo/different-types-of-sarah-on-a-wooden-background-assortment-of-cheeses.jpg?s=612x612&w=0&k=20&c=Cju_uyrxUheQPZcp55V7hStTTbR_xZJqwLUuYsqDGQg=",
         label: "Cheese",
         value: "Cheese",
         price: 15,
