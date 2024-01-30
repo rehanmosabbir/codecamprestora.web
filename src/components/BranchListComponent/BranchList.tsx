@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Space, Table, Popover, Button, Popconfirm } from "antd";
+import { Space, Table, Popover, Button, Popconfirm, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GoGear } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
@@ -29,7 +29,14 @@ export const BranchList = () => {
 
   console.log("data", data);
 
-  if (isLoading) return <div>Fetching posts...</div>;
+  if (isLoading)
+    return (
+      <div className=" m-20 p-20">
+        <Spin tip="Loading...">
+          <div className="content" />
+        </Spin>
+      </div>
+    );
   if (error) return <div>An error occurred:</div>;
 
   // const mutation = useMutation({
