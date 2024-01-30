@@ -20,22 +20,13 @@ const LoginPage = () => {
   const onFinish = async (values: LoginCredential) => {
     const { username, password } = values;
 
-    // console.log('p', values);
-
     try {
       const result = await signIn("credentials", {
         redirect: true,
         username,
-        password
+        password,
+        callbackUrl: '/branches'
       });
-
-      // console.log('ok', result);
-
-      // if (result?.error) {
-      //   setError(true);
-      // } else {
-      //   await router.push("/branches");
-      // }
     } catch (error) {
       console.error("Error occurred during authentication:", error);
     }
@@ -71,8 +62,7 @@ const LoginPage = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           style={formStyles}
-          className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]"
-        >
+          className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]">
           <div className="flex justify-center items-center pb-8">
             <div>
               <AppLogo />
@@ -98,22 +88,19 @@ const LoginPage = () => {
                 pattern: /^[A-Za-z0-9_.@]+(?:-[A-Za-z0-9]+)*$/,
                 message: "Use A-Z, a-z, 0-9, @, _, and . characters",
               },
-            ]}
-          >
+            ]}>
             <Input placeholder="Email Address / Username" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Password is required" }]}
-          >
+            rules={[{ required: true, message: "Password is required" }]}>
             <Input.Password placeholder="Password" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             name="remember"
             valuePropName="checked"
-            className=""
-          >
+            className="">
             <Checkbox style={{ color: "#364152" }}>Keep me logged in</Checkbox>
           </Form.Item>
           <span className="text-[14px] text-red-500">
@@ -129,8 +116,7 @@ const LoginPage = () => {
               className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
               htmlType="submit"
               block
-              size="large"
-            >
+              size="large">
               Sign In
             </Button>
           </Form.Item>

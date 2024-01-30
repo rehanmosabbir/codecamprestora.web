@@ -3,7 +3,7 @@ export const allEndpoints = (): {
   managerPaths: string[];
 } => {
   const ownerPaths: string[] = ["/categories", "/branches/*/users"];
-  const managerPaths: string[] = ["/branches", "/branches/*", "/categories"];
+  const managerPaths: string[] = [];
 
   return {
     ownerPaths,
