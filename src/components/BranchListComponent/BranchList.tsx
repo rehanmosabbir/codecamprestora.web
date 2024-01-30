@@ -78,7 +78,7 @@ export const BranchList = () => {
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
-        `http://54.203.205.46:5219/api/v1/branch/${idToDelete}`
+        `https://54.203.205.46:5219/api/v1/branch/${idToDelete}`
       );
       queryClient.invalidateQueries(["branchlist", 1]);
       refetch();
