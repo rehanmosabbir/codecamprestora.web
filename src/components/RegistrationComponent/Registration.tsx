@@ -51,16 +51,18 @@ const RegistrationPage = () => {
   };
 
   const onFinish = async (values: any) => {
-    console.log("Success:", values);
-    const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL as string}/api/v1/owners/register`,
-      values
-    );
-    if (data.isSuccess) {
-      form.resetFields();
-      showSuccessMessage();
-    } else showErrorMessage(data.errors[0].description);
-    console.log("data", data);
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL as string}/api/v1/owners/register`,
+        values
+      );
+      if (data.isSuccess) {
+        form.resetFields();
+        showSuccessMessage();
+      }
+    } catch (error: any) {
+      showErrorMessage(error.response.data.errors[0].description);
+    }
   };
 
   return (
