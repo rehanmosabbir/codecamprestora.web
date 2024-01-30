@@ -15,6 +15,8 @@ type BranchDetailsType = {
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
+  latitude: number;
+  longitude: number;
   updateIsInfoUpdate: (isInfoUpdate: boolean) => void;
   updateBranchName: (branchName: string) => void;
   updateRowSelectedArray: (rowSelectedArray: string[]) => void;
@@ -32,6 +34,8 @@ type BranchDetailsType = {
   ) => void;
   setOpeningHoursDetails: (openingHoursDetails: any[]) => void;
   setMainArrayOfOpeningDetails: (mainArrayOfOpeningDetails: any[]) => void;
+  updateLatitude: (latitude: number) => void;
+  updateLongitude: (longitude: number) => void;
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
@@ -45,6 +49,13 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
   districtName: "",
   thanaName: "",
   rowSelectedArray: ["1", "2", "3", "4", "5", "6", "7"],
+
+  latitude: 23.86266530867465,
+  longitude: 90.28973119576159,
+  updateLatitude: (latitude: number) =>
+    set((state) => ({ latitude: latitude })),
+  updateLongitude: (longitude: number) =>
+    set((state) => ({ longitude: longitude })),
 
   updateIsInfoUpdate: (isInfoUpdate: boolean) =>
     set((state) => ({ isInfoUpdate: isInfoUpdate })),
