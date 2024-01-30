@@ -20,6 +20,8 @@ const LoginPage = () => {
   const onFinish = async (values: LoginCredential) => {
     const { username, password } = values;
 
+    // console.log('p', values);
+
     try {
       const result = await signIn("credentials", {
         redirect: true,
@@ -27,6 +29,14 @@ const LoginPage = () => {
         password,
         callbackUrl: '/branches'
       });
+
+      // console.log('ok', result);
+
+      // if (result?.error) {
+      //   setError(true);
+      // } else {
+      //   await router.push("/branches");
+      // }
     } catch (error) {
       console.error("Error occurred during authentication:", error);
     }
@@ -62,7 +72,8 @@ const LoginPage = () => {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           style={formStyles}
-          className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]">
+          className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]"
+        >
           <div className="flex justify-center items-center pb-8">
             <div>
               <AppLogo />
@@ -77,30 +88,43 @@ const LoginPage = () => {
             </h3>
           </div>
           <Form.Item<FieldType>
-            label="Email Address / Username"
+            label="Email Address"
             name="username"
             rules={[
               {
                 required: true,
-                message: "Email Address / Username is required",
+                message: "Email Address is required",
               },
               {
-                pattern: /^[A-Za-z0-9_.@]+(?:-[A-Za-z0-9]+)*$/,
-                message: "Use A-Z, a-z, 0-9, @, _, and . characters",
+                pattern: /^[a-z0-9_.@]+(?:-[a-z0-9]+)*$/,
+                message: "Use a-z, 0-9, @, _, and . characters",
               },
-            ]}>
-            <Input placeholder="Email Address / Username" size="large" />
+            ]}
+          >
+            <Input placeholder="Email Address" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Password is required" }]}>
+            rules={[
+              {
+                required: true,
+                message: "Password is required",
+              },
+              {
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+                message: "Use A-Z, a-z, 1-9, special characters",
+              },
+            ]}
+          >
             <Input.Password placeholder="Password" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             name="remember"
             valuePropName="checked"
-            className="">
+            className=""
+          >
             <Checkbox style={{ color: "#364152" }}>Keep me logged in</Checkbox>
           </Form.Item>
           <span className="text-[14px] text-red-500">
@@ -116,7 +140,8 @@ const LoginPage = () => {
               className="bg-purple-700 font-medium hover:bg-purple-600 text-white"
               htmlType="submit"
               block
-              size="large">
+              size="large"
+            >
               Sign In
             </Button>
           </Form.Item>

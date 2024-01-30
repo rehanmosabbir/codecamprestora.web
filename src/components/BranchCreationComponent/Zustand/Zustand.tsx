@@ -14,6 +14,10 @@ type BranchDetailsType = {
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
+  latitude: number;
+  longitude: number;
+  isInfoUpdate: boolean;
+  updateIsInfoUpdate: (isInfoUpdate: boolean) => void;
   updateBranchName: (branchName: string) => void;
   updateRowSelectedArray: (rowSelectedArray: string[]) => void;
   updateDivisionName: (divisionName: string) => void;
@@ -28,10 +32,14 @@ type BranchDetailsType = {
     data: string,
     keyField: string
   ) => void;
-  setMainArrayOfOpeningDetails: (openingHoursDetails: any[]) => void;
+  setOpeningHoursDetails: (openingHoursDetails: any[]) => void;
+  setMainArrayOfOpeningDetails: (mainArrayOfOpeningDetails: any[]) => void;
+  updateLatitude: (latitude: number) => void;
+  updateLongitude: (longitude: number) => void;
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
+  isInfoUpdate:false,
   branchName: "Shymoli",
   isAvailable: 1,
   priceRangeValue: 2,
@@ -43,6 +51,16 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
   districtName: "",
   thanaName: "",
   rowSelectedArray: ["1", "2", "3", "4", "5", "6", "7"],
+
+  latitude: 23.86266530867465,
+  longitude: 90.28973119576159,
+  updateLatitude: (latitude: number) =>
+    set((state) => ({ latitude: latitude })),
+  updateLongitude: (longitude: number) =>
+    set((state) => ({ longitude: longitude })),
+
+  updateIsInfoUpdate: (isInfoUpdate: boolean) =>
+    set((state) => ({ isInfoUpdate: isInfoUpdate })),
 
   updateBranchName: (branchName: string) =>
     set((state) => ({ branchName: branchName })),
@@ -100,7 +118,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "6",
@@ -108,7 +125,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "7",
@@ -116,7 +132,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
   ] as DataType[],
 
@@ -127,15 +142,13 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: false,
     },
     {
       key: "2",
       Days: "Sunday",
-      openingHours: "10:00 AM",
-      closingHours: "10:00 PM",
+      OpeningHours: "10:00 AM",
+      ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "3",
@@ -143,7 +156,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "4",
@@ -151,7 +163,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "5",
@@ -159,7 +170,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "6",
@@ -167,7 +177,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
     {
       key: "7",
@@ -175,7 +184,6 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
-      // enabled: true,
     },
   ] as DataType[],
 
@@ -189,15 +197,23 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       return data;
     }),
 
+  setOpeningHoursDetails: (openingHoursDetails) =>
+    set((state) => {
+      var data = {
+        openingHoursDetails: openingHoursDetails.map((x) => ({
+          ...x,
+        })),
+      };
+      return data;
+    }),
+
   updateOpeningHoursDetails: (key, data, keyField) =>
     set((state) => ({
       openingHoursDetails: state.openingHoursDetails.map((item, index) => {
-        // console.log("item", item);
         if (item?.key == key) {
           if (keyField == "OpeningHours") item.OpeningHours = data;
           else if (keyField == "ClosingHours") item.ClosingHours = data;
           else if (keyField == "IsOpen") item.IsOpen = data;
-
           return item;
         } else return item;
       }),

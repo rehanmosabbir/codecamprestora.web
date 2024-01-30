@@ -1,68 +1,83 @@
 import { useState } from "react";
-import { Space, Table, Popover, Button } from "antd";
+import { Space, Table, Popover, Button, Popconfirm, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { GoGear } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
 import { AiTwotoneCheckCircle } from "react-icons/ai";
 import { AiTwotoneCloseCircle } from "react-icons/ai";
-import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
 import Link from "next/link";
-
+import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
+import axios from "axios";
+import { useQuery, QueryClient, useMutation } from "react-query";
 interface DataType {
-  key: string;
-  branchName: string;
-  status?: string;
+  id: string;
+  name: string;
+  isAvailable: boolean;
 }
-
 export const BranchList = () => {
-  const [data, setData] = useState<DataType[]>([
-    {
-      key: "1",
-      branchName: "Gulshan",
-      status: "Enable",
+  const queryClient = new QueryClient();
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["branchlist", 1],
+    queryFn: async () => {
+      const response = await axios.get(
+        `http://54.203.205.46:5219/api/v1/branch/resturant/34aaecb9-ecd1-4cc3-989f-50a6762844e0?pageNumber=1&pageSize=10`
+      );
+      console.log("api Response:", response);
+      return response.data;
     },
-    {
-      key: "2",
-      branchName: "Bonani",
-      status: "Disable",
-    },
-    {
-      key: "3",
-      branchName: "banglaMotor",
-      status: "Enable",
-    },
-    {
-      key: "4",
-      branchName: "Joe Black",
-      status: "Enable",
-    },
-    {
-      key: "5",
-      branchName: "Joe Black",
-      status: "Disable",
-    },
-    {
-      key: "6",
-      branchName: "Joe Black",
-      status: "Enable",
-    },
-    {
-      key: "7",
-      branchName: "Joe Black",
-      status: "Disable",
-    },
-  ]);
+  });
 
-  const handleDelete = (keyToDelete: string) => {
-    const updatedData = data.filter((item) => item.key !== keyToDelete);
-    setData(updatedData);
+  console.log("data", data);
+  const toggleAvailabilityMutation = useMutation(
+    ({ id, newStatus }: { id: string; newStatus: boolean }) =>
+      axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`, {
+        isAvailable: newStatus,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["branchlist", 1]);
+        refetch();
+      },
+    }
+  );
+  if (isLoading)
+    return (
+      <div className=" m-20 p-20">
+        <Spin tip="Loading...">
+          <div className="content" />
+        </Spin>
+      </div>
+    );
+  if (error) return <div>An error occurred:</div>;
+
+  const toggleAvailability = async (id: string, currentStatus: boolean) => {
+    try {
+      console.log("Toggle Params: ", id, currentStatus);
+      const newStatus = !currentStatus;
+      console.log("New Status: ", newStatus);
+      await toggleAvailabilityMutation.mutateAsync({ id, newStatus });
+    } catch (error) {
+      console.error("Error toggling branch status:", error);
+    }
   };
-
+  const handleDelete = async (idToDelete: string) => {
+    try {
+      await axios.delete(
+        `http://54.203.205.46:5219/api/v1/branch/${idToDelete}`
+      );
+      queryClient.invalidateQueries(["branchlist", 1]);
+      refetch();
+    } catch (error) {
+      console.error("Error deleting branch:", error);
+    }
+  };
   const content = (record: DataType) => (
     <div className="border-t-[1px] border-gray-200">
       <div className="m-2 flex justify-evenly">
-        <button onClick={() => handleToggle(record.key)}>
-          {record.status === "Enable" ? (
+        <button
+          onClick={() => toggleAvailability(record.id, record.isAvailable)}
+        >
+          {record.isAvailable === true ? (
             <button className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
                 <AiTwotoneCloseCircle /> Disable
@@ -76,44 +91,37 @@ export const BranchList = () => {
             </button>
           )}
         </button>
-        {/* <Button onClick={() => handleDelete(record.key)} >Delete</Button> */}
-        <button
-          onClick={() => handleDelete(record.key)}
-          className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition"
+        <Popconfirm
+          title={"Sure to Delete?"}
+          onConfirm={() => handleDelete(record.id)}
         >
-          <div className="flex items-center">
-            <MdDelete />
-            Delete
-          </div>
-        </button>
+          <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
+            <div className="flex items-center">
+              <MdDelete />
+              Delete
+            </div>
+          </button>
+        </Popconfirm>
       </div>
     </div>
   );
 
-  const handleToggle = (key: string) => {
-    const updatedData = data.map((item) => {
-      if (item.key === key) {
-        return {
-          ...item,
-          status: item.status === "Enable" ? "Disable" : "Enable",
-        };
-      }
-      return item;
-    });
-    setData(updatedData);
-  };
-
   const columns: ColumnsType<DataType> = [
     {
       title: "Branch Name",
-      dataIndex: "branchName",
+      dataIndex: "name",
       key: "name",
-      render: (name) => <Link href="/branches/123/info">{name}</Link>,
+      render: (name, record) => (
+        <Link href={`/branches/${record.id}/info`}>{name}</Link>
+      ),
     },
     {
       title: "Restaurant Status",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "isAvailable",
+      key: "isAvailable",
+      render: (isAvailable) => (
+        <span>{isAvailable ? "enable" : "disable"}</span>
+      ),
     },
     {
       title: "Action",
@@ -124,7 +132,7 @@ export const BranchList = () => {
             content={content(record)}
             placement="right"
             title="Action"
-            trigger="click"
+            // trigger="click"
           >
             <Button type="primary" className="text-white">
               <GoGear />
@@ -147,7 +155,7 @@ export const BranchList = () => {
         bordered
         scroll={{ x: 400 }}
         columns={columns}
-        dataSource={data}
+        dataSource={data?.data}
         style={{ borderRadius: 0 }}
       />
     </div>

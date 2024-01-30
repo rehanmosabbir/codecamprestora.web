@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 import { Layout, Menu, theme } from "antd";
 import { useRouter } from "next/router";
 import LeftMenuBar from "./LeftMenuBar";
@@ -17,8 +17,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const { collapsed } = useHeaderStore();
   const { setCollapsed } = useHeaderStore();
-  const isShow = !router.asPath.startsWith("/login")
-    && !router.asPath.startsWith("/registration");
+  const isShow =
+    !router.asPath.startsWith("/login") &&
+    !router.asPath.startsWith("/registration");
 
   return (
     <Layout>
@@ -87,7 +88,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
             }}
           >
             {children}
-            {!isDesktop && !collapsed && (
+            {!isDesktop && !collapsed && isShow && (
               <div
                 className="black-overlay transition"
                 style={{

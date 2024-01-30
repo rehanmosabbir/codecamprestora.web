@@ -15,7 +15,7 @@ export interface DataType {
     orderItems: OrderItemType[];
     subTotal: number;
     discount: number;
-    delivery: number;
+    deliveryCharge: number;
     totalPrice: number;
 }
 
@@ -29,7 +29,7 @@ export interface FieldType {
     orderItems: OrderItemType[];
     subTotal: number;
     discount: number;
-    delivery: number;
+    deliveryCharge: number;
     totalPrice: number;
 }
 
