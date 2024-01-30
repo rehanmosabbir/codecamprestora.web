@@ -69,7 +69,7 @@ export const BranchInformation = () => {
     queryKey: ["BranchInfo"],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/5be5ac8c-8200-46b7-95a2-0c2cc0a1f671`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/db27b5db-c55c-4be2-aed3-55e6a2c5ed59`
       );
       return response;
     },
@@ -206,7 +206,7 @@ export const BranchInformation = () => {
     updateBranchName(BranchDetailsData?.name);
     updateIsAvailable(BranchDetailsData?.isAvailable);
     updatePriceRangeValue(BranchDetailsData?.priceRange);
-    
+
     const convertedCuisineTypes = BranchDetailsData?.cuisineTypes?.map(
       (value: { cuisineTag: string }) => value?.cuisineTag
     );
