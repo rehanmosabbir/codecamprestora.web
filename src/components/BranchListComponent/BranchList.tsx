@@ -42,7 +42,7 @@ export const BranchList = () => {
 
   const toggleAvailabilityMutation = useMutation(
     ({ id, newStatus }: { id: string; newStatus: boolean }) =>
-      axios.patch(`http://54.203.205.46:5219/api/v1/branch/`, {
+      axios.patch(`https://54.203.205.46:5219/api/v1/branch/`, {
         id: id,
         isAvailable: newStatus,
       }),
