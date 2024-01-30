@@ -34,7 +34,7 @@ export const BranchList = () => {
       const pageNumber =
         (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
+        `http://54.203.205.46:5219/${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
       );
       return response.data;
     },
