@@ -375,7 +375,7 @@ export const BranchInformationForm = ({
                 placeholder="Enter cuisine types"
                 mode="tags"
                 style={{ width: "100%" }}
-                onChange={(e: string[]) => {
+                onChange={(e: { cuisineTag: string; }[]) => {
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
