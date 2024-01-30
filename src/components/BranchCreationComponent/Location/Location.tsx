@@ -245,6 +245,7 @@ import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import mapboxgl, { LngLatLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useBranchDetails } from "../Zustand/Zustand";
+import { useForm } from "antd/es/form/Form";
 
 interface Feature {
   center: LngLatLike;
@@ -259,6 +260,7 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
   const mapContainer = useRef<HTMLDivElement | null>(null);
+  const [form] = useForm();
 
   const { latitude, longitude, updateLatitude, updateLongitude } =
     useBranchDetails();
@@ -294,6 +296,12 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
         initialMarker.on("dragend", () => {
           const initialCoordinates = initialMarker.getLngLat();
           console.log("Initial marker dragged to:", initialCoordinates);
+        
+            form.setFieldsValue({
+              longitude: 'New Dynamic Value',
+              latitude:'New Dynamic Value',
+            });
+          
           updateLatitude(initialCoordinates.lat), updateLongitude(initialCoordinates.lng);
         });
 
@@ -340,6 +348,10 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
           newMarker.on("dragend", () => {
             const newCoordinates = newMarker?.getLngLat();
             console.log("Marker dragged to:", newCoordinates);
+            form.setFieldsValue({
+              longitude: 'New Dynamic Value',
+              latitude:'New Dynamic Value',
+            });
             updateLatitude(newCoordinates.lat), updateLongitude(newCoordinates.lng)
           });
         }
