@@ -13,11 +13,11 @@ export const AppLogo = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <title>Restora.tech</title>
-        <g id="Page-1" stroke="none" fill="none" fill-rule="evenodd">
+        <g id="Page-1" stroke="none" fill="none" fillRule="evenodd">
           <g
             id="login"
             transform="translate(-132.000000, -70.000000)"
-            fill-rule="nonzero"
+            fillRule="nonzero"
           >
             <g
               id="Restora.tech-SVG"
@@ -38,9 +38,9 @@ export const AppLogo = () => {
               <text
                 id="Restora.tech"
                 fill="#420502"
-                font-family="Lobster-Regular, Lobster"
-                font-size="31.3339286"
-                font-weight="normal"
+                fontFamily="Lobster-Regular, Lobster"
+                fontSize="31.3339286"
+                fontWeight="normal"
               >
                 <tspan x="0" y="83.1482143">
                   Restora.tech
