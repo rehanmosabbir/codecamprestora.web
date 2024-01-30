@@ -26,7 +26,7 @@ const LoginPage = () => {
       const result = await signIn("credentials", {
         redirect: true,
         username,
-        password
+        password,
       });
 
       // console.log('ok', result);
@@ -87,25 +87,35 @@ const LoginPage = () => {
             </h3>
           </div>
           <Form.Item<FieldType>
-            label="Email Address / Username"
+            label="Email Address"
             name="username"
             rules={[
               {
                 required: true,
-                message: "Email Address / Username is required",
+                message: "Email Address is required",
               },
               {
-                pattern: /^[A-Za-z0-9_.@]+(?:-[A-Za-z0-9]+)*$/,
-                message: "Use A-Z, a-z, 0-9, @, _, and . characters",
+                pattern: /^[a-z0-9_.@]+(?:-[a-z0-9]+)*$/,
+                message: "Use a-z, 0-9, @, _, and . characters",
               },
             ]}
           >
-            <Input placeholder="Email Address / Username" size="large" />
+            <Input placeholder="Email Address" size="large" />
           </Form.Item>
           <Form.Item<FieldType>
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Password is required" }]}
+            rules={[
+              {
+                required: true,
+                message: "Password is required",
+              },
+              {
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+                message: "Use A-Z, a-z, 1-9, special characters",
+              },
+            ]}
           >
             <Input.Password placeholder="Password" size="large" />
           </Form.Item>
