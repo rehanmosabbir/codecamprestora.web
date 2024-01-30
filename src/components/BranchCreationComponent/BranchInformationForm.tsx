@@ -24,7 +24,7 @@ import {
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
 import axios from "axios";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import Location from "./Location/Location";
 import { useForm } from "antd/es/form/Form";
 
@@ -48,6 +48,7 @@ export const BranchInformationForm = ({
     latitude,
     longitude,
   } = useBranchDetails();
+  const queryClient = useQueryClient()
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
@@ -92,6 +93,7 @@ export const BranchInformationForm = ({
     },
     onSuccess(data, variables, context) {
       console.log("onSuccess=== ", data);
+      queryClient.invalidateQueries({ queryKey: ["branchlist", 1] })
     },
     onError(error, variables, context) {
       console.log("onError=== ", error);
@@ -110,6 +112,7 @@ export const BranchInformationForm = ({
     },
     onSuccess(data, variables, context) {
       console.log("onSuccess=== ", data);
+      queryClient.invalidateQueries({ queryKey: ['BranchInfo'] })
     },
     onError(error, variables, context) {
       console.log("onError=== ", error);
@@ -182,7 +185,7 @@ export const BranchInformationForm = ({
         ],
         cuisineTypes:
           values.cuisineTypes === undefined
-            ? cuisineTypes.map((value: string) => ({
+            ? cuisineTypes.map((value: any) => ({
               cuisineTag: value,
             }))
             : cuisineTypesObjForm,
@@ -278,6 +281,7 @@ export const BranchInformationForm = ({
   return (
     <div>
       <Form
+        form={form}
         name="basic"
         style={{ width: "100%" }}
         onFinish={onFinish}

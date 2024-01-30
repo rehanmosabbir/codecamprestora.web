@@ -16,6 +16,7 @@ type BranchDetailsType = {
   mainArrayOfOpeningDetails: any[];
   latitude: number;
   longitude: number;
+  isInfoUpdate: boolean;
   updateIsInfoUpdate: (isInfoUpdate: boolean) => void;
   updateBranchName: (branchName: string) => void;
   updateRowSelectedArray: (rowSelectedArray: string[]) => void;
@@ -38,6 +39,7 @@ type BranchDetailsType = {
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
+  isInfoUpdate:false,
   branchName: "Shymoli",
   isAvailable: 1,
   priceRangeValue: 2,
