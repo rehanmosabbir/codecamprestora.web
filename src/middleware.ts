@@ -3,17 +3,19 @@ import { NextFetchEvent } from "next/server";
 import { redirectIfGuarderRoute } from "./helpers/authGuard";
 import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 
-export default async function middleware(req: NextRequestWithAuth, event: NextFetchEvent) {
+export default async function middleware(
+  req: NextRequestWithAuth,
+  event: NextFetchEvent
+) {
   const token = await getToken({ req });
   const isAuthenticated = !!token;
 
-  if(isAuthenticated)
-  {
+  if (isAuthenticated) {
     const pathTo = req.nextUrl.pathname;
     const pathFrom = req.url;
 
     var result = redirectIfGuarderRoute(token, pathTo, pathFrom);
-    if(result.isRedirected) return result.response;
+    if (result.isRedirected) return result.response;
   }
 
   const authMiddleware = withAuth({
@@ -22,5 +24,5 @@ export default async function middleware(req: NextRequestWithAuth, event: NextFe
     },
   });
 
-  return authMiddleware(req, event);
+  // return authMiddleware(req, event);
 }

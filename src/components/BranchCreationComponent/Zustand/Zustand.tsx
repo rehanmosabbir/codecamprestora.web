@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { DataType } from "../types/BranchTypes";
 
 type BranchDetailsType = {
-  isInfoUpdate: boolean;
   branchName: string;
   isAvailable: number;
   priceRangeValue: number;
@@ -11,7 +10,7 @@ type BranchDetailsType = {
   divisionName: string;
   districtName: string;
   thanaName: string;
-  cuisineTypes: string[];
+  cuisineTypes: { cuisineTag: string}[];
   openingHoursDetails: any[];
   rowSelectedArray: string[];
   mainArrayOfOpeningDetails: any[];
@@ -25,7 +24,7 @@ type BranchDetailsType = {
   updateThanaName: (ThanaName: string) => void;
   updateIsAvailable: (isAvailable: number) => void;
   updatePriceRangeValue: (priceRangeValue: number) => void;
-  updateCuisineTypes: (cuisineTypes: string[]) => void;
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) => void;
   updateAreaDetails: (areaDetails: string) => void;
   updateOpeningHoursDetails: (
     key: string,
@@ -39,12 +38,13 @@ type BranchDetailsType = {
 };
 
 export const useBranchDetails = create<BranchDetailsType>((set) => ({
-  isInfoUpdate: false,
-  branchName: "",
-  isAvailable: 0,
-  priceRangeValue: 0,
-  cuisineTypes: [],
-  areaDetails: "",
+  branchName: "Shymoli",
+  isAvailable: 1,
+  priceRangeValue: 2,
+  cuisineTypes: [{
+    "cuisineTag": "biriyani"
+  }],
+  areaDetails: "Shymoli",
   divisionName: "",
   districtName: "",
   thanaName: "",
@@ -67,7 +67,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
     set(() => ({ priceRangeValue: priceRangeValue })),
   updateAreaDetails: (areaDetails: string) =>
     set(() => ({ areaDetails: areaDetails })),
-  updateCuisineTypes: (cuisineTypes: string[]) =>
+  updateCuisineTypes: (cuisineTypes: { cuisineTag: string}[]) =>
     set(() => ({ cuisineTypes: cuisineTypes })),
   updateDivisionName: (divisionName: string) =>
     set(() => ({ divisionName: divisionName })),
@@ -84,6 +84,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
+      // enabled: false,
     },
     {
       key: "2",
@@ -91,6 +92,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
+      // enabled: true,
     },
     {
       key: "3",
@@ -98,6 +100,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
+      // enabled: true,
     },
     {
       key: "4",
@@ -105,6 +108,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
       OpeningHours: "10:00 AM",
       ClosingHours: "10:00 PM",
       IsOpen: "true",
+      // enabled: true,
     },
     {
       key: "5",
