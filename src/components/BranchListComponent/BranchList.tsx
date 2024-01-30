@@ -34,20 +34,20 @@ export const BranchList = () => {
   
   const mutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = axios.put(
+      const response = await axios.put(
         `http://54.203.205.46:5219/api/v1/branch/${id}`
       );
       return response;
     },
   });
-  const handleToggle = async (id: string) => {
+  const handleToggle =  (id: string) => {
     try {
       const branchToToggle = data.data.find((branch: any) => branch.id === id);
 
       if (branchToToggle) {
         branchToToggle.isAvailable = !branchToToggle.isAvailable;
 
-        await mutation.mutate(id);
+         mutation.mutate(id);
       }
     } catch (error) {
       console.error("Error toggling branch status:", error);
