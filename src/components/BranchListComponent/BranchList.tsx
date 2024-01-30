@@ -9,28 +9,41 @@ import Link from "next/link";
 import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
 import axios from "axios";
 import { useQuery, QueryClient, useMutation } from "react-query";
+import { useSession } from "next-auth/react";
 interface DataType {
   id: string;
   name: string;
   isAvailable: boolean;
 }
 export const BranchList = () => {
+  const path = "/api/v1/branch/";
+  const pageSizes = 10;
+  const [pageParameter, setPageParameter] = useState(1);
+  const { data: session } = useSession();
+  const restaurantId = session?.user?.restaurantId;
   const queryClient = new QueryClient();
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["branchlist", 1],
-    queryFn: async () => {
+
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["branch-list", 1],
+    queryFn: async ({ queryKey }) => {
+      const pageNumber =
+        (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
       const response = await axios.get(
-        `http://54.203.205.46:5219/api/v1/branch/resturant/34aaecb9-ecd1-4cc3-989f-50a6762844e0?pageNumber=1&pageSize=10`
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
       );
-      console.log("api Response:", response);
       return response.data;
     },
   });
 
-  console.log("data", data);
   const toggleAvailabilityMutation = useMutation(
     ({ id, newStatus }: { id: string; newStatus: boolean }) =>
-      axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`, {
+      axios.patch(`http://54.203.205.46:5219/api/v1/branch/`, {
+        id: id,
         isAvailable: newStatus,
       }),
     {
@@ -49,6 +62,8 @@ export const BranchList = () => {
       </div>
     );
   if (error) return <div>An error occurred:</div>;
+
+  const dataSource = apiResponse?.data;
 
   const toggleAvailability = async (id: string, currentStatus: boolean) => {
     try {
@@ -143,6 +158,15 @@ export const BranchList = () => {
     },
   ];
 
+  const tablePagination = {
+    total: apiResponse?.totalPages * 10,
+    onChange: async (page: number) => {
+      setPageParameter(page);
+      await refetch();
+    },
+    pageSize: 10,
+  };
+
   return (
     <div>
       <div className="flex justify-between bg-white p-5 rounded-lg">
@@ -155,8 +179,9 @@ export const BranchList = () => {
         bordered
         scroll={{ x: 400 }}
         columns={columns}
-        dataSource={data?.data}
+        dataSource={apiResponse?.data?.data}
         style={{ borderRadius: 0 }}
+        pagination={tablePagination}
       />
     </div>
   );
