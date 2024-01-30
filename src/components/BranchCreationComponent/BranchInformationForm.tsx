@@ -25,6 +25,8 @@ import {
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
 import axios from "axios";
 import { useMutation } from "react-query";
+import Location from "./Location/Location";
+import { useForm } from "antd/es/form/Form";
 
 export const BranchInformationForm = ({
   formClose,
@@ -43,6 +45,8 @@ export const BranchInformationForm = ({
     divisionName,
     districtName,
     thanaName,
+    latitude,
+    longitude,
   } = useBranchDetails();
 
   const [district, setDistrict] = useState([] as any);
@@ -66,6 +70,15 @@ export const BranchInformationForm = ({
 
   const handleCusineType = (value: string) => {
     console.log(`selected ${value}`);
+  };
+
+  const [form] = useForm();
+
+  const handleButtonClick = () => {
+    // Set a new value for the 'fieldName' input field
+    form.setFieldsValue({
+      fieldName: 'New Dynamic Value',
+    });
   };
 
   const createMutation = useMutation({
@@ -113,12 +126,12 @@ export const BranchInformationForm = ({
 
     if (isInfoUpdate === true) {
       updateMutation.mutate({
-        id: "5be5ac8c-8200-46b7-95a2-0c2cc0a1f671",
+        id: "db27b5db-c55c-4be2-aed3-55e6a2c5ed59",
         name: values.branchName === undefined ? branchName : values.branchName,
         isAvailable:
           values.isAvailable === undefined
-            ? isAvailable === 1
-            : values.isAvailable === 1,
+            ? (isAvailable === 1) ? true :false
+            : (values.isAvailable === 1) ? true :false,
         priceRange:
           values.priceRangeValue === undefined
             ? priceRangeValue
@@ -167,10 +180,15 @@ export const BranchInformationForm = ({
             isClosed: openingHoursDetails[6].IsOpen === "true" ? false : true,
           },
         ],
-        cuisineTypes: cuisineTypesObjForm,
+        cuisineTypes:
+          values.cuisineTypes === undefined
+            ? cuisineTypes.map((value: string) => ({
+              cuisineTag: value,
+            }))
+            : cuisineTypesObjForm,
         address: {
-          latitude: 123.2,
-          longitude: 2.3,
+          latitude: latitude,
+          longitude: longitude,
           division:
             values.divisionName === undefined
               ? divisionName
@@ -236,14 +254,14 @@ export const BranchInformationForm = ({
         ],
         cuisineTypes: cuisineTypesObjForm,
         address: {
-          latitude: 123.2,
-          longitude: 2.3,
+          latitude: latitude,
+          longitude: longitude,
           division: values.divisionName,
           district: values.districtName,
           thana: values.thanaName,
           areaDetails: values.areaDetails,
         },
-        restaurantId: "0080de5a-9ee5-4d7f-9c2a-73f28862bb7c",
+        restaurantId: "34aaecb9-ecd1-4cc3-989f-50a6762844e0",
       });
     }
 
@@ -363,8 +381,58 @@ export const BranchInformationForm = ({
           </Col>
         </Row>
 
-        <Meta title="Branch Address:" />
+        <Title level={5}>Branch Address:</Title>
+        {/* <Meta title="" /> */}
         <Divider />
+        <Row gutter={25}>
+          <Col span={12}>
+            <Form.Item<FieldType>
+              // latitude: 23.86266530867465,
+              // :
+              label="Latitude:"
+              labelCol={{ span: 24 }}
+              name="latitude"
+              // rules={[
+                // {
+                  // required: latitude === 23.86266530867465 ? true : false,
+                  // message: "Please input latitude!",
+                // },
+              // ]}
+            >
+              <Input
+                className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+                // placeholder="Enter Street Number"
+                size="large"
+                // type="tel"
+                // value={latitude}
+                defaultValue={latitude}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item<FieldType>
+              label="Longitude:"
+              labelCol={{ span: 24 }}
+              name="longitude"
+              // rules={[
+              //   {
+              //     required: longitude === 90.28973119576159 ? true : false,
+              //     message: "Please input longitude!",
+              //   },
+              // ]}
+            >
+              <Input
+                className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
+                // placeholder="Enter Street Number"
+                size="large"
+                // type="tel"
+                defaultValue={longitude}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Location></Location>
         <Row gutter={25}>
           <Col span={12}>
             <Form.Item<FieldType>
