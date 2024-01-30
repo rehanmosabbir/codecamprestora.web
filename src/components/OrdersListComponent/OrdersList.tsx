@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Button, Form, Modal, Select, Space, Table } from "antd";
 import { DataType } from "./Types/OrdersListTypes";
 import OrderCreationModal from "./OrderCreationModal";
+import { useQuery } from "react-query";
+import axios from "axios";
+import { branchId, pageSize, path } from "@/services/ordersListService";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -38,86 +41,43 @@ const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
 export const OrdersList: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = useState<DataType[]>([
-    {
-      customerName: "John",
-      phone: "01773967545",
-      seats: 5,
-      date: "15 Feb 2024",
-      time: "02:00 PM",
-      comment: "Nice",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
+  const [pageParameter, setPageParameter] = useState(1);
+
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["orders-list", { pageParameter }],
+    queryFn: async ({ queryKey }) => {
+      const pageNumber =
+        (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
+
+      try {
+        const result = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}${path}?branchId=${branchId}&pageNumber=${pageNumber}&pageSize=${pageSize}`
+        );
+
+        console.log(result.data.data);
+
+        return result.data.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
     },
-    {
-      customerName: "james",
-      phone: "01556284956",
-      seats: 10,
-      date: "25 Mar 2024",
-      time: "04:00 PM",
-      comment: "Tasty",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
-    },
-    {
-      customerName: "clark",
-      phone: "01963810735",
-      seats: 15,
-      date: "10 Jan 2024",
-      time: "10:30 AM",
-      comment: "Good",
-      orderItems: [
-        {
-          itemName: "Hamburger",
-          quantity: 5,
-          unitPrice: 50,
-          totalItemPrice: 250,
-        },
-        {
-          itemName: "Cheese",
-          quantity: 5,
-          unitPrice: 20,
-          totalItemPrice: 100,
-        },
-      ],
-      subTotal: 350,
-      discount: 5,
-      delivery: 0,
-      totalPrice: 345,
-    },
-  ]);
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error...</div>;
+  }
+
+  const dataSource = apiResponse || [];
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -191,8 +151,8 @@ export const OrdersList: React.FC = () => {
             Tk
           </p>
           <p>
-            <span className="font-semibold">Delivery :</span> {record.delivery}{" "}
-            Tk
+            <span className="font-semibold">Delivery :</span>{" "}
+            {record.deliveryCharge} Tk
           </p>
           <p>
             <span className="font-bold">Total Price :</span> {record.totalPrice}{" "}
@@ -229,6 +189,16 @@ export const OrdersList: React.FC = () => {
     };
   });
 
+  const tablePagination = {
+    total: (apiResponse?.totalPages || 1) * pageSize,
+    onChange: async (page: number) => {
+      setPageParameter(page);
+      await refetch();
+    },
+    pageSize: 10,
+  };
+  console.log("Total Pages:", apiResponse);
+
   return (
     <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
@@ -253,6 +223,7 @@ export const OrdersList: React.FC = () => {
           rowKey="key"
           columns={mergedColumns}
           dataSource={dataSource}
+          pagination={tablePagination}
         />
       </Form>
     </div>
