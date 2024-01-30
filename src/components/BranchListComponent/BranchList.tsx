@@ -28,7 +28,18 @@ export const BranchList = () => {
   });
 
   console.log("data", data);
-
+  const toggleAvailabilityMutation = useMutation(
+    ({ id, newStatus }: { id: string; newStatus: boolean }) =>
+      axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`, {
+        isAvailable: newStatus,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["branchlist", 1]);
+        refetch();
+      },
+    }
+  );
   if (isLoading)
     return (
       <div className=" m-20 p-20">
@@ -39,27 +50,16 @@ export const BranchList = () => {
     );
   if (error) return <div>An error occurred:</div>;
 
-  // const mutation = useMutation({
-  //   mutationFn: async (id: string) => {
-  //     const response = await axios.put(
-  //       `http://54.203.205.46:5219/api/v1/branch/${id}`
-  //     );
-  //     return response;
-  //   },
-  // });
-  // const handleToggle = (id: string) => {
-  //   try {
-  //     const branchToToggle = data.data.find((branch: any) => branch.id === id);
-
-  //     if (branchToToggle) {
-  //       branchToToggle.isAvailable = !branchToToggle.isAvailable;
-
-  //       mutation.mutate(id);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error toggling branch status:", error);
-  //   }
-  // };
+  const toggleAvailability = async (id: string, currentStatus: boolean) => {
+    try {
+      console.log("Toggle Params: ", id, currentStatus);
+      const newStatus = !currentStatus;
+      console.log("New Status: ", newStatus);
+      await toggleAvailabilityMutation.mutateAsync({ id, newStatus });
+    } catch (error) {
+      console.error("Error toggling branch status:", error);
+    }
+  };
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
@@ -71,38 +71,12 @@ export const BranchList = () => {
       console.error("Error deleting branch:", error);
     }
   };
-
-  const handleToggle = async (id: string) => {
-    try {
-      await axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`);
-      queryClient.invalidateQueries(["branchlist", 1]);
-      refetch();
-    } catch (error) {
-      console.error("Error toggling branch status:", error);
-    }
-  };
-
-  // const handleDelete = (keyToDelete: string) => {
-  //   const updatedData = data.filter((item) => item.key !== keyToDelete);
-  //   setData(updatedData);
-  // };
-
-  // const handleToggle = (key: string) => {
-  //   const updatedData = data.map((item) => {
-  //     if (item.key === key) {
-  //       return {
-  //         ...item,
-  //         status: item.status === "Enable" ? "Disable" : "Enable",
-  //       };
-  //     }
-  //     return item;
-  //   });
-  //   setData(updatedData);
-  // };
   const content = (record: DataType) => (
     <div className="border-t-[1px] border-gray-200">
       <div className="m-2 flex justify-evenly">
-        <button onClick={() => handleToggle(record.id)}>
+        <button
+          onClick={() => toggleAvailability(record.id, record.isAvailable)}
+        >
           {record.isAvailable === true ? (
             <button className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
