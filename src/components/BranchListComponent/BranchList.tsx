@@ -34,7 +34,7 @@ export const BranchList = () => {
       const pageNumber =
         (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
+        `https://54.203.205.46:5219/${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
       );
       return response.data;
     },
@@ -42,7 +42,7 @@ export const BranchList = () => {
 
   const toggleAvailabilityMutation = useMutation(
     ({ id, newStatus }: { id: string; newStatus: boolean }) =>
-      axios.patch(`http://54.203.205.46:5219/api/v1/branch/`, {
+      axios.patch(`https://54.203.205.46:5219/api/v1/branch/`, {
         id: id,
         isAvailable: newStatus,
       }),
@@ -78,7 +78,7 @@ export const BranchList = () => {
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
-        `http://54.203.205.46:5219/api/v1/branch/${idToDelete}`
+        `https://54.203.205.46:5219/api/v1/branch/${idToDelete}`
       );
       queryClient.invalidateQueries(["branchlist", 1]);
       refetch();
