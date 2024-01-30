@@ -4,8 +4,8 @@ export const allEndpoints = (): {
 } => {
   const ownerPaths: string[] = [
     "/categories",
-    "/branches/*/users",
     "/branches",
+    "/branches/*"
   ];
   const managerPaths: string[] = ["/branches", "/branches/*", "/categories"];
 

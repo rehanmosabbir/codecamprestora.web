@@ -20,7 +20,7 @@ export const BranchList = () => {
     queryKey: ["branchlist", 1],
     queryFn: async () => {
       const response = await axios.get(
-        `http://54.203.205.46:5219/api/v1/branch/resturant/eabf4311-0451-4ff7-a2f7-f7718b6e0caf?pageNumber=1&pageSize=10`
+        `http://54.203.205.46:5219/api/v1/branch/resturant/34aaecb9-ecd1-4cc3-989f-50a6762844e0?pageNumber=1&pageSize=10`
       );
       console.log("api Response:", response);
       return response.data;
@@ -31,28 +31,28 @@ export const BranchList = () => {
 
   if (isLoading) return <div>Fetching posts...</div>;
   if (error) return <div>An error occurred:</div>;
-  
-  const mutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await axios.put(
-        `http://54.203.205.46:5219/api/v1/branch/${id}`
-      );
-      return response;
-    },
-  });
-  const handleToggle =  (id: string) => {
-    try {
-      const branchToToggle = data.data.find((branch: any) => branch.id === id);
 
-      if (branchToToggle) {
-        branchToToggle.isAvailable = !branchToToggle.isAvailable;
+  // const mutation = useMutation({
+  //   mutationFn: async (id: string) => {
+  //     const response = await axios.put(
+  //       `http://54.203.205.46:5219/api/v1/branch/${id}`
+  //     );
+  //     return response;
+  //   },
+  // });
+  // const handleToggle = (id: string) => {
+  //   try {
+  //     const branchToToggle = data.data.find((branch: any) => branch.id === id);
 
-         mutation.mutate(id);
-      }
-    } catch (error) {
-      console.error("Error toggling branch status:", error);
-    }
-  };
+  //     if (branchToToggle) {
+  //       branchToToggle.isAvailable = !branchToToggle.isAvailable;
+
+  //       mutation.mutate(id);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error toggling branch status:", error);
+  //   }
+  // };
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
@@ -62,6 +62,16 @@ export const BranchList = () => {
       refetch();
     } catch (error) {
       console.error("Error deleting branch:", error);
+    }
+  };
+
+  const handleToggle = async (id: string) => {
+    try {
+      await axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`);
+      queryClient.invalidateQueries(["branchlist", 1]);
+      refetch();
+    } catch (error) {
+      console.error("Error toggling branch status:", error);
     }
   };
 
@@ -82,7 +92,6 @@ export const BranchList = () => {
   //   });
   //   setData(updatedData);
   // };
-
   const content = (record: DataType) => (
     <div className="border-t-[1px] border-gray-200">
       <div className="m-2 flex justify-evenly">
@@ -121,7 +130,9 @@ export const BranchList = () => {
       title: "Branch Name",
       dataIndex: "name",
       key: "name",
-      render: (name) => <Link href="/branches/123/info">{name}</Link>,
+      render: (name, record) => (
+        <Link href={`/branches/${record.id}/info`}>{name}</Link>
+      ),
     },
     {
       title: "Restaurant Status",
@@ -140,7 +151,7 @@ export const BranchList = () => {
             content={content(record)}
             placement="right"
             title="Action"
-            trigger="click"
+            // trigger="click"
           >
             <Button type="primary" className="text-white">
               <GoGear />
