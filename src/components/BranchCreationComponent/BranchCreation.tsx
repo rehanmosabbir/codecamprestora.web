@@ -5,8 +5,16 @@ import { useBranchDetails } from "./Zustand/Zustand";
 export const BranchCreation = () => {
   const {
     mainArrayOfOpeningDetails,
-    setOpeningHoursDetails,
     updateIsInfoUpdate,
+    updateBranchName,
+    updateIsAvailable,
+    updateDivisionName,
+    updateDistrictName,
+    updateThanaName,
+    updatePriceRangeValue,
+    updateCuisineTypes,
+    updateAreaDetails,
+    setOpeningHoursDetails,
     updateRowSelectedArray,
   } = useBranchDetails();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,6 +24,20 @@ export const BranchCreation = () => {
     setOpeningHoursDetails(mainArrayOfOpeningDetails);
     updateRowSelectedArray(["1", "2", "3", "4", "5", "6", "7"]);
     setIsModalOpen(true);
+    updateBranchName("");
+    // console.log("jjjj---", BranchDetailsData?.isAvailable);
+    updateIsAvailable(0);
+    updatePriceRangeValue(0);
+
+    // const convertedCuisineTypes = BranchDetailsData?.cuisineTypes?.map(
+    //   (value: { cuisineTag: string }) => value?.cuisineTag
+    // );
+    updateCuisineTypes([]);
+
+    updateAreaDetails("");
+    updateDivisionName("");
+    updateDistrictName("");
+    updateThanaName("");
   };
 
   const handleCancel = () => {

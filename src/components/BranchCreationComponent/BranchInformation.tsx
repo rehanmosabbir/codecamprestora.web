@@ -8,6 +8,7 @@ import { useBranchDetails } from "./Zustand/Zustand";
 import Title from "antd/es/typography/Title";
 import axios from "axios";
 import { useQuery } from "react-query";
+import { useRouter } from "next/router";
 
 const columns: ColumnsType<DataType> = [
   {
@@ -52,6 +53,8 @@ const getLabel = (priceRange: number) => {
 export const BranchInformation = () => {
   const [editInfo, setEditInfo] = useState(false);
   const {
+    longitude,
+    latitude,
     updateIsInfoUpdate,
     updateBranchName,
     updateIsAvailable,
@@ -65,17 +68,22 @@ export const BranchInformation = () => {
     updateRowSelectedArray,
   } = useBranchDetails();
 
+  const router = useRouter();
+  const id = router.query.branchid;
+  // console.log({id})
+
   const { data } = useQuery({
     queryKey: ["BranchInfo"],
     queryFn: async () => {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/db27b5db-c55c-4be2-aed3-55e6a2c5ed59`
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch/${id}`
       );
       return response;
     },
   });
 
   const BranchDetailsData = data?.data?.data;
+  console.log({ BranchDetailsData });
 
   const findOpeningHours = (index: number) => {
     const data: openingClosingType =
@@ -84,12 +92,22 @@ export const BranchInformation = () => {
       );
 
     let time = parseInt(data?.openingHours, 10);
-    if (time > 12) {
+    // console.log({ time });
+    if (time >= 12) {
       time = time % 12;
-      if (time < 10) {
+      console.log("time 2", time);
+      if (time < 10 && time > 0) {
         let timeString =
           "0" +
           time +
+          data?.openingHours[2] +
+          data?.openingHours[3] +
+          data?.openingHours[4] +
+          " PM";
+        return timeString;
+      } else if (time == 0) {
+        let timeString =
+          "12" +
           data?.openingHours[2] +
           data?.openingHours[3] +
           data?.openingHours[4] +
@@ -105,6 +123,14 @@ export const BranchInformation = () => {
           " PM";
         return timeString;
       }
+    } else if (time === 0) {
+      return (
+        "12" +
+        data?.openingHours[2] +
+        data?.openingHours[3] +
+        data?.openingHours[4] +
+        " AM"
+      );
     } else return data?.openingHours + " AM";
   };
 
@@ -115,13 +141,21 @@ export const BranchInformation = () => {
       );
 
     let time = parseInt(data?.closingHours, 10);
-
-    if (time > 12) {
+    if (time >= 12) {
       time = time % 12;
-      if (time < 10) {
+      // console.log({ time });
+      if (time < 10 && time > 0) {
         let timeString =
           "0" +
           time +
+          data?.closingHours[2] +
+          data?.closingHours[3] +
+          data?.closingHours[4] +
+          " PM";
+        return timeString;
+      } else if (time == 0) {
+        let timeString =
+          "12" +
           data?.closingHours[2] +
           data?.closingHours[3] +
           data?.closingHours[4] +
@@ -137,8 +171,17 @@ export const BranchInformation = () => {
           " PM";
         return timeString;
       }
+    } else if (time === 0) {
+      return (
+        "12" +
+        data?.closingHours[2] +
+        data?.closingHours[3] +
+        data?.closingHours[4] +
+        " AM"
+      );
     } else return data?.closingHours + " AM";
   };
+
   const findIsOpen = (index: number) => {
     const data: openingClosingType =
       BranchDetailsData?.openingClosingTimes?.find(
@@ -198,13 +241,14 @@ export const BranchInformation = () => {
       IsOpen: findIsOpen(6) ? "false" : "true",
     },
   ];
-  // console.log("BranchInformation page -->>");
+  // console.log("BranchInformation page -->>", longitude, latitude);
 
   const handelEditButton = () => {
     setEditInfo(true);
     updateIsInfoUpdate(true);
     updateBranchName(BranchDetailsData?.name);
-    updateIsAvailable(BranchDetailsData?.isAvailable);
+    // console.log("jjjj---", BranchDetailsData?.isAvailable);
+    updateIsAvailable(BranchDetailsData?.isAvailable === true ? 1 : 2);
     updatePriceRangeValue(BranchDetailsData?.priceRange);
 
     const convertedCuisineTypes = BranchDetailsData?.cuisineTypes?.map(
@@ -280,10 +324,18 @@ export const BranchInformation = () => {
             <Col span={2}>:</Col>
             <Col span={16}>
               <p className="text-base">
-                Chicken grill
-                {BranchDetailsData?.cuisineTypes?.map(
-                  (value: { cuisineTag: string }) => ", " + value.cuisineTag
-                )}
+                {/* Chicken grill */}
+                { 
+                
+                BranchDetailsData?.cuisineTypes?.map(
+                  (value: { cuisineTag: string }, index: number) => {
+                    // console.log(BranchDetailsData?.cuisineTypes.length)
+                    return (index+1 === BranchDetailsData?.cuisineTypes.length
+                      ? value.cuisineTag
+                      : value.cuisineTag + ", ")
+                    }
+                )
+                }
               </p>
             </Col>
           </Row>
@@ -310,6 +362,7 @@ export const BranchInformation = () => {
           </Row>
         </div>
         <div className=" bg-white pb-5 pl-5 pr-5">
+          {/* <Title level={5}>Opening Hours:</Title> */}
           <label className="font-semibold	">Opening Hours:</label>
           <Divider />
           <div>
