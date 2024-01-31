@@ -11,6 +11,6 @@ export interface FieldType {
   priceRangeValue?:string;
   cuisineTypes?:string[];
   oprninghours?:string;
-  latitude:number;
-  longitude:number;
+  formLatitude:number;
+  formLongitude:number;
 }

@@ -64,7 +64,7 @@ export const useBranchDetails = create<BranchDetailsType>((set) => ({
 
   updateBranchName: (branchName: string) =>
     set((state) => ({ branchName: branchName })),
-  updateIsAvailable: (isAvailable) => set(() => ({ isAvailable: isAvailable })),
+  updateIsAvailable: (isAvailable:number) => set(() => ({ isAvailable: isAvailable })),
   updatePriceRangeValue: (priceRangeValue: number) =>
     set(() => ({ priceRangeValue: priceRangeValue })),
   updateAreaDetails: (areaDetails: string) =>
