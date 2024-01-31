@@ -27,7 +27,7 @@ const LoginPage = () => {
         redirect: true,
         username,
         password,
-        callbackUrl: "/branches",
+        // callbackUrl: "/branches",
       });
 
       // console.log('ok', result);
@@ -41,9 +41,9 @@ const LoginPage = () => {
       console.error("Error occurred during authentication:", error);
     }
   };
-
+  console.log("osama");
   const onFinishFailed = (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
+    console.log("Failed:", errorInfo, "osama");
   };
 
   useEffect(() => {

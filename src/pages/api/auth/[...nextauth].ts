@@ -69,7 +69,7 @@ const authOptions: NextAuthOptions = {
       return Promise.resolve(session);
     },
     async redirect({ url, baseUrl }) {
-      console.log(url, baseUrl, 'asdasdsad')
+      console.log(url, baseUrl, process.env.NEXT_PUBLIC_NEXTAUTH_URL, 'asdasdsad')
       let returnUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL || baseUrl;
       return returnUrl;
       // // Allows relative callback URLs
