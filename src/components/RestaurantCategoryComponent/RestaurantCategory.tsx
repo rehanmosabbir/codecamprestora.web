@@ -41,12 +41,7 @@ import { useSession } from "next-auth/react";
 
 const getBase64 = (img: RcFile, callback: (base64: string) => void) => {
   const reader = new FileReader();
-
-  reader.addEventListener("load", () => {
-    console.log("FileReader load event:", reader.result);
-    callback(reader.result as string);
-  });
-
+  reader.addEventListener("load", () => callback(reader.result as string));
   reader.readAsDataURL(img);
 };
 
@@ -143,7 +138,7 @@ export const RestaurantCategories: React.FC = () => {
       image: {
         name: "",
         type: "",
-        base64: "",
+        base64Url: "",
       },
       displayOrder: newDisplayOrder,
       restaurantId: restaurantId,
@@ -188,14 +183,14 @@ export const RestaurantCategories: React.FC = () => {
       info: UploadChangeParam<UploadFile>
     ) => {
       if (info.file.status === "done") {
-        getBase64(info.file.originFileObj as RcFile, (base64) => {
+        getBase64(info.file.originFileObj as RcFile, (base64Url) => {
           const { name, type } = info.file.originFileObj as RcFile;
           setData((prevData) => {
             const newData = prevData.map((item: DataType) =>
               item.id === record.id
                 ? {
                     ...item,
-                    image: { ...item.image, name, type, base64 },
+                    image: { ...item.image, name, type, base64Url },
                   }
                 : item
             );
@@ -213,12 +208,12 @@ export const RestaurantCategories: React.FC = () => {
         disabled={!isDisabled}
       >
         {editing ? (
-          record?.image?.base64 ? (
+          record?.image?.base64Url ? (
             <img
               height={200}
               width={200}
               className="p-1 rounded-lg"
-              src={record?.image?.base64}
+              src={record?.image?.base64Url}
               alt="Restaurant Image"
             />
           ) : (
@@ -229,7 +224,7 @@ export const RestaurantCategories: React.FC = () => {
             height={200}
             width={200}
             className="p-1 rounded-lg"
-            src={record?.image?.base64 || defaultImageSrc}
+            src={record?.image?.base64Url || defaultImageSrc}
             alt="Restaurant Image"
           />
         )}
@@ -244,6 +239,7 @@ export const RestaurantCategories: React.FC = () => {
       );
       const currentData = response.data.data;
 
+      console.log(form);
       form.setFieldsValue({
         name: "",
         image: record.image,
