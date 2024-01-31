@@ -9,7 +9,7 @@ export interface DataType {
 export interface ImageObject {
     name: string;
     type: string;
-    base64: string;
+    base64Url: string;
 }
 
 export interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {

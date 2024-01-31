@@ -10,7 +10,6 @@ import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
 import axios from "axios";
 import { useQuery, QueryClient, useMutation } from "react-query";
 import { useSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
 interface DataType {
   id: string;
   name: string;
@@ -20,8 +19,7 @@ export const BranchList = () => {
   const path = "/api/v1/branch/";
   const pageSizes = 10;
   const [pageParameter, setPageParameter] = useState(1);
-  const { status, data: session } = useSession();
-  console.log(status);
+  const { data: session } = useSession();
   const restaurantId = session?.user?.restaurantId;
   const queryClient = new QueryClient();
 
@@ -33,15 +31,14 @@ export const BranchList = () => {
   } = useQuery({
     queryKey: ["branch-list", 1],
     queryFn: async ({ queryKey }) => {
-      console.log('restaurantId', restaurantId);
-      const pageNumber = (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
+      const pageNumber =
+        (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BASE_URL}${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
       );
-
       return response.data;
     },
-    enabled: status === 'authenticated'
+    staleTime: 10000,
   });
 
   const toggleAvailabilityMutation = useMutation(
@@ -94,7 +91,8 @@ export const BranchList = () => {
     <div className="border-t-[1px] border-gray-200">
       <div className="m-2 flex justify-evenly">
         <button
-          onClick={() => toggleAvailability(record.id, record.isAvailable)}>
+          onClick={() => toggleAvailability(record.id, record.isAvailable)}
+        >
           {record.isAvailable === true ? (
             <button className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
@@ -111,7 +109,8 @@ export const BranchList = () => {
         </button>
         <Popconfirm
           title={"Sure to Delete?"}
-          onConfirm={() => handleDelete(record.id)}>
+          onConfirm={() => handleDelete(record.id)}
+        >
           <button className="bg-red-500 hover:bg-red-500 active:bg-red-500 px-2 py-1 rounded text-white transition">
             <div className="flex items-center">
               <MdDelete />

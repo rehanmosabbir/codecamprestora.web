@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { useState } from 'react';
+import { useState } from "react";
 import { ConfigProvider } from "antd";
 import type { AppProps } from "next/app";
 import theme from "../../theme/themeConfig";
@@ -13,7 +13,11 @@ export default function App({
 }: AppProps) {
   const [queryClient] = useState(new QueryClient());
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false} refetchInterval={2 * 60}>
+    <SessionProvider
+      session={session}
+      refetchOnWindowFocus={false}
+      refetchInterval={2 * 60}
+    >
       <QueryClientProvider client={queryClient}>
         <ConfigProvider theme={theme}>
           <RootLayout>
