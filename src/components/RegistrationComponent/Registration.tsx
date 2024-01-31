@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppLogo } from "@/assets/Logo";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
@@ -19,6 +20,7 @@ interface FieldType {
 const RegistrationPage = () => {
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const router = useRouter();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -59,6 +61,7 @@ const RegistrationPage = () => {
       if (data.isSuccess) {
         form.resetFields();
         showSuccessMessage();
+        router.push("/login");
       }
     } catch (error: any) {
       showErrorMessage(error.response.data.errors[0].description);
@@ -133,7 +136,7 @@ const RegistrationPage = () => {
               { required: true, message: "Password is required" },
               {
                 pattern:
-                  /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@#$%^&(){}[\]:;<>,.?/~_+-=|\\])[0-9a-zA-Z*.!@#$%^&(){}[\]:;<>,.?/~_+-=|\\]{4,32}$/,
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,32}$/,
                 message:
                   "Password must contains uppercase, lowsercase, number and special character",
               },

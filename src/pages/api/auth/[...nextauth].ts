@@ -4,8 +4,9 @@ import { LoginCredential } from "@/types/auth";
 import { NextAuthOptions, User, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { isTokenExpired, login, refreshToken } from "@/services/authService";
+import { NextApiRequest, NextApiResponse } from "next";
 
-const authOption: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -36,16 +37,17 @@ const authOption: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user: User }) {
 
       if (user) {
-        return {...user};
+        token = { ...token, ...user };
+        return Promise.resolve(token);
       }
 
       const isExpired = isTokenExpired(token);
-      if(isExpired)
-      {
+      if (isExpired) {
         const refreshedTokenResult = await refreshToken(token);
-        // console.log(refreshedTokenResult);
-        if(refreshedTokenResult.isSuccess) {
+
+        if (refreshedTokenResult.isSuccess) {
           const refreshToken: JWT = {
+            ...token,
             accessToken: refreshedTokenResult.accessToken,
             refreshToken: refreshedTokenResult.refreshToken,
             expiresIn: refreshedTokenResult.expiresIn,
@@ -54,32 +56,42 @@ const authOption: NextAuthOptions = {
             userId: refreshedTokenResult.userId
           };
 
-        //   console.log(refreshToken);
-          return refreshToken;
+          return Promise.resolve(refreshToken);
         }
       }
 
-      return token;
+      return Promise.resolve(token);
     },
-    async session({session, token}: {session: Session, token: JWT})
-    {
-        strategy: "jwt";
-        return { user: token } as Session;
+    async session({ session, token }: { session: Session, token: JWT }) {
+      if (token) {
+        session.user = token;
+      }
+      return Promise.resolve(session);
     },
     async redirect({ url, baseUrl }) {
-      const callbackUrlKey = 'callbackUrl';
-      const searchParams = new URL(url).searchParams;
+      // console.log(url, baseUrl, process.env.NEXT_PUBLIC_NEXTAUTH_URL, 'asdasdsad')
+      let returnUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL || baseUrl;
+      return returnUrl;
 
-      if(searchParams.has(callbackUrlKey))
-      {
-        const callbackURL = searchParams.get(callbackUrlKey);
-        if(callbackURL?.length != 0) return `${baseUrl}${callbackURL}`;
-      }
+      // // Allows relative callback URLs
+      // if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // // Allows callback U"RLs on the same origin
+      // else if (new URL(url).origin === baseUrl) return url;
+      // return baseUrl;
 
-      return baseUrl;
+      // const callbackUrlKey = "callbackUrl";
+      // const searchParams = new URL(url).searchParams;
+
+      // if (searchParams.has(callbackUrlKey)) {
+      //   const callbackURL = searchParams.get(callbackUrlKey);
+      //   if (callbackURL?.length != 0) return `${baseUrl}${callbackURL}`;
+      // }
+
+      // return baseUrl;
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-export default NextAuth(authOption);
+export default NextAuth(authOptions);
+

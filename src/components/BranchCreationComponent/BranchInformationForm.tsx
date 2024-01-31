@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FieldType } from "@/types/BreanchCreationTypes";
 import {
   Button,
-  Card,
   Col,
   Form,
   Input,
@@ -24,9 +23,11 @@ import {
   thanaData,
 } from "./DivisionDistrictThanaApi/DivisionDistrictThanaApi";
 import axios from "axios";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import Location from "./Location/Location";
 import { useForm } from "antd/es/form/Form";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export const BranchInformationForm = ({
   formClose,
@@ -48,6 +49,13 @@ export const BranchInformationForm = ({
     latitude,
     longitude,
   } = useBranchDetails();
+  const { data: session } = useSession();
+  const restaurantId = session?.user?.restaurantId;
+
+  const router = useRouter();
+  const id = router.query.branchid;
+  console.log({ id });
+  const queryClient = useQueryClient();
 
   const [district, setDistrict] = useState([] as any);
   const [thana, setThana] = useState([] as any);
@@ -74,12 +82,30 @@ export const BranchInformationForm = ({
 
   const [form] = useForm();
 
-  const handleButtonClick = () => {
+  const handleFormFildChange = (lat: number, lng: number) => {
     // Set a new value for the 'fieldName' input field
     form.setFieldsValue({
-      fieldName: 'New Dynamic Value',
+      formLongitude: lng,
+
+      formLatitude: lat,
     });
+    // updateLatitude(lat);
+    // updateLongitude(lng);
+    console.log(
+      "handleFormFildChange-->>",
+      latitude,
+      "->",
+      lat,
+      " -- ",
+      longitude,
+      "->",
+      lng
+    );
   };
+
+  // useEffect(() => {
+  //   handleFormFildChange(lat, lng);
+  // }, [latitude, longitude]);
 
   const createMutation = useMutation({
     mutationFn: async (branchCreationInformation: any) => {
@@ -92,6 +118,7 @@ export const BranchInformationForm = ({
     },
     onSuccess(data, variables, context) {
       console.log("onSuccess=== ", data);
+      queryClient.invalidateQueries({ queryKey: ["branch-list", 1] });
     },
     onError(error, variables, context) {
       console.log("onError=== ", error);
@@ -102,7 +129,7 @@ export const BranchInformationForm = ({
     mutationFn: async (branchCreationInformation: any) => {
       // console.log({ branchCreationInformation });
       const response = await axios.put(
-        `http://54.203.205.46:5219/api/v1/branch`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
         branchCreationInformation
       );
       // console.log("created data --", response);
@@ -110,6 +137,7 @@ export const BranchInformationForm = ({
     },
     onSuccess(data, variables, context) {
       console.log("onSuccess=== ", data);
+      queryClient.invalidateQueries({ queryKey: ["BranchInfo"] });
     },
     onError(error, variables, context) {
       console.log("onError=== ", error);
@@ -126,12 +154,16 @@ export const BranchInformationForm = ({
 
     if (isInfoUpdate === true) {
       updateMutation.mutate({
-        id: "db27b5db-c55c-4be2-aed3-55e6a2c5ed59",
+        id: id,
         name: values.branchName === undefined ? branchName : values.branchName,
         isAvailable:
           values.isAvailable === undefined
-            ? (isAvailable === 1) ? true :false
-            : (values.isAvailable === 1) ? true :false,
+            ? isAvailable === 1
+              ? true
+              : false
+            : values.isAvailable === 1
+            ? true
+            : false,
         priceRange:
           values.priceRangeValue === undefined
             ? priceRangeValue
@@ -182,13 +214,15 @@ export const BranchInformationForm = ({
         ],
         cuisineTypes:
           values.cuisineTypes === undefined
-            ? cuisineTypes.map((value: string) => ({
-              cuisineTag: value,
-            }))
+            ? cuisineTypes.map((value: any) => ({
+                cuisineTag: value,
+              }))
             : cuisineTypesObjForm,
         address: {
-          latitude: latitude,
-          longitude: longitude,
+          latitude:
+            values.formLongitude === undefined ? latitude : values.formLongitude,
+          longitude:
+            values.formLatitude === undefined ? longitude : values.formLatitude,
           division:
             values.divisionName === undefined
               ? divisionName
@@ -254,18 +288,17 @@ export const BranchInformationForm = ({
         ],
         cuisineTypes: cuisineTypesObjForm,
         address: {
-          latitude: latitude,
-          longitude: longitude,
+          latitude: values.formLatitude,
+          longitude: values.formLongitude,
           division: values.divisionName,
           district: values.districtName,
           thana: values.thanaName,
           areaDetails: values.areaDetails,
         },
-        restaurantId: "34aaecb9-ecd1-4cc3-989f-50a6762844e0",
+        restaurantId: restaurantId,
       });
     }
-
-    // console.log({ mutation });
+    form.resetFields();
     formClose(false);
     // setMainArrayOfOpeningDetails(openingHoursDetails);
   };
@@ -278,6 +311,7 @@ export const BranchInformationForm = ({
   return (
     <div>
       <Form
+        form={form}
         name="basic"
         style={{ width: "100%" }}
         onFinish={onFinish}
@@ -321,7 +355,9 @@ export const BranchInformationForm = ({
             >
               <Radio.Group
                 onChange={handelResturentisAvailable}
-                defaultValue={isInfoUpdate ? (isAvailable ? 1 : 2) : undefined}
+                defaultValue={
+                  isInfoUpdate ? (isAvailable === 1 ? 1 : 2) : undefined
+                }
               >
                 <Radio value={1}>YES</Radio>
                 <Radio value={2}>NO</Radio>
@@ -329,7 +365,6 @@ export const BranchInformationForm = ({
             </Form.Item>
           </Col>
         </Row>
-
         <Row gutter={25}>
           <Col span={12}>
             <Form.Item<FieldType>
@@ -371,7 +406,7 @@ export const BranchInformationForm = ({
                 placeholder="Enter cuisine types"
                 mode="tags"
                 style={{ width: "100%" }}
-                onChange={(e: string[]) => {
+                onChange={(e: { cuisineTag: string }[]) => {
                   handleCusineType;
                 }}
                 tokenSeparators={[","]}
@@ -380,7 +415,6 @@ export const BranchInformationForm = ({
             </Form.Item>
           </Col>
         </Row>
-
         <Title level={5}>Branch Address:</Title>
         {/* <Meta title="" /> */}
         <Divider />
@@ -391,12 +425,12 @@ export const BranchInformationForm = ({
               // :
               label="Latitude:"
               labelCol={{ span: 24 }}
-              name="latitude"
+              name="formLatitude"
               // rules={[
-                // {
-                  // required: latitude === 23.86266530867465 ? true : false,
-                  // message: "Please input latitude!",
-                // },
+              // {
+              // required: latitude === 23.86266530867465 ? true : false,
+              // message: "Please input latitude!",
+              // },
               // ]}
             >
               <Input
@@ -405,7 +439,8 @@ export const BranchInformationForm = ({
                 size="large"
                 // type="tel"
                 // value={latitude}
-                defaultValue={latitude}
+                // defaultValue={latitude}
+                defaultValue={isInfoUpdate ? latitude : undefined}
               />
             </Form.Item>
           </Col>
@@ -414,7 +449,7 @@ export const BranchInformationForm = ({
             <Form.Item<FieldType>
               label="Longitude:"
               labelCol={{ span: 24 }}
-              name="longitude"
+              name="formLongitude"
               // rules={[
               //   {
               //     required: longitude === 90.28973119576159 ? true : false,
@@ -427,12 +462,14 @@ export const BranchInformationForm = ({
                 // placeholder="Enter Street Number"
                 size="large"
                 // type="tel"
-                defaultValue={longitude}
+                // defaultValue={longitude}
+                // value={longitude}
+                defaultValue={isInfoUpdate ? longitude : undefined}
               />
             </Form.Item>
           </Col>
         </Row>
-        <Location></Location>
+        <Location handleFormFildChange={handleFormFildChange}></Location>
         <Row gutter={25}>
           <Col span={12}>
             <Form.Item<FieldType>
@@ -532,7 +569,6 @@ export const BranchInformationForm = ({
             </Form.Item>
           </Col>
         </Row>
-
         <Row gutter={16}>
           <Col span={24}>
             <div>
@@ -542,7 +578,6 @@ export const BranchInformationForm = ({
             </div>
           </Col>
         </Row>
-
         <hr className="mb-3" />
         <div className="flex ">
           <Form.Item>

@@ -245,6 +245,7 @@ import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import mapboxgl, { LngLatLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useBranchDetails } from "../Zustand/Zustand";
+import Search from "antd/es/input/Search";
 
 interface Feature {
   center: LngLatLike;
@@ -254,14 +255,12 @@ interface GeoCodingResponse {
   features: Feature[];
 }
 
-const MapWithInitialAndSearchMarker: React.FC = () => {
+const Location = ({ handleFormFildChange }: { handleFormFildChange: any }) => {
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
   const mapContainer = useRef<HTMLDivElement | null>(null);
-
-  const { latitude, longitude, updateLatitude, updateLongitude } =
-    useBranchDetails();
+  const { latitude, longitude } = useBranchDetails();
 
   useEffect(() => {
     mapboxgl.accessToken =
@@ -272,31 +271,30 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
         const newMap = new mapboxgl.Map({
           container: mapContainer?.current,
           style: "mapbox://styles/mapbox/streets-v12",
-          center: [longitude,latitude ],
+          center: [longitude, latitude],
           zoom: 5,
           attributionControl: false,
         });
-
-        // Add navigation control
         newMap.addControl(new mapboxgl.NavigationControl());
 
-        // Add an initial marker
         const initialMarker = new mapboxgl.Marker({
           draggable: true,
         })
           .setLngLat([longitude, latitude])
           .addTo(newMap);
 
-        // Set the initial marker
         setMarker(initialMarker);
 
-        // Add dragend event listener for the initial marker
         initialMarker.on("dragend", () => {
           const initialCoordinates = initialMarker.getLngLat();
           console.log("Initial marker dragged to:", initialCoordinates);
-          updateLatitude(initialCoordinates.lat), updateLongitude(initialCoordinates.lng);
+          // console.log(
+          //   initialCoordinates.lat,
+          //   "initialMarker",
+          //   initialCoordinates.lng
+          // );
+          handleFormFildChange(initialCoordinates.lat, initialCoordinates.lng);
         });
-
         setMap(newMap);
       }
     };
@@ -312,7 +310,8 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
     };
   }, [map]);
 
-  const handleSearch = async () => {
+  const handleSearch = async (e: any) => {
+    // e.preventDefault();
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${searchTerm}.json?access_token=${mapboxgl.accessToken}`
@@ -326,22 +325,24 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
         if (marker) {
           marker?.setLngLat(searchCoordinates);
         } else {
-
           const newMarker = new mapboxgl.Marker({
             draggable: true,
           })
             .setLngLat(searchCoordinates)
             .addTo(map as mapboxgl.Map);
-
-          // Set the new marker
+            
           setMarker(newMarker);
 
           // Add dragend event listener for the new marker
           newMarker.on("dragend", () => {
             const newCoordinates = newMarker?.getLngLat();
             console.log("Marker dragged to:", newCoordinates);
-            updateLatitude(newCoordinates.lat), updateLongitude(newCoordinates.lng)
+            handleFormFildChange(newCoordinates.lat, newCoordinates.lng);
+
+            // updateLatitude(newCoordinates.lat);
+            // updateLongitude(newCoordinates.lng);
           });
+          // handleFormFildChange();
         }
 
         // Fly to the searched location
@@ -356,9 +357,21 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
     }
   };
 
+  const styles: any = {
+    sidebar: {
+      backgroundColor: "rgb(35 55 75 / 90%)",
+      // color: "#fff",
+      padding: "2px",
+      fontFamily: "monospace",
+      zIndex: 1,
+      position: "absolute",
+      borderRadius: "4px",
+    },
+  };
+
   return (
     <div>
-      <div>
+      {/* <div style={styles.sidebar}>
         <input
           type="text"
           placeholder="Search for a location"
@@ -367,8 +380,34 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
             setSearchTerm(e.target.value)
           }
         />
-        <button onClick={handleSearch}>Search</button>
+        <button className="p-2" onClick={handleSearch}>Search</button>
+      </div> */}
+
+      <div>
+        <Search
+          placeholder="Search for a location"
+          value={searchTerm}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            e.preventDefault();
+            setSearchTerm(e.target.value);
+          }}
+          style={{
+            width: 200,
+            fontFamily: "monospace",
+            zIndex: 1,
+            position: "absolute",
+            margin: "2px",
+          }}
+          onSearch={handleSearch}
+          // enterButton={
+
+          // }
+        />
+        {/* <Button type="primary" className="p-2" onClick={handleSearch}> */}
+        {/* Search */}
+        {/* </Button> */}
       </div>
+
       <div
         ref={(el) => (mapContainer.current = el)}
         style={{ height: "400px" }}
@@ -377,4 +416,4 @@ const MapWithInitialAndSearchMarker: React.FC = () => {
   );
 };
 
-export default MapWithInitialAndSearchMarker;
+export default Location;

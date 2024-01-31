@@ -27,6 +27,7 @@ const LoginPage = () => {
         redirect: true,
         username,
         password,
+        callbackUrl: "/branches",
       });
 
       // console.log('ok', result);
@@ -95,8 +96,8 @@ const LoginPage = () => {
                 message: "Email Address is required",
               },
               {
-                pattern: /^[a-z0-9_.@]+(?:-[a-z0-9]+)*$/,
-                message: "Use a-z, 0-9, @, _, and . characters",
+                pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: "Email is not valid",
               },
             ]}
           >
@@ -113,7 +114,8 @@ const LoginPage = () => {
               {
                 pattern:
                   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
-                message: "Use A-Z, a-z, 1-9, special characters",
+                message:
+                  "Password must contains uppercase, lowsercase, number and special character",
               },
             ]}
           >

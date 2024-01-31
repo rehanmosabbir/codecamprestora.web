@@ -9,26 +9,51 @@ import Link from "next/link";
 import { BranchCreation } from "../BranchCreationComponent/BranchCreation";
 import axios from "axios";
 import { useQuery, QueryClient, useMutation } from "react-query";
+import { useSession } from "next-auth/react";
 interface DataType {
   id: string;
   name: string;
   isAvailable: boolean;
 }
 export const BranchList = () => {
+  const path = "/api/v1/branch/";
+  const pageSizes = 10;
+  const [pageParameter, setPageParameter] = useState(1);
+  const { data: session } = useSession();
+  const restaurantId = session?.user?.restaurantId;
   const queryClient = new QueryClient();
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["branchlist", 1],
-    queryFn: async () => {
+
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["branch-list", 1],
+    queryFn: async ({ queryKey }) => {
+      const pageNumber =
+        (queryKey[1] as { pageParameter?: number })?.pageParameter || 1;
       const response = await axios.get(
-        `http://54.203.205.46:5219/api/v1/branch/resturant/34aaecb9-ecd1-4cc3-989f-50a6762844e0?pageNumber=1&pageSize=10`
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}resturant/${restaurantId}?pageNumber=${pageNumber}&pageSize=${pageSizes}`
       );
-      console.log("api Response:", response);
       return response.data;
     },
+    staleTime: 10000,
   });
 
-  console.log("data", data);
-
+  const toggleAvailabilityMutation = useMutation(
+    ({ id, newStatus }: { id: string; newStatus: boolean }) =>
+      axios.patch(`http://54.203.205.46:5219/api/v1/branch/`, {
+        id: id,
+        isAvailable: newStatus,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["branchlist", 1]);
+        refetch();
+      },
+    }
+  );
   if (isLoading)
     return (
       <div className=" m-20 p-20">
@@ -39,27 +64,18 @@ export const BranchList = () => {
     );
   if (error) return <div>An error occurred:</div>;
 
-  // const mutation = useMutation({
-  //   mutationFn: async (id: string) => {
-  //     const response = await axios.put(
-  //       `http://54.203.205.46:5219/api/v1/branch/${id}`
-  //     );
-  //     return response;
-  //   },
-  // });
-  // const handleToggle = (id: string) => {
-  //   try {
-  //     const branchToToggle = data.data.find((branch: any) => branch.id === id);
+  const dataSource = apiResponse?.data;
 
-  //     if (branchToToggle) {
-  //       branchToToggle.isAvailable = !branchToToggle.isAvailable;
-
-  //       mutation.mutate(id);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error toggling branch status:", error);
-  //   }
-  // };
+  const toggleAvailability = async (id: string, currentStatus: boolean) => {
+    try {
+      console.log("Toggle Params: ", id, currentStatus);
+      const newStatus = !currentStatus;
+      console.log("New Status: ", newStatus);
+      await toggleAvailabilityMutation.mutateAsync({ id, newStatus });
+    } catch (error) {
+      console.error("Error toggling branch status:", error);
+    }
+  };
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
@@ -71,38 +87,12 @@ export const BranchList = () => {
       console.error("Error deleting branch:", error);
     }
   };
-
-  const handleToggle = async (id: string) => {
-    try {
-      await axios.put(`http://54.203.205.46:5219/api/v1/branch/${id}`);
-      queryClient.invalidateQueries(["branchlist", 1]);
-      refetch();
-    } catch (error) {
-      console.error("Error toggling branch status:", error);
-    }
-  };
-
-  // const handleDelete = (keyToDelete: string) => {
-  //   const updatedData = data.filter((item) => item.key !== keyToDelete);
-  //   setData(updatedData);
-  // };
-
-  // const handleToggle = (key: string) => {
-  //   const updatedData = data.map((item) => {
-  //     if (item.key === key) {
-  //       return {
-  //         ...item,
-  //         status: item.status === "Enable" ? "Disable" : "Enable",
-  //       };
-  //     }
-  //     return item;
-  //   });
-  //   setData(updatedData);
-  // };
   const content = (record: DataType) => (
     <div className="border-t-[1px] border-gray-200">
       <div className="m-2 flex justify-evenly">
-        <button onClick={() => handleToggle(record.id)}>
+        <button
+          onClick={() => toggleAvailability(record.id, record.isAvailable)}
+        >
           {record.isAvailable === true ? (
             <button className="bg-red-500 hover:bg-red-400 active:bg-red-500 px-2 py-1 rounded text-white transition">
               <div className="flex items-center">
@@ -169,6 +159,15 @@ export const BranchList = () => {
     },
   ];
 
+  const tablePagination = {
+    total: apiResponse?.totalPages * 10,
+    onChange: async (page: number) => {
+      setPageParameter(page);
+      await refetch();
+    },
+    pageSize: 10,
+  };
+
   return (
     <div>
       <div className="flex justify-between bg-white p-5 rounded-lg">
@@ -181,8 +180,9 @@ export const BranchList = () => {
         bordered
         scroll={{ x: 400 }}
         columns={columns}
-        dataSource={data?.data}
+        dataSource={apiResponse?.data?.data}
         style={{ borderRadius: 0 }}
+        pagination={tablePagination}
       />
     </div>
   );

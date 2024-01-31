@@ -6,7 +6,17 @@ export interface DataType {
   OpeningHours: string;
   ClosingHours: string;
   IsOpen: any;
-  enabled: boolean;
+  // enabled: boolean;
+}
+
+
+export interface openingClosingType {
+ 
+  day: number;
+  openingHours: string;
+  closingHours: string;
+  isClosed: any;
+ 
 }
 
 // export interface Item {

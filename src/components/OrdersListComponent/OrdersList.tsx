@@ -4,7 +4,8 @@ import { DataType } from "./Types/OrdersListTypes";
 import OrderCreationModal from "./OrderCreationModal";
 import { useQuery } from "react-query";
 import axios from "axios";
-import { branchId, pageSize, path } from "@/services/ordersListService";
+import { pageSize, path } from "@/services/ordersListService";
+import { useRouter } from "next/router";
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
@@ -39,6 +40,8 @@ const SelectOption: React.FC<{ style?: React.CSSProperties }> = ({ style }) => (
 );
 
 export const OrdersList: React.FC = () => {
+  const router = useRouter();
+  const branchId = router?.query?.branchid;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [pageParameter, setPageParameter] = useState(1);
@@ -67,6 +70,7 @@ export const OrdersList: React.FC = () => {
         throw error;
       }
     },
+    staleTime: 10000,
   });
 
   if (isLoading) {

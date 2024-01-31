@@ -15,16 +15,17 @@ export const login = async (
 };
 
 export const refreshToken = async (token: JWT): Promise<AuthResult> => {
-  var result = await axios.post(
-    "http://54.203.205.46:5219/api/v1/owners/refresh",
-    {
+  var result = await axios
+    .post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/owners/refresh`, {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
-    }
-  );
+    })
+    .then((result) => result.data)
+    .catch((error) => null);
 
-  var data = result.data;
-  return data;
+  // var data = result.data;
+  // return data;
+  return result;
 };
 
 export const isTokenExpired = (token: JWT): boolean => {
