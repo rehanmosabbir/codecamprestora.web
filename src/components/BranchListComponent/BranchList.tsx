@@ -38,6 +38,7 @@ export const BranchList = () => {
       );
       return response.data;
     },
+    staleTime: 10000,
   });
 
   const toggleAvailabilityMutation = useMutation(

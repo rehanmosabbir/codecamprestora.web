@@ -42,11 +42,10 @@ const authOptions: NextAuthOptions = {
       }
 
       const isExpired = isTokenExpired(token);
-      if(isExpired)
-      {
+      if (isExpired) {
         const refreshedTokenResult = await refreshToken(token);
 
-        if(refreshedTokenResult.isSuccess) {
+        if (refreshedTokenResult.isSuccess) {
           const refreshToken: JWT = {
             ...token,
             accessToken: refreshedTokenResult.accessToken,
@@ -63,17 +62,19 @@ const authOptions: NextAuthOptions = {
 
       return Promise.resolve(token);
     },
-    async session({session, token}: {session: Session, token: JWT})
-    {
-        session.user = token;
-        return Promise.resolve(session);
+    async session({ session, token }: { session: Session, token: JWT }) {
+      session.user = token;
+      return Promise.resolve(session);
     },
     async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
+      console.log(url, baseUrl, 'asdasdsad')
+      let returnUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL || baseUrl;
+      return returnUrl;
+      // // Allows relative callback URLs
+      // if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // // Allows callback URLs on the same origin
+      // else if (new URL(url).origin === baseUrl) return url;
+      // return baseUrl;
 
       // const callbackUrlKey = "callbackUrl";
       // const searchParams = new URL(url).searchParams;
@@ -90,3 +91,4 @@ const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
+

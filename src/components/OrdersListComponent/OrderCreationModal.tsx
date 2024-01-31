@@ -25,14 +25,15 @@ import { AppLogo } from "@/assets/Logo";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useQueryClient } from "react-query";
-import { branchId } from "@/services/ordersListService";
+import { useRouter } from "next/router";
 
 const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
   onCancel,
 }) => {
-  const branchIds = branchId;
   const { data: session } = useSession();
   const userId = session?.user?.restaurantId;
+  const router = useRouter();
+  const branchId = router?.query?.branchid;
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [selectedFoodsWithQuantity, setSelectedFoodsWithQuantity] = useState<
@@ -77,7 +78,7 @@ const OrderCreationModal: React.FC<OrderCreationModalProps> = ({
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/Orders`,
       {
-        branchId: branchIds,
+        branchId: branchId,
         userId: userId,
         orderItems: itemDetails,
         customerName,
