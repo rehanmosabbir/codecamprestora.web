@@ -69,12 +69,13 @@ const authOptions: NextAuthOptions = {
       return Promise.resolve(session);
     },
     async redirect({ url, baseUrl }) {
-      console.log(url, baseUrl, process.env.NEXT_PUBLIC_NEXTAUTH_URL, 'asdasdsad')
+      // console.log(url, baseUrl, process.env.NEXT_PUBLIC_NEXTAUTH_URL, 'asdasdsad')
       let returnUrl = process.env.NEXT_PUBLIC_NEXTAUTH_URL || baseUrl;
       return returnUrl;
+
       // // Allows relative callback URLs
       // if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // // Allows callback URLs on the same origin
+      // // Allows callback U"RLs on the same origin
       // else if (new URL(url).origin === baseUrl) return url;
       // return baseUrl;
 
