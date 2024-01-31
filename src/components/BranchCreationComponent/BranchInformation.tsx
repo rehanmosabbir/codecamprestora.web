@@ -66,6 +66,8 @@ export const BranchInformation = () => {
     updateAreaDetails,
     setOpeningHoursDetails,
     updateRowSelectedArray,
+    updateLatitude,
+    updateLongitude
   } = useBranchDetails();
 
   const router = useRouter();
@@ -244,9 +246,10 @@ export const BranchInformation = () => {
   // console.log("BranchInformation page -->>", longitude, latitude);
 
   const handelEditButton = () => {
-    setEditInfo(true);
+    
     updateIsInfoUpdate(true);
     updateBranchName(BranchDetailsData?.name);
+
     // console.log("jjjj---", BranchDetailsData?.isAvailable);
     updateIsAvailable(BranchDetailsData?.isAvailable === true ? 1 : 2);
     updatePriceRangeValue(BranchDetailsData?.priceRange);
@@ -255,6 +258,13 @@ export const BranchInformation = () => {
       (value: { cuisineTag: string }) => value?.cuisineTag
     );
     updateCuisineTypes(convertedCuisineTypes);
+    console.log('check check 1');
+    console.log(BranchDetailsData.address.latitude)
+    console.log(BranchDetailsData.address.longitude)
+    console.log('check check 2');
+
+    updateLatitude(BranchDetailsData.address.latitude);
+    updateLongitude(BranchDetailsData.address.longitude);
 
     updateAreaDetails(BranchDetailsData?.address?.areaDetails);
     updateDivisionName(BranchDetailsData?.address?.division);
@@ -267,6 +277,7 @@ export const BranchInformation = () => {
       if (values.IsOpen === "true") rowSelected.push(values.key);
     });
     updateRowSelectedArray(rowSelected);
+    setEditInfo(true);
   };
 
   if (!BranchDetailsData)

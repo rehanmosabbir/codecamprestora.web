@@ -48,19 +48,6 @@ export const BranchInformationForm = ({
     thanaName,
     latitude,
     longitude,
-    updateLatitude,
-    updateLongitude,
-    updateIsInfoUpdate,
-    updateBranchName,
-    updateIsAvailable,
-    updateDivisionName,
-    updateDistrictName,
-    updateThanaName,
-    updatePriceRangeValue,
-    updateCuisineTypes,
-    updateAreaDetails,
-    setOpeningHoursDetails,
-    updateRowSelectedArray,
   } = useBranchDetails();
   const { data: session } = useSession();
   const restaurantId = session?.user?.restaurantId;
@@ -102,8 +89,8 @@ export const BranchInformationForm = ({
 
       formLatitude: lat,
     });
-    updateLatitude(lat);
-    updateLongitude(lng);
+    // updateLatitude(lat);
+    // updateLongitude(lng);
     console.log(
       "handleFormFildChange-->>",
       latitude,
@@ -142,7 +129,7 @@ export const BranchInformationForm = ({
     mutationFn: async (branchCreationInformation: any) => {
       // console.log({ branchCreationInformation });
       const response = await axios.put(
-        `http://54.203.205.46:5219/api/v1/branch`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/branch`,
         branchCreationInformation
       );
       // console.log("created data --", response);
@@ -233,9 +220,9 @@ export const BranchInformationForm = ({
             : cuisineTypesObjForm,
         address: {
           latitude:
-            values.divisionName === undefined ? latitude : values.formLongitude,
+            values.formLongitude === undefined ? latitude : values.formLongitude,
           longitude:
-            values.divisionName === undefined ? longitude : values.formLatitude,
+            values.formLatitude === undefined ? longitude : values.formLatitude,
           division:
             values.divisionName === undefined
               ? divisionName
