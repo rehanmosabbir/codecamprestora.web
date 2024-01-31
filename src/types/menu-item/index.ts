@@ -20,12 +20,12 @@ export interface IMenuCategory {
 
 export interface IMenuItem {
     availability: boolean;
+    base64Url: string;
     branchId: string;
     categoryId: string;
     description: string;
     displayOrder: number;
     id: string;
-    imageId: string;
     ingredients: string;
     name: string;
     price: number;

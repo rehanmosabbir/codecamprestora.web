@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 
 const path = "/api/v1/menuItemCategory";
 
@@ -8,7 +8,7 @@ const beginPage = 1;
 const endPage = 10;
 
 const MENU_CATEGORY = `http://54.203.205.46:5219/api/v1/MenuCategory/GetAll34aaecb9-ecd1-4cc3-989f-50a6762844e0`;
-const MENU_ITEM = `http://54.203.205.46:5219/api/v1/MenuItem/Paginated?BranchId=${branchId}&PageNumber=${beginPage}&PageSize=${endPage}`;
+const MENU_ITEM = `http://54.203.205.46:5219/api/v1/MenuItem/Paginated?BranchId=db27b5db-c55c-4be2-aed3-55e6a2c5ed59&PageNumber=1&PageSize=10`;
 
 const menuCategory = async () => {
     const data = axios.get(MENU_CATEGORY);
@@ -25,7 +25,7 @@ export const getAllMenuCategory = () => {
         queryKey: ['menu-category'],
         queryFn: menuCategory
     });
-    
+
     return query;
 }
 
@@ -34,6 +34,24 @@ export const getAllMenuItem = () => {
         queryKey: ['menu-item'],
         queryFn: menuItem
     });
-    
+
     return query;
 }
+
+const updateMenuItem = async (updatedMenuItemData: any) => {
+    const response = await axios.put(`http://54.203.205.46:5219/api/v1/MenuItem/${updatedMenuItemData.id}`, updatedMenuItemData);
+    return response.data;
+};
+
+export const useUpdateMenuItem = () => {
+    return useMutation(updateMenuItem);
+};
+
+const deleteMenuItem = async (itemId: string) => {
+    const response = await axios.delete(`http://54.203.205.46:5219/api/v1/MenuItem/${itemId}`);
+    return response.data;
+};
+
+export const useDeleteMenuItem = () => {
+    return useMutation(deleteMenuItem);
+};

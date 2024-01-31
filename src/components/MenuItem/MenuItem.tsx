@@ -7,16 +7,46 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import React, { useId, useState } from "react";
-import { Button, Checkbox, Form, Popconfirm, Select, Space, Table, Typography } from "antd";
+import { Button, Checkbox, Form, message, Popconfirm, Select, Space, Table, Typography, Upload } from "antd";
 import { IMenuItem, IMenuItemProps } from "@/types/menu-item";
-import { dummyData, dummyNewData } from "./dummyData";
+import { dummyNewData } from "./dummyData";
 import { EditableCell, Row } from "./components";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+
+import type { UploadProps } from "antd";
+import { useDeleteMenuItem, useUpdateMenuItem } from "@/services/menuItemService";
+import { QueryClient } from "react-query";
+
+const defaultImgSrc = `https://cdn-icons-png.flaticon.com/512/1996/1996055.png?ga=GA1.1.1713970303.1705205371&`;
+
+const getBase64 = (img: any, callback: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result as string));
+    reader.readAsDataURL(img);
+};
+
+const beforeUpload = (file: any) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt5M = file.size / 1024 / 1024 < 5;
+    if (!isLt5M) {
+        message.error('Image must be smaller than 5MB!');
+    }
+    return isJpgOrPng && isLt5M;
+};
 
 export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItemProps }) {
-    const [dataSource, setDataSource] = useState<IMenuItem[]>(dummyData);
+    const queryClient = new QueryClient();
+    const [dataSource, setDataSource] = useState<IMenuItem[]>(menuItem.data.data);
     const [editingKey, setEditingKey] = useState<string>("");
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>("");
+
+    const updateMenuItemMutation = useUpdateMenuItem();
+    const deleteMenuItemMutation = useDeleteMenuItem();
 
     const isEditing = (record: IMenuItem) => record.id === editingKey;
 
@@ -50,6 +80,7 @@ export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItem
             }
 
             console.log(`save: ${id}`);
+            await updateMenuItemMutation.mutateAsync(row.id, row as any);
         } catch (error) {
             console.log(`error: ${error}`);
         }
@@ -60,8 +91,15 @@ export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItem
         setDataSource([...dataSource, newData]);
     }
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         console.log(`Delete Id: ${id}`);
+        try {
+            // Call the mutation to delete the menu item
+            await deleteMenuItemMutation.mutateAsync(id);
+            queryClient.invalidateQueries(['menu-item']);
+        } catch (error) {
+            console.log(`error: ${error}`);
+        }
     }
 
     const handleChange = (id: string) => {
@@ -73,13 +111,29 @@ export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItem
         })
     }
 
+    const handleImageChange: UploadProps['onChange'] = (info) => {
+        if (info.file.status === 'uploading') {
+            setLoading(true);
+            return;
+        }
+        if (info.file.status === 'done') {
+            getBase64(info.file.originFileObj, (url) => {
+                setLoading(false);
+                setImageUrl(url);
+            });
+        }
+    };
+
     const columns: any = [
         {
             key: "sort",
         },
         {
-            title: "Order",
-            dataIndex: "displayOrder",
+            title: "Image",
+            dataIndex: "base64Url",
+            render: (_: any, record: IMenuItem) => {
+                return <img src={record.base64Url} alt="Image" />
+            }
         },
         {
             title: "Name",
@@ -104,18 +158,36 @@ export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItem
         {
             title: "Category",
             dataIndex: "categoryId",
-            render: (_: any) => {
-                return (
-                    <Select disabled={editingKey === ""} style={{ width: "120px" }} size="large">
-                        {
-                            menuCategory.data.map(category =>
-                                <Select.Option key={category.id}>
+            render: (_: any, record: IMenuItem) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <Form.Item
+                        name="categoryId"
+                        initialValue={record.categoryId}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please select a category",
+                            },
+                        ]}
+                    >
+                        <Select style={{ width: "120px" }} size="large">
+                            {menuCategory.data.map((category) => (
+                                <Select.Option key={category.id} value={category.id}>
                                     {category.name}
                                 </Select.Option>
-                            )
-                        }
+                            ))}
+                        </Select>
+                    </Form.Item>
+                ) : (
+                    <Select disabled={editingKey === ""} style={{ width: "120px" }} size="large" defaultValue={record.categoryId}>
+                        {menuCategory.data.map((category) => (
+                            <Select.Option key={category.id} value={category.id}>
+                                {category.name}
+                            </Select.Option>
+                        ))}
                     </Select>
-                )
+                );
             }
         },
         {
@@ -141,7 +213,6 @@ export function MenuItem({ data: { menuCategory, menuItem } }: { data: IMenuItem
             title: "Operation",
             render: (_: any, record: IMenuItem) => {
                 const editable = isEditing(record);
-
                 return (
                     editable ? (
                         <span>
