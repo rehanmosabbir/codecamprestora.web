@@ -107,57 +107,17 @@ export function AccountSettings() {
           </Upload>
         </Form.Item>
         <div className="block gap-5 md:flex">
-          <Form.Item
-            label="Owner Name"
-            name="ownerName"
-            rules={[{ required: true, message: "Please Enter Owner Name" }]}
-          >
+          <Form.Item label="Name" name="ownerName">
             <Input size="large" placeholder="Update Owner Name" />
           </Form.Item>
 
-          <Form.Item
-            label="Restaurant Name"
-            name="restaurantName"
-            rules={[
-              { required: true, message: "Please Enter Restaurant Name" },
-            ]}
-          >
+          <Form.Item label="Restaurant Name" name="restaurantName">
             <Input size="large" placeholder="Update Restaurant Name" />
           </Form.Item>
         </div>
 
-        <Form.Item
-          label="Restaurant Address"
-          name="address"
-          rules={[
-            { required: true, message: "Please Enter Restaurant Address" },
-          ]}
-        >
-          <Input.TextArea
-            size="large"
-            autoSize={{ minRows: 3, maxRows: 5 }}
-            placeholder="Update Restaurant Address"
-          />
-        </Form.Item>
         <div className="block gap-5 md:flex">
-          <Form.Item
-            label="Email Address / Username"
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: "Please Enter Email Address / Username",
-              },
-            ]}
-          >
-            <Input size={"large"} placeholder="Update Owner Email" />
-          </Form.Item>
-
-          <Form.Item
-            label="Owner Password"
-            name="password"
-            rules={[{ required: true, message: "Please Enter Owner Password" }]}
-          >
+          <Form.Item label="Password" name="password">
             <Input.Password size="large" placeholder="Update Owner Password" />
           </Form.Item>
         </div>
