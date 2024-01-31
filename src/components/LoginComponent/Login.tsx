@@ -70,7 +70,7 @@ const LoginPage = () => {
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          autoComplete="off"
+          // autoComplete="off"
           style={formStyles}
           className="shadow-md rounded-md bg-white w-[26rem] lg:w-[28rem]"
         >

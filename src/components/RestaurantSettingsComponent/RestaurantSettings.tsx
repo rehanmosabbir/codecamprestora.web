@@ -6,7 +6,9 @@ import {
   UploadFile,
   UploadProps,
 } from "antd/es/upload";
-import { useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const formItemLayout = {
   labelCol: { span: 24 },
@@ -35,6 +37,23 @@ export function RestaurantSettings() {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [restaurantName, setRestaurantName] = useState();
+
+  const data = useSession();
+  const restaurantId = data?.data?.user?.restaurantId;
+
+  useEffect(() => {
+    const getRestaurant = async () => {
+      if (restaurantId) {
+        const data: any = await axios.get(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/Restaurants/${restaurantId}`
+        );
+        setRestaurantName(data.data.data.name);
+      }
+    };
+    getRestaurant();
+  }, []);
 
   const handleImageChange: UploadProps["onChange"] = (
     info: UploadChangeParam<UploadFile>
@@ -57,16 +76,43 @@ export function RestaurantSettings() {
     }
   };
 
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: any) => {
+    const data: any = await axios.put(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/Restaurants`,
+      {
+        id: restaurantId,
+        name: values.restaurantName,
+        imageId: "60C28298-B55A-4497-A3B4-0EB21DF208CB",
+      }
+    );
+    if (data.data.isSuccess) {
+      showSuccessMessage();
+    } else {
+      showErrorMessage("Some Error occure");
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
 
+  const showSuccessMessage = () => {
+    messageApi.open({
+      type: "success",
+      content: "Update Successful!",
+    });
+  };
+
+  const showErrorMessage = (message: string) => {
+    messageApi.open({
+      type: "error",
+      content: message,
+    });
+  };
+
   return (
     <div className="bg-white px-10 sm:px-20 py-10 rounded-md">
+      {contextHolder}
       <h3 className="font-bold py-2 text-[23px] text-purple-700 pb-8">
         Restaurant Settings
       </h3>
@@ -77,6 +123,12 @@ export function RestaurantSettings() {
         name="accountSettings"
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        fields={[
+          {
+            name: ["restaurantName"],
+            value: restaurantName,
+          },
+        ]}
         style={{
           maxWidth: 650,
         }}
