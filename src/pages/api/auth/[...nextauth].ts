@@ -65,7 +65,10 @@ const authOptions: NextAuthOptions = {
     },
     async session({session, token}: {session: Session, token: JWT})
     {
-        session.user = token;
+        if(token)
+        {
+          session.user = token;
+        }
         return Promise.resolve(session);
     },
     async redirect({ url, baseUrl }) {

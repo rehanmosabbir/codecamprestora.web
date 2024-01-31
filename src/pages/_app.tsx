@@ -13,7 +13,7 @@ export default function App({
 }: AppProps) {
   const [queryClient] = useState(new QueryClient());
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false}>
+    <SessionProvider session={session} refetchOnWindowFocus={false} refetchInterval={2 * 60}>
       <QueryClientProvider client={queryClient}>
         <ConfigProvider theme={theme}>
           <RootLayout>
