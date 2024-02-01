@@ -334,7 +334,7 @@ export const BranchInformationForm = ({
             >
               <Input
                 className="text-[16px] text-gray-600 hover:bg-slate-100 hover:ring-1"
-                placeholder="Enter Branch Name"
+                placeholder="Please Enter Branch Name"
                 size="large"
                 defaultValue={isInfoUpdate ? branchName : ""}
               />
@@ -349,7 +349,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: isAvailable === 0 ? true : false,
-                  message: "Please input Contact Number!",
+                  message: "Please Select Availability!",
                 },
               ]}
             >
@@ -374,7 +374,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: priceRangeValue === 0 ? true : false,
-                  message: "Please input your Branch Name!",
+                  message: "Please Select Price Range!",
                 },
               ]}
             >
@@ -397,7 +397,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: cuisineTypes.length === 0 ? true : false,
-                  message: "Please input Contact Number!",
+                  message: "Please Enter Cuisine Types!",
                 },
               ]}
             >
@@ -479,7 +479,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: areaDetails === "" ? true : false,
-                  message: "Please input Contact Number!",
+                  message: "Please Enter Area Details!",
                 },
               ]}
             >
@@ -500,7 +500,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: divisionName === "" ? true : false,
-                  message: "Please input your Branch Name!",
+                  message: "Please Enter Division Name!",
                 },
               ]}
             >
@@ -526,7 +526,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: districtName === "" ? true : false,
-                  message: "Please input Contact Number!",
+                  message: "Please Enter District Name!",
                 },
               ]}
             >
@@ -552,7 +552,7 @@ export const BranchInformationForm = ({
               rules={[
                 {
                   required: thanaName === "" ? true : false,
-                  message: "Please input your Branch Name!",
+                  message: "Please Enter Thana Name!",
                 },
               ]}
             >
