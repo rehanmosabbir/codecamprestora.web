@@ -19,7 +19,7 @@ export const BranchList = () => {
   const path = "/api/v1/branch/";
   const pageSizes = 10;
   const [pageParameter, setPageParameter] = useState(1);
-  const { status: sessionStatus, data: session } = useSession();
+  const { data: session } = useSession();
   const restaurantId = session?.user?.restaurantId;
   const queryClient = new QueryClient();
 
@@ -38,13 +38,12 @@ export const BranchList = () => {
       );
       return response.data;
     },
-    enabled: sessionStatus === 'authenticated',
     staleTime: 10000,
   });
 
   const toggleAvailabilityMutation = useMutation(
     ({ id, newStatus }: { id: string; newStatus: boolean }) =>
-      axios.patch(`http://54.203.205.46:5219/api/v1/branch/`, {
+      axios.patch(`${process.env.NEXT_PUBLIC_BASE_URL}${path}`, {
         id: id,
         isAvailable: newStatus,
       }),
@@ -80,7 +79,7 @@ export const BranchList = () => {
   const handleDelete = async (idToDelete: string) => {
     try {
       await axios.delete(
-        `http://54.203.205.46:5219/api/v1/branch/${idToDelete}`
+        `${process.env.NEXT_PUBLIC_BASE_URL}${path}${idToDelete}`
       );
       queryClient.invalidateQueries(["branchlist", 1]);
       refetch();
