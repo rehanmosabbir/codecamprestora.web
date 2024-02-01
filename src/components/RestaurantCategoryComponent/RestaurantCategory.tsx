@@ -243,7 +243,7 @@ export const RestaurantCategories: React.FC = () => {
       form.setFieldsValue({
         name: "",
         image: record.image,
-        // ...currentData,
+        ...currentData,
       });
       setEditingKey(record.id);
 
@@ -270,7 +270,7 @@ export const RestaurantCategories: React.FC = () => {
       const row = {
         displayOrder: currentData.displayOrder,
         id: currentData.id,
-        image: values.image || {},
+        image: values.image,
         restaurantId: restaurantId,
         name: values.name,
       };
