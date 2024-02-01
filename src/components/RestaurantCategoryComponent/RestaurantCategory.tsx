@@ -436,9 +436,9 @@ export const RestaurantCategories: React.FC = () => {
   return (
     <div>
       <div className="bg-white font-[500] text-lg p-5 rounded-lg">
-        <span className="sm:inline-block hidden">Restaurant</span> Categories
+        <span className="sm:inline-block hidden">Menu</span> Categories
         <Button onClick={handleAdd} type="primary" style={{ float: "right" }}>
-          Add Item
+          Add Category
         </Button>
       </div>
       <DndContext
