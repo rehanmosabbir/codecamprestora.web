@@ -19,7 +19,7 @@ export const BranchList = () => {
   const path = "/api/v1/branch/";
   const pageSizes = 10;
   const [pageParameter, setPageParameter] = useState(1);
-  const { data: session } = useSession();
+  const { status: sessionStatus, data: session } = useSession();
   const restaurantId = session?.user?.restaurantId;
   const queryClient = new QueryClient();
 
@@ -38,6 +38,7 @@ export const BranchList = () => {
       );
       return response.data;
     },
+    enabled: sessionStatus === 'authenticated',
     staleTime: 10000,
   });
 
