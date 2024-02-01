@@ -59,12 +59,12 @@ export const OrdersList: React.FC = () => {
 
       try {
         const result = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}${path}?branchId=${branchId}&pageNumber=${pageNumber}&pageSize=${pageSize}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}${path}${branchId}?pageNumber=${pageNumber}&pageSize=${pageSize}`
         );
 
-        console.log(result.data.data);
+        console.log(result.data.data.data);
 
-        return result.data.data;
+        return result.data.data.data;
       } catch (error) {
         console.error("Error fetching data:", error);
         throw error;
